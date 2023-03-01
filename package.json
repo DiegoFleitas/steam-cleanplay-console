@@ -1,0 +1,30 @@
+{
+  "name": "express-flyio-api-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "app": "npx cross-var echo $npm_package_name",
+    "fly:deploy": "flyctl deploy",
+    "fly:logs": "npx cross-var flyctl logs -a $npm_package_name",
+    "fly:stop": "npx cross-var flyctl scale count 0 -a $npm_package_name",
+    "fly:start": "npx cross-var flyctl scale count 1 -a $npm_package_name",
+    "fly:ssh": "npx cross-var flyctl ssh console -a $npm_package_name"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.3.2",
+    "body-parser": "^1.20.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "redis": "^4.6.4"
+  },
+  "devDependencies": {
+    "cross-var": "^1.1.0"
+  }
+}
