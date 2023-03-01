@@ -1,61 +1,75 @@
-const form = document.getElementById("movie-form");
+const floatingButton = document.querySelector(".floating-button");
+const modal = document.querySelector(".modal");
+const closeButton = document.querySelector(".close-button");
+const textArea = document.querySelector("#text");
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault(); // Prevent the form from submitting normally
+let isFirstClick = true;
 
-  console.log(event.target);
-  const formData = new FormData(event.target);
-
-  const data = Object.fromEntries(formData.entries());
-  console.log(data);
-
-  fetch("/api/poster", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
-      const errorMessage = document.getElementById("error-message");
-      const resultMessage = document.getElementById("result-message");
-      if (response.error) {
-        errorMessage.innerHTML = response.error;
-        errorMessage.style.display = "";
-        resultMessage.style.display = "none";
-      } else {
-        resultMessage.innerHTML = `${response.message} ${JSON.stringify(
-          response
-        )}`;
-        resultMessage.style.display = "";
-        errorMessage.style.display = "none";
-        rebuildTable(data.title, data.year, response);
-      }
-    })
-    .catch((error) => console.error(error));
+floatingButton.addEventListener("click", () => {
+  if (isFirstClick) {
+    modal.style.display = "flex";
+    isFirstClick = false;
+  }
 });
 
-function rebuildTable(title, year, data) {
-  const id = `${title.toLowerCase().replace(/ /g, "-")}-${year}`;
-  const row =
-    document.querySelector(`tr[data-id="${id}"]`) ||
-    document.createElement("tr");
-  row.setAttribute("data-id", id);
+closeButton.addEventListener("click", () => {
+  modal.style.display = "none";
+});
 
-  let [tdTitle, tdYear, tdImg] = [...row.children];
-  if (!tdTitle) tdTitle = document.createElement("td");
-  if (!tdYear) tdYear = document.createElement("td");
-  if (!tdImg) tdImg = document.createElement("td");
+window.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+  modal.style.display = "none";
+  isFirstClick = true;
+});
 
-  tdTitle.textContent = title;
-  tdYear.textContent = year;
-  if (data.poster)
-    tdImg.innerHTML = `<img class="poster" src="${data.poster}" />`;
+const draggableButton = document.getElementById("draggable-button");
 
-  if (!row.parentNode) document.querySelector("tbody").appendChild(row);
-  if (!row.parentNode && !tdStreaming.textContent) return;
-  row.innerHTML = "";
-  [tdTitle, tdYear, tdImg].forEach((td) => row.appendChild(td));
+let isDragging = false;
+let dragX = 0;
+let dragY = 0;
+
+draggableButton.addEventListener("mousedown", (event) => {
+  isDragging = true;
+  dragX = event.offsetX;
+  dragY = event.offsetY;
+});
+
+draggableButton.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+draggableButton.addEventListener("mousemove", (event) => {
+  if (isDragging) {
+    const x = event.clientX - dragX;
+    const y = event.clientY - dragY;
+    draggableButton.style.left = `${x}px`;
+    draggableButton.style.top = `${y}px`;
+  }
+});
+
+document.addEventListener("mousedown", function (event) {
+  if (event.button === 1) {
+    // middle mouse button
+    event.preventDefault();
+    reloadClosestIframe(event.clientX, event.clientY);
+  }
+});
+
+function reloadClosestIframe(x, y) {
+  const iframes = Array.from(document.querySelectorAll("iframe"));
+  const closestIframe = iframes.reduce(
+    (closest, iframe) => {
+      const rect = iframe.getBoundingClientRect();
+      const distance = Math.sqrt(
+        Math.pow(x - rect.left - rect.width / 2, 2) +
+          Math.pow(y - rect.top - rect.height / 2, 2)
+      );
+      if (distance < closest.distance) {
+        return { iframe, distance };
+      }
+      return closest;
+    },
+    { iframe: null, distance: Infinity }
+  ).iframe;
+  closestIframe.src = closestIframe.src;
 }
