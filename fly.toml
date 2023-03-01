@@ -1,41 +1,40 @@
-# fly.toml file generated for express-flyio-api-template on 2023-02-19T17:04:43-03:00
+# fly.toml file generated for cleanplay-console-dtofo0ea4m on 2023-03-01T19:09:25-03:00
 
-app = "express-flyio-api-template"
+app = "cleanplay-console-dtofo0ea4m"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-PORT = "8080"
+  PORT = "8080"
 
 [experimental]
-auto_rollback = true
+  auto_rollback = true
 
 [[services]]
-http_checks = []
-internal_port = 8080
-processes = ["app"]
-protocol = "tcp"
-script_checks = []
-[services.concurrency]
-hard_limit = 25
-soft_limit = 20
-type = "connections"
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+  [services.labels]
+    no-restart = true
 
-[[services.ports]]
-force_https = true
-handlers = ["http"]
-port = 80
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
 
-[[services.ports]]
-handlers = ["tls", "http"]
-port = 443
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
 
-[[services.tcp_checks]]
-grace_period = "1s"
-interval = "15s"
-restart_limit = 10
-timeout = "2s"
-
-[services.labels]
-no-restart = true
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 10
+    timeout = "2s"

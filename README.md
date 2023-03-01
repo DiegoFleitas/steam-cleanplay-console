@@ -1,4 +1,4 @@
-# express-flyio-api-template
+# cleanplay-console-dtofo0ea4m
 
 ## Run locally / debugging
 
@@ -46,4 +46,5 @@ Upstash Redis created with `flyctl redis create`
 - `flyctl redis status <redis-name>` & then copy the Private URL & set the proper env variable at the .env file
 
 ## Other
+
 - https://fly.io/blog/shipping-logs/
