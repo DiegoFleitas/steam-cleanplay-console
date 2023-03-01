@@ -15,8 +15,8 @@ iframe {
 }
 .floating-button {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    left: 589px;
+    top: 7px;
     background-color: #f44336;
     color: #fff;
     border-radius: 50%;
