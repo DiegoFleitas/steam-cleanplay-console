@@ -8,7 +8,7 @@ import { session, logging } from "./middleware/index.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static("public"));
+app.use(express.static("public/dist")); // serve static files that vite built
 
 // anonymous session
 app.use(session);
