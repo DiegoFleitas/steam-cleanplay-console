@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 import { session, logging } from "./middleware/index.js";
+import { proxy } from "./controllers/index.js";
 import { isHealthy } from "./helpers/redis.js";
 
 const app = express();
@@ -32,6 +33,10 @@ app.get("/redis-healthcheck", async (req, res) => {
   } else {
     res.status(500).send("Redis is not healthy");
   }
+});
+
+app.all("/api/proxy/:url(*)", async (req, res) => {
+  return proxy(req, res);
 });
 
 app.listen(port, () =>
