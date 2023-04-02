@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 import { session, logging } from "./middleware/index.js";
+import { isHealthy } from "./helpers/redis.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,19 @@ app.use(logging);
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
+
+app.get("/healthcheck", (req, res) => {
+  res.status(200).send("OK");
+});
+
+// redis healthcheck endpoint
+app.get("/redis-healthcheck", async (req, res) => {
+  if (await isHealthy()) {
+    res.status(200).send("OK");
+  } else {
+    res.status(500).send("Redis is not healthy");
+  }
+});
 
 app.listen(port, () =>
   console.log(`app listening on port http://localhost:${port}`)
