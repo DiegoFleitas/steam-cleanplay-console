@@ -1,9 +1,5 @@
 # cleanplay-console-dtofo0ea4m
 
-A web to scan Letterboxd watchlists & find which streaming providers currently offer those movies on the chosen country ...capable of alternative searching 🏴‍☠️
-
-Forget the headache of sifting through annoying, irrelevant movie recommendations while searching movies on JustWatch
-
 ## Development
 
 Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration
