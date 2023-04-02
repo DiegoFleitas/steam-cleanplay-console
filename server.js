@@ -9,7 +9,12 @@ import { isHealthy } from "./helpers/redis.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static("public/dist")); // serve static files that vite built
+app.use(express.static("public")); // serve static files
+
+app.get("/", (req, res) => {
+  // built by vite
+  res.sendFile("/dist/index.html", { root: __dirname });
+});
 
 // anonymous session
 app.use(session);
