@@ -1,7 +1,8 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const morgan = require("morgan");
-require("dotenv").config();
+import express from "express";
+import bodyParser from "body-parser";
+import morgan from "morgan";
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig();
 
 const app = express();
 const port = process.env.PORT || 3000;
