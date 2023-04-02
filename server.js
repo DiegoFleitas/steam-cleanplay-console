@@ -1,6 +1,5 @@
 import express from "express";
 import bodyParser from "body-parser";
-import morgan from "morgan";
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 import { session, logging } from "./middleware/index.js";
