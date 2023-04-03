@@ -1,4 +1,4 @@
-# cleanplay-console-dtofo0ea4m
+# cleanplay-console
 
 ## Development
 
