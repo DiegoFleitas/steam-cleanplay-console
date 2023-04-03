@@ -1,4 +1,4 @@
-# cleanplay-console
+# Cleanplay Console
 
 A web-based tool to check if players in a Team Fortress 2 (TF2) or Counter-Strike: Global Offensive (CS:GO) match have any Valve Anti-Cheat (VAC) bans, etc
 
