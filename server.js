@@ -41,6 +41,8 @@ app.get("/redis-healthcheck", async (req, res) => {
 });
 
 app.all("/api/proxy/:url(*)", async (req, res) => {
+  // let browsers cache response for 1h
+  res.setHeader("Cache-Control", "public, max-age=3600");
   return proxy(req, res);
 });
 
