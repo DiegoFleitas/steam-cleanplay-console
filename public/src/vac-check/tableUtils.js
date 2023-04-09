@@ -1,4 +1,4 @@
-import STATE from "./state.js";
+import STATE from "../state.js";
 
 let table = null;
 export const clearTable = () => {
@@ -9,13 +9,13 @@ export const clearTable = () => {
   }
 };
 
-const setupTableData = (lookup) => {
+const setupTableData = (vacLookup) => {
   const uniqueIds = new Set(); // Create a Set to store unique ids
   const tableData = []; // Create a new array to store the desired properties
 
-  for (const key in lookup) {
-    if (lookup.hasOwnProperty(key)) {
-      const currentItem = lookup[key];
+  for (const key in vacLookup) {
+    if (vacLookup.hasOwnProperty(key)) {
+      const currentItem = vacLookup[key];
 
       // Check if the id is already in the Set
       if (!uniqueIds.has(currentItem.id)) {
@@ -35,7 +35,7 @@ const setupTableData = (lookup) => {
 };
 
 export const drawTable = () => {
-  const tableData = setupTableData(STATE.lookup);
+  const tableData = setupTableData(STATE.vacLookup);
 
   console.log("tableData", tableData);
 

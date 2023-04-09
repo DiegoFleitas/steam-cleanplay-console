@@ -46,30 +46,3 @@ draggableButton.addEventListener("mousemove", (event) => {
     draggableButton.style.top = `${y}px`;
   }
 });
-
-document.addEventListener("mousedown", function (event) {
-  if (event.button === 1) {
-    // middle mouse button
-    event.preventDefault();
-    reloadClosestIframe(event.clientX, event.clientY);
-  }
-});
-
-function reloadClosestIframe(x, y) {
-  const iframes = Array.from(document.querySelectorAll("iframe"));
-  const closestIframe = iframes.reduce(
-    (closest, iframe) => {
-      const rect = iframe.getBoundingClientRect();
-      const distance = Math.sqrt(
-        Math.pow(x - rect.left - rect.width / 2, 2) +
-          Math.pow(y - rect.top - rect.height / 2, 2)
-      );
-      if (distance < closest.distance) {
-        return { iframe, distance };
-      }
-      return closest;
-    },
-    { iframe: null, distance: Infinity }
-  ).iframe;
-  closestIframe.src = closestIframe.src;
-}

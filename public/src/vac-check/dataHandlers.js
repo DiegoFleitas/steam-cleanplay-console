@@ -1,12 +1,12 @@
-import STATE from "./state.js";
+import STATE from "../state.js";
 
 const TF2_APP_ID = 440;
 const CSGO_APP_ID = 730;
 
 export const onBansData = (data) => {
-  // setup STATE.lookup
+  // setup STATE.vacLookup
   data.players.forEach((player) => {
-    const playerEntry = STATE.lookup[player.SteamId];
+    const playerEntry = STATE.vacLookup[player.SteamId];
 
     const divElements = [];
     if (player.NumberOfVACBans || player.NumberOfGameBans) {
@@ -25,7 +25,7 @@ export const onBansData = (data) => {
     const anchor =
       playerEntry["link_html"] ||
       createAnchor(
-        STATE.lookup[player.SteamId]["name"],
+        STATE.vacLookup[player.SteamId]["name"],
         `https://steamcommunity.com/profiles/${player.SteamId}`,
         "_blank"
       );
@@ -45,7 +45,7 @@ export const onSummaryData = (data) => {
       player.communityvisibilitystate !== 3 ? "hidden" : "public"
     );
 
-    const playerEntry = STATE.lookup[player.steamid];
+    const playerEntry = STATE.vacLookup[player.steamid];
     playerEntry["profile_html"] = span;
     playerEntry["profile"] = span.textContent;
 
@@ -88,7 +88,7 @@ export const onSummaryData = (data) => {
 export const onSteamLevelData = (data) => {
   for (let i = 0; i < data.length; i++) {
     let id = data[i].steamid;
-    const playerEntry = STATE.lookup[id];
+    const playerEntry = STATE.vacLookup[id];
     playerEntry["level"] = data[i]?.response
       ? data[i].response?.player_level
       : "";
@@ -96,7 +96,7 @@ export const onSteamLevelData = (data) => {
 };
 
 export const onOwnedGamesData = (data, id) => {
-  const playerEntry = STATE.lookup[id];
+  const playerEntry = STATE.vacLookup[id];
   playerEntry["playtime_raw"] = "";
   playerEntry["playtime"] = "";
   playerEntry["os"] = "";
@@ -124,7 +124,7 @@ export const onOwnedGamesData = (data, id) => {
 };
 
 export const onSteamFriendListData = (data, id) => {
-  const playerEntry = STATE.lookup[id];
+  const playerEntry = STATE.vacLookup[id];
   let friends = [];
   let friendsArray = [];
 
@@ -143,13 +143,13 @@ export const onSteamFriendListData = (data, id) => {
 export const onSteamUserStatsData = (data) => {
   for (let i = 0; i < data.length; i++) {
     let id = data[i].steamid;
-    const playerEntry = STATE.lookup[id];
+    const playerEntry = STATE.vacLookup[id];
     playerEntry["stats"] = data[i].playerstats;
   }
 };
 
 export const onXMLData = (xml, id) => {
-  const playerEntry = STATE.lookup[id];
+  const playerEntry = STATE.vacLookup[id];
   playerEntry["xml"] = xml;
   let parser = new DOMParser();
   let xmlDoc = parser.parseFromString(xml, "text/xml");
@@ -167,7 +167,7 @@ export const onXMLData = (xml, id) => {
 };
 
 export const onLogsData = (response, id) => {
-  const playerEntry = STATE.lookup[id];
+  const playerEntry = STATE.vacLookup[id];
 
   const anchors = [];
 
@@ -209,7 +209,7 @@ export const onLogsData = (response, id) => {
 };
 
 export const onSourcebansData = (response, id) => {
-  const playerEntry = STATE.lookup[id];
+  const playerEntry = STATE.vacLookup[id];
 
   const anchor = createAnchor("sourcebans", "#", "_blank", "padding:2px");
 

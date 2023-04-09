@@ -1,5 +1,6 @@
 export default {
-  lookup: {},
+  vacLookup: {},
+  graphLookup: {},
   isTF2: false,
   isCSGO: false,
   tableData: [],

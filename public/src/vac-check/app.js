@@ -19,10 +19,10 @@ import {
   makeXMLProfileRequest,
   playerLogsRequest,
   playerSourcebansRequest,
-} from "./apiRequests.js";
+} from "../utils/apiRequests.js";
 import { getId } from "../utils/steamUtils.js";
 import { drawTable, clearTable } from "./tableUtils.js";
-import STATE from "./state.js";
+import STATE from "../state.js";
 
 // TODO: reset button
 // TODO: show profile summary
@@ -39,7 +39,7 @@ let text = `#   3481 "「VΛC」✔ Lightning⸙Dust"            [U:1:1266329853
 
 let ids = null;
 
-const inputElem = document.querySelector("#input");
+const inputElem = document.querySelector("#input-vac");
 inputElem.value = text;
 
 document.querySelector("#button").addEventListener("click", () => {
@@ -54,7 +54,7 @@ const processInput = async (input) => {
 
   parseInput(input);
 
-  ids = Object.keys(STATE.lookup);
+  ids = Object.keys(STATE.vacLookup);
   STATE.tableData = [];
   clearTable();
 
@@ -174,7 +174,7 @@ const parseSteamId3 = (data, index) => {
   let rawId = data[index].replace(/\[U:1:/g, "").replace(/]/g, "");
   const id64 = getId(rawId);
   const name = data[index - 1].replaceAll('"', "");
-  STATE.lookup[id64] = {
+  STATE.vacLookup[id64] = {
     name,
     id: id64,
   };
@@ -185,7 +185,7 @@ const parseSteamId = (data, index) => {
   let rawId = data[index].split(":");
   let aux = rawId[2] * 2 + parseInt(rawId[1]);
   let id64 = getId(aux.toString());
-  STATE.lookup[id64] = {
+  STATE.vacLookup[id64] = {
     name: data[index - 1],
   };
 };

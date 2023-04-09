@@ -1,6 +1,5 @@
-import STATE from "./state.js";
-
 const PROXY = "";
+const SAPIHUB_KEY = "";
 
 const sendGet = async (url) => {
   try {
@@ -13,10 +12,9 @@ const sendGet = async (url) => {
   }
 };
 
-export const playerBansRequest = async (ids) => {
-  const steamids = ids.join(",");
+export const playerGroupsRequest = async (id) => {
   return sendGet(
-    `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamids}`
+    `${PROXY}https://sapihub.sheenweb.co.uk/api_player_getusergrouplist.php?&key=${SAPIHUB_KEY}&hour=24&steamid64=${id}`
   );
 };
 
@@ -27,7 +25,19 @@ export const playerSummariesRequest = async (ids) => {
   );
 };
 
-// Many
+export const playerBansRequest = async (ids) => {
+  const steamids = ids.join(",");
+  return sendGet(
+    `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamids}`
+  );
+};
+
+export const playerFriendListRequest = async (id) => {
+  return sendGet(
+    `${PROXY}https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?steamid=${id}&relationship=friend`
+  );
+};
+
 export const playerSteamlevelRequest = (ids) => {
   let results = [];
   return new Promise((resolve, reject) => {
@@ -55,14 +65,6 @@ export const playerOwnedGamesRequest = async (id) => {
   );
 };
 
-// One
-export const playerFriendListRequest = async (id) => {
-  return sendGet(
-    `${PROXY}https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?steamid=${id}&relationship=friend`
-  );
-};
-
-// Many
 export const getUserStatsForGameRequest = (ids) => {
   let results = [];
   return new Promise((resolve, reject) => {
@@ -84,9 +86,8 @@ export const getUserStatsForGameRequest = (ids) => {
   });
 };
 
+// TODO: fix this
 export const makeXMLProfileRequest = async (id, url) => {
-  // console.log(id, url);
-  const playerEntry = STATE.lookup[id];
   //API only allows 1 steam id at once.
   // https://steamcommunity.com/id/salamislide
   if (!url) return;
@@ -94,12 +95,10 @@ export const makeXMLProfileRequest = async (id, url) => {
   return sendGet(endpoint);
 };
 
-// One
 export const playerLogsRequest = async (id) => {
   return sendGet(`${PROXY}https://logs.tf/api/v1/log?player=${id}`);
 };
 
-// One
 export const playerSourcebansRequest = async (id) => {
   let encoded = encodeURIComponent(
     `https://www.google.com/search?q="${id}"+"sourceban"`

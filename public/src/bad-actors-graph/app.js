@@ -1,11 +1,11 @@
-import STATE from "./state.js";
+import STATE from "../state.js";
 import { getId } from "../utils/steamUtils.js";
 import {
   playerGroupsRequest,
   playerSummariesRequest,
   playerBansRequest,
   playerFriendListRequest,
-} from "./apiRequests.js";
+} from "../utils/apiRequests.js";
 import {
   onGroupsData,
   onSummaryData,
@@ -26,7 +26,7 @@ const typeColors = {
 // get steam ids from input
 let text = `#   3481 "「VΛC」✔ Lightning⸙Dust"            [U:1:1266329853]     32:26       85    0 active #   3481 "critical shit"            [U:1:1407862404]     32:26       85    0 active #   3481 "Blackjack"             [U:1:120274086]     32:26       85    0 active #   1123 "miura"             [U:1:132939500]     24:08       57    0 active #   1039 "Agadir"            [U:1:1037258007]     1:38:25    64    0 active #   1124 "sakay"             [U:1:1264703974]    21:46       78    0 active #   1140 "Tilápia2.0"       [U:1:1264702923]    11:33       44    0 active #   1020 "adriano.thiele"    [U:1:1477596109]     2:08:15    51    0 active #   1146 "Theoddsguy"        [U:1:1131600126]    06:11      117    1 active #   1125 "[CHILI]"           [U:1:1025561896]    20:10       97    0 active #   1075 "Jompas"            [U:1:1508352030]    52:27      108    0 active #   1118 "hochi mama"        [U:1:1265357981]    30:01       48    0 active #   1136 "HyperMat"          [U:1:436527521]     13:08       58    0 active #   1126 "nesturdoba"        [U:1:227181971]     19:12      127    0 active #   1103 "Kitty ❤"         [U:1:127424796]     39:51       32    0 active #   1066 "xmateoff"          [U:1:1227469169]     1:08:22    93    0 active #   1132 "Frosty"            [U:1:375197856]     16:10       86    0 active #   1109 "Kanno"             [U:1:313232557]     38:58      106    0 active #   1149 "Comrade"           [U:1:489396812]     00:47       75   74 spawning #   1137 "soldado em treinamento" [U:1:1386588645] 13:03    108    0 active #   1107 "Argentinian Boy"   [U:1:1163422494]    39:04       68    0 active #   1141 "Mcl_Blue"          [U:1:75586915]      10:46       77    0 active #   1121 "possiblejewel75"   [U:1:1225436622]    26:52      112    0 active #   1119 "Zeruel"            [U:1:419240233]     29:32       35    0 active #   1108 "Jim"               [U:1:204256192]     39:04       55    0 active
 `; // const input = prompt('Input value from status on console', text) || '';
-const inputElem = document.querySelector("#input");
+const inputElem = document.querySelector("#input-graph");
 inputElem.value = text;
 let allData = [];
 let elements = {
@@ -41,12 +41,12 @@ document.querySelector("#button").addEventListener("click", () => {
     .filter((e) => e.trim().length > 0);
   parseSteamData();
   console.log(allData);
-  console.log(STATE.lookup);
+  console.log(STATE.graphLookup);
 
   getSteamData().then(() => {
-    console.log(STATE.lookup);
+    console.log(STATE.graphLookup);
 
-    const graphElements = buildGraph(elements, STATE.lookup);
+    const graphElements = buildGraph(elements, STATE.graphLookup);
     console.log("elements", elements);
     console.log("graphElements", graphElements);
 
@@ -141,8 +141,8 @@ class Graph {
   }
 }
 
-const buildGraph = (elements, lookup) => {
-  for (const [key, entry] of Object.entries(lookup)) {
+const buildGraph = (elements, graphLookup) => {
+  for (const [key, entry] of Object.entries(graphLookup)) {
     console.log(entry);
     const node = { data: entry };
     elements.nodes.push(node);
@@ -183,7 +183,7 @@ const parseSteamData = () => {
         rawid = rawid.replace(/]/g, "");
         const id64 = getId(rawid);
         const name = allData[index - 1].replaceAll('"', "");
-        STATE.lookup[id64] = {
+        STATE.graphLookup[id64] = {
           name,
           id: id64,
         };
@@ -196,7 +196,7 @@ const parseSteamData = () => {
         console.log(aux);
         let id64 = getId(aux.toString());
         console.log(id64);
-        STATE.lookup[id64] = {
+        STATE.graphLookup[id64] = {
           name: allData[index - 1],
         };
       }
@@ -205,14 +205,14 @@ const parseSteamData = () => {
 };
 
 const getSteamData = async () => {
-  const ids = Object.keys(STATE.lookup);
+  const ids = Object.keys(STATE.graphLookup);
 
   return new Promise(async (resolve) => {
     const playerSummaries = playerSummariesRequest(ids);
     const playerBans = playerBansRequest(ids);
     const playerFriendLists = [];
 
-    for (const [key] of Object.entries(STATE.lookup)) {
+    for (const [key] of Object.entries(STATE.graphLookup)) {
       playerFriendLists.push(playerFriendListRequest(key));
     }
 
@@ -226,7 +226,7 @@ const getSteamData = async () => {
     onBansData(bansData);
 
     friendListsData.forEach((friendListData, i) => {
-      onSteamFriendListData(friendListData, Object.keys(STATE.lookup)[i]);
+      onSteamFriendListData(friendListData, Object.keys(STATE.graphLookup)[i]);
     });
     resolve();
   });
