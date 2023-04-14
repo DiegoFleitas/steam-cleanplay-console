@@ -1,5 +1,3 @@
-import SteamID from "steamid";
-
 export const getId = (inputSteamID) => {
   try {
     const steamID = new SteamID(inputSteamID);
