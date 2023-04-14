@@ -175,21 +175,12 @@ const parseSteamData = () => {
   for (let index = 0; index < allData.length; index++) {
     const elem = allData[index];
     if (elem.length >= 12) {
-      const isSteamId3 = elem.includes("[U:1:");
-      const isSteamId = elem.includes("STEAM_");
-      if (isSteamId3) {
-        const id64 = getId(elem);
+      const id64 = getId(elem);
+      if (id64 && id64.length > 16) {
         const name = allData[index - 1].replaceAll('"', "");
         STATE.graphLookup[id64] = {
           name,
           id: id64,
-        };
-      } else if (isSteamId) {
-        // csgo console output
-        let id64 = getId(elem);
-        console.log(id64);
-        STATE.graphLookup[id64] = {
-          name: allData[index - 1],
         };
       }
     }
