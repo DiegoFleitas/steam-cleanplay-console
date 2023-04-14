@@ -178,10 +178,7 @@ const parseSteamData = () => {
       const isSteamId3 = elem.includes("[U:1:");
       const isSteamId = elem.includes("STEAM_");
       if (isSteamId3) {
-        let rawid = elem;
-        rawid = rawid.replace(/\[U:1:/g, "");
-        rawid = rawid.replace(/]/g, "");
-        const id64 = getId(rawid);
+        const id64 = getId(elem);
         const name = allData[index - 1].replaceAll('"', "");
         STATE.graphLookup[id64] = {
           name,
@@ -189,12 +186,7 @@ const parseSteamData = () => {
         };
       } else if (isSteamId) {
         // csgo console output
-        let rawid = elem;
-        rawid = rawid.split(":");
-        console.log(rawid);
-        let aux = rawid[2] * 2 + parseInt(rawid[1]);
-        console.log(aux);
-        let id64 = getId(aux.toString());
+        let id64 = getId(elem);
         console.log(id64);
         STATE.graphLookup[id64] = {
           name: allData[index - 1],
