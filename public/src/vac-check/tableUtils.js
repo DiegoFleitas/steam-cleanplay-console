@@ -57,59 +57,65 @@ export const drawTable = () => {
         title: "Avatar",
         data: "avatar_html",
         render: (data, type, row) => {
-          return data.outerHTML;
+          return data?.outerHTML;
         },
+        defaultContent: "",
       },
       {
         title: "Game nick",
         data: "link_html",
         render: (data, type, row) => {
-          return data.outerHTML;
+          return data?.outerHTML;
         },
+        defaultContent: "",
       },
       {
         title: "Other",
         data: "other_html",
         render: (data, type, row) => {
-          return data.outerHTML;
+          return data?.outerHTML;
         },
+        defaultContent: "",
       },
       {
         title: "VAC",
         data: "vac_html",
         render: (data, type, row) => {
-          return data.outerHTML;
+          return data?.outerHTML;
         },
+        defaultContent: "",
       },
-      { title: "OS", data: "os" },
+      { title: "OS", data: "os", defaultContent: "" },
       {
         title: "Created (days)",
         data: "timecreated",
         defaultContent: "",
       },
-      { title: "Profile", data: "profile" },
+      { title: "Profile", data: "profile", defaultContent: "" },
       { title: "Level", data: "level", defaultContent: "" },
-      { title: "Playtime (hrs)", data: "playtime" },
+      { title: "Playtime (hrs)", data: "playtime", defaultContent: "" },
       {
         title: "Steam nick",
         data: "personaname_html",
         render: (data, type, row) => {
-          return data.outerHTML;
+          return data?.outerHTML;
         },
+        defaultContent: "",
       },
-      { title: "Groups", data: "groups" },
+      { title: "Groups", data: "groups", defaultContent: "" },
       {
         title: "Created (days)",
         visible: false,
         data: "timecreated_raw",
         defaultContent: "",
       },
-      { title: "Related", visible: true, data: "related" },
+      { title: "Related", visible: true, data: "related", defaultContent: "" },
     ],
     columnDefs: [
       {
         targets: 4, // index of the VAC column
-        type: "numeric", // Set the sorting type to 'numeric'
+        type: "numeric",
+        // Set the sorting type to 'numeric'
         orderable: true,
         compare: (a, b) => {
           // custom sort function for the VAC column
@@ -181,7 +187,7 @@ const findRelations = (tableData) => {
     element.related = "";
     element.related_steamids = "";
     const name = element.personaname;
-    element?.friends.forEach((friend) => {
+    element?.friends?.forEach((friend) => {
       const friendId = friend.steamid;
       const friendEntry = tableData.find((el) => el.id === friendId);
       if (friendEntry) {
