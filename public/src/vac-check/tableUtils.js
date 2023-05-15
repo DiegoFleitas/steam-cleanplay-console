@@ -45,7 +45,7 @@ export const drawTable = () => {
     searching: true,
     ordering: true,
     info: true,
-    lengthChange: true,
+    lengthChange: false,
     order: [], // Disable initial sort
 
     columns: [

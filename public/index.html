@@ -31,10 +31,6 @@
   </head>
   <body>
     <div class="left" id="bad-actors-graph">
-      <div style="z-index: 2 important!" class="other">
-        <input id="input-graph" />
-        <button id="button">Go</button>
-      </div>
       <div class="container">
         <div id="cy"></div>
       </div>
@@ -51,8 +47,10 @@
         </div>
       </div>
       <hr />
-      <input id="input-vac" />
-      <button id="button">Go</button>
+      <div class="inputs">
+        <input id="input-vac" />
+        <button id="button">🔍</button>
+      </div>
       <table id="dataTable" hidden="true"></table>
       <div class="loader center" id="loader" hidden="true"></div>
       <hr />

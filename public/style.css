@@ -1,177 +1,218 @@
 .left {
-    float: left;
-    width: 33.33%;
-    height: 100vh;
-    overflow: auto;
+   float: left;
+   width: 33.33%;
+   height: 100vh;
+   overflow: auto;
 }
+
 .right {
-    float: right;
-    width: 66.67%;
-    height: 100vh;
-    overflow: auto;
+   float: right;
+   width: 66.67%;
+   height: 100vh;
+   overflow: auto;
 }
+
 .floating-button {
-    position: fixed;
-    left: 589px;
-    top: 7px;
-    background-color: #f44336;
-    color: #fff;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 9999;
+   position: fixed;
+   left: 589px;
+   top: 7px;
+   background-color: #f44336;
+   color: #fff;
+   border-radius: 50%;
+   width: 50px;
+   height: 50px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 24px;
+   cursor: pointer;
+   z-index: 9999;
 }
+
 #draggable-button {
-    position: absolute;
-    cursor: move;
-    z-index: 9999;
+   position: absolute;
+   cursor: move;
+   z-index: 9999;
 }
+
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9998;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   display: none;
+   justify-content: center;
+   align-items: center;
+   z-index: 9998;
 }
+
 .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    width: 500px;
-    max-width: 90%;
-    text-align: center;
+   background-color: #fff;
+   padding: 20px;
+   border-radius: 5px;
+   width: 500px;
+   max-width: 90%;
+   text-align: center;
 }
+
 .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 24px;
-    cursor: pointer;
+   position: absolute;
+   top: 10px;
+   right: 10px;
+   font-size: 24px;
+   cursor: pointer;
 }
+
 textarea {
-    width: 100%;
-    height: 200px;
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    resize: none;
-    font-size: 16px;
+   width: 100%;
+   height: 200px;
+   padding: 10px;
+   border-radius: 5px;
+   border: none;
+   resize: none;
+   font-size: 16px;
 }
 
 body {
-    font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 15px;
-    line-height: 1.42857143;
-    color: white;
-    background-color: #222222;
- }
- 
- a {
-    color: #0ce3ac;
-    text-decoration: none;
- }
- 
- .jumbotron .h1 {
-    font-size: 68px;
- }
- 
- .jumbotron p {
-    margin-bottom: 15px;
-    font-size: 23px;
-    font-weight: 200;
- }
- 
- table {
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 20px;
-    background-color: white;
-    color: #222222;
- }
- 
- .loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #ef9849; /* orange */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
- }
- 
- @keyframes spin {
-    0% {
-       transform: rotate(0deg);
-    }
-    100% {
-       transform: rotate(360deg);
-    }
- }
- 
- .center {
-    margin: auto;
- }
- 
- /* bad actors */
+   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-size: 15px;
+   line-height: 1.42857143;
+   color: white;
+   background-color: #222222;
+   padding: 5px;
+   margin: 5px;
+}
 
- #bad-actors-graph #cy {
-    width: 100%;
-    height: 1000px;
-    display: block;
-    left: 0;
-    top: 0;
-    z-index: 1;
- }
- 
- #bad-actors-graph .other {
-    z-index: 999 important!;
- }
- 
- #bad-actors-graph .tooltipstyles {
-    background-color: #fff;
-    color: #0a0a0a;
-    text-align: left;
-    padding: 0 5px;
-    border-radius: 6px;
- }
- 
- #bad-actors-graph body {
-     font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-     font-size: 15px;
-     line-height: 1.42857143;
-     color: white;
-     background-color: #222222;
-  }
-  
-  #bad-actors-graph a {
-     color: #0ce3ac;
-     text-decoration: none;
-  }
-  
-  #bad-actors-graph .jumbotron .h1 {
-     font-size: 68px;
-  }
-  
-  #bad-actors-graph .jumbotron p {
-     margin-bottom: 15px;
-     font-size: 23px;
-     font-weight: 200;
-  }
-  
-  #bad-actors-graph table {
-     color: black;
-  }
-  
-  #bad-actors-graph .center {
-     margin: auto;
-  }
-  
+a {
+   color: #0ce3ac;
+   text-decoration: none;
+   padding: 2px;
+   margin: 2px;
+}
+
+.jumbotron h1 {
+   font-size: 68px;
+   padding: 2px;
+   margin: 2px;
+}
+
+#input-vac {
+   width: 80%;
+   padding: 10px;
+   margin: 10px;
+   border-radius: 5px;
+   border: none;
+   resize: none;
+}
+
+#button {
+   width: 81.7%;
+   padding: 10px;
+   margin: 10px;
+   border-radius: 5px;
+   border: none;
+   resize: none;
+   background-color: #f37f77;
+   cursor: pointer;
+}
+
+.inputs {
+   margin: auto;
+   padding-top: 20px;
+   padding-bottom: 20px;
+}
+
+.page-header {
+   padding: 2px;
+   margin: 2px;
+}
+
+.panel-default * {
+   margin: 10px;  
+}
+
+.jumbotron p {
+   font-size: 23px;
+   font-weight: 200;
+   padding: 5px;
+   margin: 5px;
+}
+
+table {
+   width: 100%;
+   max-width: 100%;
+   margin-bottom: 20px;
+   background-color: white;
+   padding: 5px;
+   margin: 5px;
+   color: #222222;
+}
+
+.loader {
+   border: 16px solid #f3f3f3; /* Light grey */
+   border-top: 16px solid #ef9849; /* orange */
+   border-radius: 50%;
+   width: 120px;
+   height: 120px;
+   animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+   0% {
+      transform: rotate(0deg);
+   }
+   100% {
+      transform: rotate(360deg);
+   }
+}
+
+.center {
+   margin: auto;
+}
+
+/* bad actors */
+
+#bad-actors-graph #cy {
+   width: 100%;
+   height: 1000px;
+   display: block;
+   left: 0;
+   top: 0;
+   z-index: 1;
+}
+
+#bad-actors-graph .other {
+   z-index: 999 important!;
+}
+
+#bad-actors-graph .tooltipstyles {
+   background-color: #fff;
+   color: #0a0a0a;
+   text-align: left;
+   padding: 0 5px;
+   border-radius: 6px;
+}
+
+#bad-actors-graph body {
+   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-size: 15px;
+   line-height: 1.42857143;
+   color: white;
+   background-color: #222222;
+}
+
+.dataTables_filter {
+   float: left !important;
+}
+
+#dataTable_filter label {
+   margin: 5px;
+   padding: 5px;
+}
+
+input[type="search"] {
+   color: #f3f3f3;
+   background-color: #f3f3f3 !important;
+}
