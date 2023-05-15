@@ -64,8 +64,21 @@ export const drawTable = () => {
       {
         title: "Game nick",
         data: "link_html",
+        // append steam nick if different to game nick
         render: (data, type, row) => {
-          return data?.outerHTML;
+          let gameNickWords = data?.innerText.replace(/[\W_]+/g, "").trim();
+          let steamNickWords = row.personaname_html?.innerText
+            .replace(/[\W_]+/g, "")
+            .trim();
+
+          if (gameNickWords !== steamNickWords) {
+            return (
+              data?.outerHTML.trim() +
+              "<br>" +
+              row.personaname_html?.outerHTML.trim()
+            );
+          }
+          return data?.outerHTML.trim();
         },
         defaultContent: "",
       },
@@ -163,11 +176,6 @@ export const drawTable = () => {
       //   defaultContent: "", // Provide default content if the cell is empty
       // },
     ],
-    // createdRow: (row, data, dataIndex) => {
-    //   if (data["related"]) {
-    //     $(row).addClass("text-danger");
-    //   }
-    // },
     pageLength: 30,
   });
   table
