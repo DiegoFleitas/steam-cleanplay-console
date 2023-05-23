@@ -11,14 +11,27 @@ export const onBansData = (data) => {
     const divElements = [];
     if (player.NumberOfVACBans || player.NumberOfGameBans) {
       if (player.NumberOfGameBans) {
-        divElements.push(createDiv(`${player.NumberOfGameBans} Game bans`));
+        divElements.push(
+          createDiv(
+            `${player.NumberOfGameBans} Game bans`,
+            "color: #800000;font-size: x-small;"
+          )
+        );
       }
       if (player.NumberOfVACBans) {
         divElements.push(
-          createDiv(`${player.NumberOfVACBans} VAC bans`, "color: red;")
+          createDiv(
+            `${player.NumberOfVACBans} VAC bans`,
+            "color: #800000;font-size: x-small;"
+          )
         );
       }
-      divElements.push(createDiv(`${player.DaysSinceLastBan} days ago`));
+      divElements.push(
+        createDiv(
+          `(${player.DaysSinceLastBan} days ago)`,
+          "color: #800000;font-size: x-small;"
+        )
+      );
     }
     const span = createSpanWithChildren(...divElements);
 
@@ -239,6 +252,7 @@ const createAnchor = (content, href, target = "", style = "") => {
 
 const createImage = (src) => {
   const img = document.createElement("img");
+  img.style = "border-radius: 5px;";
   img.src = src;
   return img;
 };

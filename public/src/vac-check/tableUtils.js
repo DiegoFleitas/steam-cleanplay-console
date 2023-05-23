@@ -11,7 +11,7 @@ export const clearTable = () => {
 
 const setupTableData = (vacLookup) => {
   const uniqueIds = new Set(); // Create a Set to store unique ids
-  const tableData = []; // Create a new array to store the desired properties
+  let tableData = []; // Create a new array to store the desired properties
 
   for (const key in vacLookup) {
     if (vacLookup.hasOwnProperty(key)) {
@@ -30,12 +30,43 @@ const setupTableData = (vacLookup) => {
     }
   }
 
+  // Pre-process the data for more performant table building
+  tableData = tableData.map((row) => {
+    let gameNickWords = row.link_html?.innerText.replace(/[\W_]+/g, "").trim();
+    let steamNickWords = row.personaname_html?.innerText
+      .replace(/[\W_]+/g, "")
+      .trim();
+    let differentNicks = gameNickWords !== steamNickWords;
+    return {
+      ...row,
+      gameNickWords,
+      steamNickWords,
+      differentNicks,
+      gameNickOuterHTML: row.link_html?.outerHTML.trim(),
+      steamNickOuterHTML: row.personaname_html?.outerHTML.trim(),
+      hasVAC: row.vac_html?.outerHTML.includes("VAC"),
+      isHidden: row.profile?.includes("hidden"),
+      hasLinuxHours: row.os?.includes("🐧"),
+    };
+  });
+
   // don't return the related_steamids and friends columns
   return findRelations(tableData);
 };
 
 export const drawTable = () => {
   const tableData = setupTableData(STATE.vacLookup);
+
+  tableData.sort(
+    (a, b) =>
+      b.hasVAC - a.hasVAC || // VAC presence first
+      b.differentNicks - a.differentNicks || // Different nicks next
+      b.hasLinuxHours - a.hasLinuxHours || // Playtime on 🐧 next
+      a.timecreated - b.timecreated || // Newest accounts next
+      b.isHidden - a.isHidden || // Hidden profiles next
+      a.playtime - b.playtime || // Lowest playtime next
+      a.level - b.level // Lowest level last
+  );
 
   console.log("tableData", tableData);
 
@@ -66,19 +97,10 @@ export const drawTable = () => {
         data: "link_html",
         // append steam nick if different to game nick
         render: (data, type, row) => {
-          let gameNickWords = data?.innerText.replace(/[\W_]+/g, "").trim();
-          let steamNickWords = row.personaname_html?.innerText
-            .replace(/[\W_]+/g, "")
-            .trim();
-
-          if (gameNickWords !== steamNickWords) {
-            return (
-              data?.outerHTML.trim() +
-              "<br>" +
-              row.personaname_html?.outerHTML.trim()
-            );
+          if (row.differentNicks) {
+            return row.gameNickOuterHTML + "<br>" + row.steamNickOuterHTML;
           }
-          return data?.outerHTML.trim();
+          return row.gameNickOuterHTML;
         },
         defaultContent: "",
       },
@@ -127,67 +149,36 @@ export const drawTable = () => {
     columnDefs: [
       {
         targets: 4, // index of the VAC column
-        type: "numeric",
-        // Set the sorting type to 'numeric'
+        type: "boolean",
         orderable: true,
-        compare: (a, b) => {
-          // custom sort function for the VAC column
-          if (a.includes("VAC") && !b.includes("VAC")) {
-            return -1; // a contains VAC, so a should come before b
-          } else if (!a.includes("VAC") && b.includes("VAC")) {
-            return 1; // b contains VAC, so b should come before a
-          } else {
-            return 0; // no difference, do not sort
-          }
-        },
+        // Use pre-processed boolean for sorting
+        data: "hasVAC",
       },
       {
         targets: 7, // index of the profile column
-        type: "numeric",
+        type: "boolean",
         orderable: true,
-        compare: (a, b) => {
-          // custom sort function for the profile column
-          if (a.includes("hidden") && !b.includes("hidden")) {
-            return -1; // a contains hidden, so a should come before b
-          } else if (!a.includes("hidden") && b.includes("hidden")) {
-            return 1; // b contains hidden, so b should come before a
-          } else {
-            return 0; // no difference, do not sort
-          }
-        },
+        // Use pre-processed boolean for sorting
+        data: "isHidden",
       },
       {
         targets: 5, // index of the OS column
-        type: "numeric",
+        type: "boolean",
         orderable: true,
-        compare: (a, b) => {
-          // custom sort function for the OS column
-          if (a.includes("🐧") && !b.includes("🐧")) {
-            return -1; // a contains 🐧, so a should come before b
-          } else if (!a.includes("🐧") && b.includes("🐧")) {
-            return 1; // b contains 🐧, so b should come before a
-          } else {
-            return 0; // no difference, do not sort
-          }
-        },
+        // Use pre-processed boolean for sorting
+        data: "hasLinuxHours",
       },
-      // {
-      //   targets: "_all", // Apply to all columns
-      //   defaultContent: "", // Provide default content if the cell is empty
-      // },
+      {
+        targets: 2, // index of the "Game nick" column
+        type: "boolean",
+        orderable: true,
+        // Use the pre-processed boolean for sorting
+        data: "differentNicks",
+      },
     ],
     pageLength: 30,
   });
-  table
-    .order([
-      [4, "desc"], // Sort by VAC first, in descending order
-      [5, "desc"], // Then sort by OS containing 🐧, in descending order
-      [6, "asc"], // Then sort by least created days, in ascending order
-      [9, "asc"], // Then sort by lowest playtime first, in ascending order
-      [7, "desc"], // Then sort by hidden profiles, in descending order
-      [8, "asc"], // Finally sort by lower level first, in ascending order
-    ])
-    .draw();
+  table.draw();
 };
 
 const findRelations = (tableData) => {
@@ -207,24 +198,7 @@ const findRelations = (tableData) => {
           element.related += `, ${name}`;
         }
       }
-      // if (friendEntry) {
-      //   const span = createSpan(name, "red");
-      //   friendEntry.related += ` ${name}`;
-      //   element.related_steamids += ` ${element.id}`;
-      //   if (!element.related) {
-      //     element.related = span;
-      //   } else {
-      //     element.related += `, ${span.innerHTML}`;
-      //   }
-      // }
     });
   });
   return tableData;
 };
-
-// const createSpan = (content, color) => {
-//   const span = document.createElement("span");
-//   span.style.color = color;
-//   span.innerHTML = content;
-//   return span;
-// };

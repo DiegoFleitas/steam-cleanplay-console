@@ -60,6 +60,7 @@ class Graph {
     console.log("constructor", elements);
     this.cy = cytoscape({
       container: document.getElementById("cy"),
+      userZoomingEnabled: false,
       boxSelectionEnabled: false,
       autounselectify: true,
       layout: {
