@@ -187,9 +187,10 @@ export const onLogsData = (response, id) => {
   if (response && response.total) {
     anchors.push(
       createAnchor(
-        `logs.tf (${response.total})`,
+        `logs.tf(${response.total})`,
         `https://logs.tf/profile/${id}`,
-        "_blank"
+        "_blank",
+        "padding: 2px;font-size:x-small;"
       )
     );
   }
@@ -199,7 +200,7 @@ export const onLogsData = (response, id) => {
       "steamid.uk",
       `https://steamid.uk/profile/${id}`,
       "_blank",
-      "padding: 2px;"
+      "padding: 2px;font-size:x-small;"
     )
   );
 
@@ -208,7 +209,34 @@ export const onLogsData = (response, id) => {
       "sourcebans",
       `https://www.google.com/search?q="${id}"+"sourceban"`,
       "_blank",
-      "padding: 2px;"
+      "padding: 2px;font-size:x-small;"
+    )
+  );
+
+  anchors.push(
+    createAnchor(
+      "rep.tf",
+      `https://rep.tf/${id}`,
+      "_blank",
+      "padding: 2px;font-size:x-small;"
+    )
+  );
+
+  anchors.push(
+    createAnchor(
+      "steamdb",
+      `https://steamdb.info/calculator/${id}`,
+      "_blank",
+      "padding: 2px;font-size:x-small;"
+    )
+  );
+
+  anchors.push(
+    createAnchor(
+      "bazaar.tf",
+      `https://bazaar.tf/score/${id}`,
+      "_blank",
+      "padding: 2px;font-size:x-small;"
     )
   );
 

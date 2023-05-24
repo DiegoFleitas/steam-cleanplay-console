@@ -98,7 +98,7 @@ export const drawTable = () => {
         // append steam nick if different to game nick
         render: (data, type, row) => {
           if (row.differentNicks) {
-            return row.gameNickOuterHTML + "<br>" + row.steamNickOuterHTML;
+            return `<del>${row.gameNickOuterHTML}</del><br>${row.steamNickOuterHTML}`;
           }
           return row.gameNickOuterHTML;
         },

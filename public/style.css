@@ -92,6 +92,10 @@ a {
    margin: 2px;
 }
 
+a:hover {
+   text-decoration: underline;
+}
+
 .jumbotron h1 {
    font-size: 68px;
    padding: 2px;
