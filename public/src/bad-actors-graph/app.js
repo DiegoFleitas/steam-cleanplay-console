@@ -121,10 +121,8 @@ class Graph {
       target.popperref = target.popper({
         content: () => {
           const node = event.target;
-          this.tips.innerHTML = `name: ${node.data("name")} id: ${node.data(
-            "id"
-          )}`;
-          this.tips.className = "tooltipstyles";
+          this.tips.innerHTML = `${node.data("name")}`;
+          this.tips.className = "node-tooltip";
           document.body.appendChild(this.tips);
           return this.tips;
         },

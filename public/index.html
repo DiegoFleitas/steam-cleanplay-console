@@ -30,13 +30,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
   </head>
   <body>
-    <div class="left" id="bad-actors-graph">
-      <div class="container">
-        <div id="cy"></div>
-      </div>
-      <script src="./src/bad-actors-graph/app.js" type="module"></script>
-    </div>
-    <div class="right" id="vac-check">
+    <div class="left" id="vac-check">
       <div class="row">
         <div class="jumbotron">
           <h1>Cleanplay Console 🧼</h1>
@@ -89,6 +83,15 @@
       </div>
       <hr />
       <script src="./src/vac-check/app.js" type="module"></script>
+    </div>
+    <div class="right" id="bad-actors-graph">
+      <div class="container">
+        <div>
+          <p style="text-align: center">Social Graph</p>
+        </div>
+        <div id="cy"></div>
+      </div>
+      <script src="./src/bad-actors-graph/app.js" type="module"></script>
     </div>
     <button id="draggable-button" class="floating-button">📓</button>
     <div class="modal">

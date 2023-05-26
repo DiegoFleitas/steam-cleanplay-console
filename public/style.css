@@ -1,20 +1,20 @@
 .left {
    float: left;
-   width: 33.33%;
+   width: 66.67%;
    height: 100vh;
    overflow: auto;
 }
 
 .right {
    float: right;
-   width: 66.67%;
+   width: 33.33%;
    height: 100vh;
    overflow: auto;
 }
 
 .floating-button {
    position: fixed;
-   left: 589px;
+   left: calc(70% - 25px);
    top: 7px;
    background-color: #f44336;
    color: #F8F8F0;
@@ -191,13 +191,23 @@ table {
    z-index: 999 important!;
 }
 
-#bad-actors-graph .tooltipstyles {
-   background-color: #F8F8F0;
-   color: #0a0a0a;
-   text-align: left;
-   padding: 0 5px;
-   border-radius: 6px;
+.node-tooltip {
+   background-color: #333;
+   color: #fff;
+   padding: 2px;
+   border-radius: 4px;
+   z-index: 1000;
 }
+
+.tooltip {
+   background-color: #333;
+   color: #fff; 
+   padding: 10px;
+   border-radius: 4px;
+   font-size: 12px;
+   z-index: 1000;
+   display: none;
+ }
 
 #bad-actors-graph body {
    font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -217,6 +227,7 @@ table {
 }
 
 input[type="search"] {
-   color: #f3f3f3;
+   color: black;
    background-color: #f3f3f3 !important;
 }
+

@@ -78,6 +78,9 @@ export const drawTable = () => {
     info: true,
     lengthChange: false,
     order: [], // Disable initial sort
+    language: {
+      search: "Search all columns: ",
+    },
 
     columns: [
       {
@@ -98,7 +101,15 @@ export const drawTable = () => {
         // append steam nick if different to game nick
         render: (data, type, row) => {
           if (row.differentNicks) {
-            return `<del>${row.gameNickOuterHTML}</del><br>${row.steamNickOuterHTML}`;
+            const element = document.createElement("div");
+            element.innerHTML = `<del>${row.gameNickOuterHTML}</del><br>${row.steamNickOuterHTML}`;
+
+            const del = element.querySelector("del");
+            del.classList.add("has-tooltip");
+            del.dataset.tooltip =
+              "This player in-game nick differs from their steam account name.";
+
+            return element.innerHTML;
           }
           return row.gameNickOuterHTML;
         },
@@ -179,6 +190,38 @@ export const drawTable = () => {
     pageLength: 30,
   });
   table.draw();
+
+  const tooltip = document.createElement("div");
+  tooltip.classList.add("tooltip");
+  document.body.append(tooltip);
+
+  let popperInstance = null;
+
+  document.addEventListener(
+    "mouseenter",
+    (e) => {
+      if (e.target.matches(".has-tooltip")) {
+        tooltip.innerText = e.target.dataset.tooltip;
+        tooltip.style.display = "block"; // Make the tooltip visible
+        popperInstance = Popper.createPopper(e.target, tooltip);
+      }
+    },
+    true
+  ); // Using capture phase to handle event as soon as it propagates
+
+  document.addEventListener(
+    "mouseleave",
+    (e) => {
+      if (e.target.matches(".has-tooltip")) {
+        tooltip.style.display = "none"; // Hide the tooltip
+        if (popperInstance) {
+          popperInstance.destroy(); // Destroy the popper instance
+          popperInstance = null;
+        }
+      }
+    },
+    true
+  ); // Using capture phase to handle event as soon as it propagates
 };
 
 const findRelations = (tableData) => {

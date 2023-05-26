@@ -62,21 +62,16 @@ export const onSummaryData = (data) => {
     playerEntry["profile_html"] = span;
     playerEntry["profile"] = span.textContent;
 
-    // FIXME: race condition
-    const isPersonanameMismatched =
-      playerEntry["link"]?.textContent?.indexOf(player.personaname) === -1;
-
     playerEntry["link_html"] =
       playerEntry["link_html"] ||
-      createAnchor(
-        player.personaname,
-        player.profileurl,
-        "_blank",
-        isPersonanameMismatched ? "color:red;" : ""
-      );
+      createAnchor(player.personaname, player.profileurl, "_blank");
 
     playerEntry["personaname"] = player.personaname;
-    playerEntry["personaname_html"] = createSpan(player.personaname);
+    playerEntry["personaname_html"] = createAnchor(
+      player.personaname,
+      player.profileurl,
+      "_blank"
+    );
 
     playerEntry["profileurl"] = player.profileurl;
 
