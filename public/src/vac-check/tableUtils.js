@@ -119,7 +119,7 @@ export const drawTable = () => {
         title: "Other",
         data: "other_html",
         render: (data, type, row) => {
-          return data?.outerHTML;
+          return `<div class="display-column">${data?.outerHTML}</div>`;
         },
         defaultContent: "",
       },

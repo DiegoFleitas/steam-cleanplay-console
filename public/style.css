@@ -89,7 +89,6 @@ a {
    color: #20B2AA;
    text-decoration: none;
    padding: 2px;
-   margin: 2px;
 }
 
 a:hover {
@@ -135,6 +134,10 @@ a:hover {
 
 .panel-default * {
    margin: 10px;  
+}
+
+.modal-content * {
+   color: black;
 }
 
 .jumbotron p {
@@ -231,3 +234,7 @@ input[type="search"] {
    background-color: #f3f3f3 !important;
 }
 
+.display-column {
+   display: flex;
+   flex-direction: column;
+}
