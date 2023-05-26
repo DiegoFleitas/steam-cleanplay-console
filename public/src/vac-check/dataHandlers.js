@@ -236,6 +236,7 @@ export const onLogsData = (response, id) => {
   );
 
   const div = createDivWithChildren(...anchors);
+  div.className = "display-column";
   if (!playerEntry["other_html"]) {
     playerEntry["other_html"] = document.createElement("div");
   }
