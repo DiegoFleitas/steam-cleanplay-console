@@ -202,7 +202,7 @@ export const onLogsData = (response, id) => {
   anchors.push(
     createAnchor(
       "sourcebans",
-      `https://www.google.com/search?q="${id}"+"sourceban"`,
+      `https://searx.one/search?q="${id}" banlist`,
       "_blank",
       "padding: 2px;font-size:x-small;"
     )
