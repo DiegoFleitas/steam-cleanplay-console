@@ -133,7 +133,7 @@ export const drawTable = () => {
       },
       { title: "OS", data: "os", defaultContent: "" },
       {
-        title: "Created (days)",
+        title: "Created",
         data: "timecreated",
         defaultContent: "",
       },
@@ -150,7 +150,7 @@ export const drawTable = () => {
       },
       { title: "Groups", data: "groups", defaultContent: "" },
       {
-        title: "Created (days)",
+        title: "Created (raw)",
         visible: false,
         data: "timecreated_raw",
         defaultContent: "",

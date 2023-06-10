@@ -85,9 +85,9 @@ export const onSummaryData = (players) => {
 
     playerEntry["timecreated_raw"] = player.timecreated;
     const created = new Date(player.timecreated * 1000);
-    const now = new Date();
-    const diffDays = Math.ceil(Math.abs(now - created) / (1000 * 60 * 60 * 24));
-    playerEntry["timecreated"] = diffDays ? diffDays : "";
+    playerEntry["timecreated"] = player.timecreated
+      ? moment(created).fromNow()
+      : "";
 
     playerEntry["summary"] = player;
   });
