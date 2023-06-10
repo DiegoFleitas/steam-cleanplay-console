@@ -3,9 +3,9 @@ import STATE from "../state.js";
 const TF2_APP_ID = 440;
 const CSGO_APP_ID = 730;
 
-export const onBansData = (data) => {
+export const onBansData = (players) => {
   // setup STATE.vacLookup
-  data.players.forEach((player) => {
+  players.forEach((player) => {
     const playerEntry = STATE.vacLookup[player.SteamId];
 
     const divElements = [];
@@ -51,9 +51,9 @@ export const onBansData = (data) => {
   });
 };
 
-export const onSummaryData = (data) => {
-  console.log(data);
-  data.players.forEach((player) => {
+export const onSummaryData = (players) => {
+  // console.log(data);
+  players.forEach((player) => {
     const span = createSpan(
       player.communityvisibilitystate !== 3 ? "hidden" : "public"
     );

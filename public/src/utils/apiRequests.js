@@ -1,3 +1,5 @@
+import { getCache, setCache } from "./localCache.js";
+
 const PROXY = "";
 const SAPIHUB_KEY = "";
 
@@ -13,29 +15,96 @@ const sendGet = async (url) => {
 };
 
 export const playerGroupsRequest = async (id) => {
-  return sendGet(
-    `${PROXY}https://sapihub.sheenweb.co.uk/api_player_getusergrouplist.php?&key=${SAPIHUB_KEY}&hour=24&steamid64=${id}`
-  );
+  const url = `${PROXY}https://sapihub.sheenweb.co.uk/api_player_getusergrouplist.php?&key=${SAPIHUB_KEY}&hour=24&steamid64=${id}`;
+  return sendGet(url);
 };
 
 export const playerSummariesRequest = async (ids) => {
-  const steamids = ids.join(",");
-  return sendGet(
-    `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=${steamids}`
-  );
+  const dummyResponse = { response: { players: [] } };
+  let steamIds = "";
+  const cachedResults = [];
+  const cacheLabel = "ISTEAMUSER/GETPLAYERSUMMARIES";
+  for (let index = 0; index < ids.length; index++) {
+    let cachedResult = await getCache(ids[index], cacheLabel);
+    if (cachedResult) {
+      cachedResults.push(cachedResult);
+    }
+  }
+  if (cachedResults.length) {
+    const cachedIds = cachedResults.map((result) => result.steamid);
+    steamIds = ids.filter((id) => !cachedIds.includes(id));
+  } else {
+    steamIds = ids;
+  }
+  const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=${steamIds.join(
+    ","
+  )}`;
+  if (steamIds.length) {
+    // pending request
+    const result = await sendGet(url);
+    for (let i = 0; i < result.response.players.length; i++) {
+      let player = result.response.players[i];
+      await setCache(player.steamid, player, cacheLabel);
+    }
+    if (cachedResults) {
+      const cachedData = Object.values(cachedResults).map(
+        (result) => result.data
+      );
+      return dummyResponse.response.players.concat(
+        cachedData,
+        result.response.players
+      );
+    }
+    return dummyResponse.response.players.concat(result.response.players);
+  } else {
+    // fully cached
+    return dummyResponse.response.players.concat(cachedResults);
+  }
 };
 
 export const playerBansRequest = async (ids) => {
-  const steamids = ids.join(",");
-  return sendGet(
-    `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamids}`
-  );
+  const dummyResponse = { players: [] };
+  let steamIds = "";
+  const cachedResults = [];
+  const cacheLabel = "ISTEAMUSER/GETPLAYERBANS";
+  for (let index = 0; index < ids.length; index++) {
+    let cachedResult = await getCache(ids[index], cacheLabel);
+    if (cachedResult) {
+      cachedResults.push(cachedResult);
+    }
+  }
+  if (cachedResults.length) {
+    const cachedIds = cachedResults.map((result) => result.SteamId);
+    steamIds = ids.filter((id) => !cachedIds.includes(id));
+  } else {
+    steamIds = ids;
+  }
+  const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamIds.join(
+    ","
+  )}`;
+  if (steamIds.length) {
+    // pending request
+    const result = await sendGet(url);
+    for (let i = 0; i < result.players.length; i++) {
+      let player = result.players[i];
+      await setCache(player.SteamId, player, cacheLabel);
+    }
+    if (cachedResults) {
+      const cachedData = Object.values(cachedResults).map(
+        (result) => result.data
+      );
+      return dummyResponse.players.concat(cachedData, result.players);
+    }
+    return dummyResponse.players.concat(result.players);
+  } else {
+    // fully cached
+    return dummyResponse.players.concat(cachedResults);
+  }
 };
 
 export const playerFriendListRequest = async (id) => {
-  return sendGet(
-    `${PROXY}https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?steamid=${id}&relationship=friend`
-  );
+  const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?steamid=${id}&relationship=friend`;
+  return sendGet(url);
 };
 
 export const playerSteamlevelRequest = (ids) => {
@@ -43,9 +112,8 @@ export const playerSteamlevelRequest = (ids) => {
   return new Promise((resolve, reject) => {
     for (let i = 0; i < ids.length; i++) {
       let steamid = ids[i];
-      sendGet(
-        `${PROXY}https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?steamid=${steamid}`
-      )
+      let url = `${PROXY}https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?steamid=${steamid}`;
+      sendGet(url)
         .then((result) => {
           if (!result) result = [];
           result.steamid = steamid;
@@ -60,9 +128,8 @@ export const playerSteamlevelRequest = (ids) => {
 };
 
 export const playerOwnedGamesRequest = async (id) => {
-  return sendGet(
-    `${PROXY}https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?steamid=${id}&include_played_free_games=1`
-  );
+  const url = `${PROXY}https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?steamid=${id}&include_played_free_games=1`;
+  return sendGet(url);
 };
 
 export const getUserStatsForGameRequest = (ids) => {
@@ -70,9 +137,8 @@ export const getUserStatsForGameRequest = (ids) => {
   return new Promise((resolve, reject) => {
     for (let i = 0; i < ids.length; i++) {
       let steamid = ids[i];
-      sendGet(
-        `${PROXY}https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v1/?steamid=${steamid}&appid=440`
-      )
+      let url = `${PROXY}https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v1/?steamid=${steamid}&appid=440`;
+      sendGet(url)
         .then((result) => {
           if (!result) result = [];
           result.steamid = steamid;
@@ -86,22 +152,19 @@ export const getUserStatsForGameRequest = (ids) => {
   });
 };
 
-// TODO: fix this
-export const makeXMLProfileRequest = async (id, url) => {
-  //API only allows 1 steam id at once.
-  // https://steamcommunity.com/id/salamislide
+export const makeXMLProfileRequest = async (url) => {
+  // ex: https://steamcommunity.com/id/salamislide?xml=1
   if (!url) return;
-  const endpoint = `${PROXY}${url}?xml=1`;
-  return sendGet(endpoint);
+  return sendGet(`${PROXY}${url}`);
 };
 
 export const playerLogsRequest = async (id) => {
-  return sendGet(`${PROXY}https://logs.tf/api/v1/log?player=${id}`);
+  const url = `${PROXY}https://logs.tf/api/v1/log?player=${id}`;
+  return sendGet(url);
 };
 
 export const playerSourcebansRequest = async (id) => {
-  let encoded = encodeURIComponent(
-    `https://www.google.com/search?q="${id}"+"sourceban"`
-  );
+  const url = `https://www.google.com/search?q="${id}"+"sourceban"`;
+  let encoded = encodeURIComponent(url);
   return sendGet(`${PROXY}${encoded}`);
 };
