@@ -53,7 +53,7 @@ const findRelations = () => {
     });
     // TODO: ignore the one we are searching for
     for (const [id2, user] of filteredLookup) {
-      console.log("findRelations entry user", entry, user);
+      // console.log("findRelations entry user", entry, user);
       if (id1 !== id2 && friendsArray.includes(id2)) {
         !STATE.graphLookup[id1].related_steamids
           ? (STATE.graphLookup[id1].related_steamids = `${id2}`)
