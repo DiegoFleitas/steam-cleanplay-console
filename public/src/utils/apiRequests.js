@@ -36,22 +36,20 @@ export const playerSummariesRequest = async (ids) => {
   } else {
     steamIds = ids;
   }
-  const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=${steamIds.join(
-    ","
-  )}`;
+
   if (steamIds.length) {
+    const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=${steamIds.join(
+      ","
+    )}`;
     // pending request
     const result = await sendGet(url);
     for (let i = 0; i < result.response.players.length; i++) {
       let player = result.response.players[i];
       await setCache(player.steamid, player, cacheLabel);
     }
-    if (cachedResults) {
-      const cachedData = Object.values(cachedResults).map(
-        (result) => result.data
-      );
+    if (cachedResults.length) {
       return dummyResponse.response.players.concat(
-        cachedData,
+        cachedResults,
         result.response.players
       );
     }
@@ -79,10 +77,10 @@ export const playerBansRequest = async (ids) => {
   } else {
     steamIds = ids;
   }
-  const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamIds.join(
-    ","
-  )}`;
   if (steamIds.length) {
+    const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamIds.join(
+      ","
+    )}`;
     // pending request
     const result = await sendGet(url);
     for (let i = 0; i < result.players.length; i++) {
@@ -90,10 +88,7 @@ export const playerBansRequest = async (ids) => {
       await setCache(player.SteamId, player, cacheLabel);
     }
     if (cachedResults) {
-      const cachedData = Object.values(cachedResults).map(
-        (result) => result.data
-      );
-      return dummyResponse.players.concat(cachedData, result.players);
+      return dummyResponse.players.concat(cachedResults, result.players);
     }
     return dummyResponse.players.concat(result.players);
   } else {
