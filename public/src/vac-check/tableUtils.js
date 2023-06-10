@@ -140,6 +140,7 @@ export const drawTable = () => {
       { title: "Profile", data: "profile", defaultContent: "" },
       { title: "Level", data: "level", defaultContent: "" },
       { title: "Playtime (hrs)", data: "playtime", defaultContent: "" },
+      { title: "Location", data: "location", defaultContent: "" },
       {
         title: "Steam nick",
         data: "personaname_html",

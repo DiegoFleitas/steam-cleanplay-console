@@ -1,4 +1,5 @@
 import STATE from "../state.js";
+import { getLocation } from "../utils/steamUtils.js";
 
 const TF2_APP_ID = 440;
 const CSGO_APP_ID = 730;
@@ -88,6 +89,12 @@ export const onSummaryData = (players) => {
     playerEntry["timecreated"] = player.timecreated
       ? moment(created).fromNow()
       : "";
+
+    playerEntry["location"] = getLocation(
+      player?.loccountrycode,
+      player?.locstatecode,
+      player?.loccityid
+    );
 
     playerEntry["summary"] = player;
   });
