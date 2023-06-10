@@ -75,12 +75,12 @@ const processInput = async (input) => {
 const fetchData = async (ids) => {
   try {
     const bansResponse = await playerBansRequest(ids);
-    onBansData(bansResponse);
+    if (bansResponse) onBansData(bansResponse);
 
     const summariesResponse = await playerSummariesRequest(ids);
-    onSummaryData(summariesResponse.response);
+    if (summariesResponse) onSummaryData(summariesResponse);
 
-    const players = summariesResponse.response.players;
+    const players = summariesResponse;
 
     await Promise.all(players.map(fetchPlayerData));
 
@@ -97,15 +97,17 @@ const fetchPlayerData = async (player) => {
   const steamId = player.steamid;
   const requests = [];
 
-  try {
-    requests.push(
-      makeXMLProfileRequest(steamId, player.profileurl).then((response) => {
-        onXMLData(response, steamId);
-      })
-    );
-  } catch (error) {
-    console.error(error);
-  }
+  // try {
+  //   requests.push(
+  //     makeXMLProfileRequest(steamId, `${player.profileurl}?xml=1`).then(
+  //       (response) => {
+  //         onXMLData(response, steamId);
+  //       }
+  //     )
+  //   );
+  // } catch (error) {
+  //   console.error(error);
+  // }
 
   try {
     requests.push(

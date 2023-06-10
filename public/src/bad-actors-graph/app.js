@@ -204,8 +204,8 @@ const getSteamData = async () => {
       ...playerFriendLists,
     ]);
 
-    if (summaryData) onSummaryData(summaryData.response);
-    onBansData(bansData);
+    if (summaryData) onSummaryData(summaryData);
+    if (bansData) onBansData(bansData);
 
     friendListsData.forEach((friendListData, i) => {
       onSteamFriendListData(friendListData, Object.keys(STATE.graphLookup)[i]);

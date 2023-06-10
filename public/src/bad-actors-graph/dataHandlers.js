@@ -11,17 +11,17 @@ export const onGroupsData = (data, steamid) => {
   }
 };
 
-export const onSummaryData = (data) => {
+export const onSummaryData = (players) => {
   // console.log(data);
-  data.players.forEach((player) => {
+  players.forEach((player) => {
     const playerEntry = STATE.graphLookup[player.steamid];
     playerEntry.img = player.avatarmedium;
     // playerEntry["summary"] = player;
   });
 };
 
-export const onBansData = (data) => {
-  data.players.forEach((player) => {
+export const onBansData = (players) => {
+  players.forEach((player) => {
     const playerEntry = STATE.graphLookup[player.SteamId];
     playerEntry.bans = false;
     if (player.CommunityBanned || player.VACBanned) {
