@@ -164,7 +164,7 @@ const parseInput = (input) => {
         // FIXME: flags might get overriden by the next element
         STATE.isTF2 = elem.includes("[U:1:");
         STATE.isCSGO = elem.includes("STEAM_");
-        const name = data[index - 1].replaceAll('"', "");
+        const name = data?.[index - 1]?.replaceAll('"', "") || "";
         // console.log(id64, name);
         STATE.vacLookup[id64] = {
           name,

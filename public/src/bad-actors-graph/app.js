@@ -175,7 +175,7 @@ const parseSteamData = () => {
     if (elem.length >= 12) {
       const id64 = getId(elem);
       if (id64 && id64.length > 16) {
-        const name = allData[index - 1].replaceAll('"', "");
+        const name = allData?.[index - 1]?.replaceAll('"', "") || "";
         STATE.graphLookup[id64] = {
           name,
           id: id64,
