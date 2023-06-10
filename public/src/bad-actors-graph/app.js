@@ -40,15 +40,15 @@ document.querySelector("#button").addEventListener("click", () => {
     .split(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
     .filter((e) => e.trim().length > 0);
   parseSteamData();
-  console.log(allData);
-  console.log(STATE.graphLookup);
+  //console.log(allData);
+  //console.log(STATE.graphLookup);
 
   getSteamData().then(() => {
-    console.log(STATE.graphLookup);
+    //console.log(STATE.graphLookup);
 
     const graphElements = buildGraph(elements, STATE.graphLookup);
-    console.log("elements", elements);
-    console.log("graphElements", graphElements);
+    //console.log("elements", elements);
+    //console.log("graphElements", graphElements);
 
     new Graph(graphElements);
     // new Graph(elements);
@@ -57,7 +57,7 @@ document.querySelector("#button").addEventListener("click", () => {
 
 class Graph {
   constructor(elements) {
-    console.log("constructor", elements);
+    //console.log("constructor", elements);
     this.cy = cytoscape({
       container: document.getElementById("cy"),
       userZoomingEnabled: false,
@@ -104,7 +104,7 @@ class Graph {
 
     // Bind click event
     this.cy.on("click", "node", (event) => {
-      console.log("click", event);
+      //console.log("click", event);
       const connected = event.target
         .predecessors()
         .union(event.target)
@@ -142,12 +142,12 @@ class Graph {
 
 const buildGraph = (elements, graphLookup) => {
   for (const [key, entry] of Object.entries(graphLookup)) {
-    console.log(entry);
+    // console.log(entry);
     const node = { data: entry };
     elements.nodes.push(node);
     if (!entry || !entry.related_steamids) continue;
     const related = entry.related_steamids.split(" ");
-    console.log("related", related.length, related);
+    //console.log("related", related.length, related);
 
     for (let i = 0; i < related.length; i++) {
       const id = related[i];
@@ -165,12 +165,11 @@ const buildGraph = (elements, graphLookup) => {
       if (!result) elements.edges.push(edge);
     }
   }
-  console.log("buildGraph", elements);
+  //console.log("buildGraph", elements);
   return elements;
 };
 
 const parseSteamData = () => {
-  // *** steam functions end ***
   for (let index = 0; index < allData.length; index++) {
     const elem = allData[index];
     if (elem.length >= 12) {

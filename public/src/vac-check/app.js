@@ -61,9 +61,9 @@ const processInput = async (input) => {
   try {
     await fetchData(ids);
     drawTable();
-    $(document).ready(() => {
-      console.log("ready");
-    });
+    // $(document).ready(() => {
+    //   console.log("ready");
+    // });
   } catch (error) {
     console.error(error);
   } finally {
