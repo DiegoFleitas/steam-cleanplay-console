@@ -1,7 +1,7 @@
 import STATE from "../state.js";
 
 export const onGroupsData = (data, steamid) => {
-  console.log("onGroupsData", data);
+  // console.log("onGroupsData", data);
   const playerEntry = STATE.graphLookup[steamid];
   playerEntry.groups = "";
   if (data && data.response && data.response.groups) {
@@ -31,10 +31,10 @@ export const onBansData = (players) => {
 };
 
 export const onSteamFriendListData = (data, id) => {
-  console.log("onSteamFriendListData", data);
+  // console.log("onSteamFriendListData", data);
   let friends = data?.friendslist?.friends || [];
   STATE.graphLookup[id].friends = friends;
-  console.log(id, STATE.graphLookup[id]);
+  // console.log(id, STATE.graphLookup[id]);
 
   findRelations();
 };
@@ -45,7 +45,7 @@ const findRelations = () => {
       return entry && entry.friends;
     }
   );
-  console.log("filteredLookup", filteredLookup);
+  // console.log("filteredLookup", filteredLookup);
   for (const [id1, entry] of filteredLookup) {
     if (!entry || !entry.friends) continue;
     const friendsArray = entry.friends.map((el) => {
