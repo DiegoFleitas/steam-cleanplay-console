@@ -60,9 +60,9 @@ export const drawTable = () => {
   tableData.sort(
     (a, b) =>
       b.hasVAC - a.hasVAC || // VAC presence first
-      b.differentNicks - a.differentNicks || // Different nicks next
-      b.hasLinuxHours - a.hasLinuxHours || // Playtime on 🐧 next
       a.timecreated - b.timecreated || // Newest accounts next
+      b.hasLinuxHours - a.hasLinuxHours || // Playtime on 🐧 next
+      b.differentNicks - a.differentNicks || // Different nicks next
       b.isHidden - a.isHidden || // Hidden profiles next
       a.playtime - b.playtime || // Lowest playtime next
       a.level - b.level // Lowest level last
@@ -91,7 +91,7 @@ export const drawTable = () => {
         title: "Avatar",
         data: "avatar_html",
         render: (data, type, row) => {
-          return data?.outerHTML;
+          return data?.outerHTML ?? "";
         },
         defaultContent: "",
       },
@@ -100,9 +100,9 @@ export const drawTable = () => {
         data: "link_html",
         // append steam nick if different to game nick
         render: (data, type, row) => {
-          if (row.differentNicks) {
+          if (row?.differentNicks) {
             const element = document.createElement("div");
-            element.innerHTML = `<del>${row.gameNickOuterHTML}</del><br>${row.steamNickOuterHTML}`;
+            element.innerHTML = `<del>${row?.gameNickOuterHTML}</del><br>${row?.steamNickOuterHTML}`;
 
             const del = element.querySelector("del");
             del.classList.add("has-tooltip");
@@ -111,7 +111,10 @@ export const drawTable = () => {
 
             return element.innerHTML;
           }
-          return row.gameNickOuterHTML;
+          return (
+            row?.gameNickOuterHTML ??
+            `<a href="https://steamcommunity.com/profiles/${row?.id}" target="_blank">${row?.name}</a>`
+          );
         },
         defaultContent: "",
       },
@@ -119,7 +122,7 @@ export const drawTable = () => {
         title: "Other",
         data: "other_html",
         render: (data, type, row) => {
-          return `${data?.outerHTML}`;
+          return `${data?.outerHTML || ""}`;
         },
         defaultContent: "",
       },
