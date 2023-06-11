@@ -111,20 +111,25 @@ a:hover {
 }
 
 #button {
-   width: 81.7%;
    padding: 10px;
    margin: 10px;
    border-radius: 5px;
    border: none;
    resize: none;
-   background-color: #f37f77;
+   font-weight: bolder;
    cursor: pointer;
+   background-color: #00BFFF;
+   transition: background-color 0.3s ease;
+}
+
+#button:hover {
+   background-color: #009ACD;
 }
 
 .inputs {
-   margin: auto;
-   padding-top: 20px;
-   padding-bottom: 20px;
+   width: 100%;
+   display: flex;
+   justify-content: center;
 }
 
 .page-header {
