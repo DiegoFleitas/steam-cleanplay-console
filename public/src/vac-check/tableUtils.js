@@ -50,7 +50,6 @@ const setupTableData = (vacLookup) => {
     };
   });
 
-  // don't return the related_steamids and friends columns
   return findRelations(tableData);
 };
 
@@ -229,23 +228,36 @@ export const drawTable = () => {
 };
 
 const findRelations = (tableData) => {
+  if (!Array.isArray(tableData)) {
+    throw new Error("tableData must be an array");
+  }
+
+  // Convert tableData to a Map for efficient lookup
+  const tableDataMap = new Map(tableData.map((el) => [el.id, el]));
+
   tableData.forEach((element) => {
-    element.related = "";
-    element.related_steamids = "";
+    // Initialize related and related_steamids as arrays instead of strings
+    element.related = [];
+    element.related_steamids = [];
+
     const name = element.personaname;
     element?.friends?.forEach((friend) => {
       const friendId = friend.steamid;
-      const friendEntry = tableData.find((el) => el.id === friendId);
+      const friendEntry = tableDataMap.get(friendId);
       if (friendEntry) {
-        friendEntry.related += ` ${name}`;
-        element.related_steamids += ` ${element.id}`;
-        if (!element.related) {
-          element.related = name;
-        } else {
-          element.related += `, ${name}`;
+        // Check if friendEntry.related exists, if not, initialize it to an empty array
+        if (!friendEntry.related) {
+          friendEntry.related = [];
         }
+        friendEntry.related.push(name);
+        element.related_steamids.push(element.id);
       }
     });
+
+    // Convert related and related_steamids to strings
+    element.related = element.related.join(", ");
+    element.related_steamids = element.related_steamids.join(" ");
   });
+
   return tableData;
 };

@@ -40,25 +40,38 @@ export const onSteamFriendListData = (data, id) => {
 };
 
 const findRelations = () => {
+  // Check if STATE.graphLookup exists and is an object
+  if (!STATE.graphLookup || typeof STATE.graphLookup !== "object") {
+    throw new Error("STATE.graphLookup is not a valid object");
+  }
+
   const filteredLookup = Object.entries(STATE.graphLookup).filter(
     ([key, entry]) => {
-      return entry && entry.friends;
+      // Ensure entry and entry.friends exist
+      return entry && Array.isArray(entry.friends);
     }
   );
-  // console.log("filteredLookup", filteredLookup);
+
   for (const [id1, entry] of filteredLookup) {
-    if (!entry || !entry.friends) continue;
-    const friendsArray = entry.friends.map((el) => {
-      return el.steamid;
-    });
-    // TODO: ignore the one we are searching for
+    if (!entry || !Array.isArray(entry.friends)) continue;
+
+    const friendsSet = new Set(entry.friends.map((el) => el.steamid));
+
+    // Initialize related_steamids as an empty array
+    STATE.graphLookup[id1].related_steamids = [];
+
     for (const [id2, user] of filteredLookup) {
-      // console.log("findRelations entry user", entry, user);
-      if (id1 !== id2 && friendsArray.includes(id2)) {
-        !STATE.graphLookup[id1].related_steamids
-          ? (STATE.graphLookup[id1].related_steamids = `${id2}`)
-          : (STATE.graphLookup[id1].related_steamids += ` ${id2}`);
+      if (id1 !== id2 && friendsSet.has(id2)) {
+        STATE.graphLookup[id1].related_steamids.push(id2);
       }
     }
+
+    // Convert related_steamids array into a space-separated string
+    // Remove the current steam ID if it's in related_steamids
+    STATE.graphLookup[id1].related_steamids = STATE.graphLookup[
+      id1
+    ].related_steamids
+      .filter((related_id) => related_id !== id1)
+      .join(" ");
   }
 };
