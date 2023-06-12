@@ -36,10 +36,10 @@ export const onSteamFriendListData = (data, id) => {
   STATE.graphLookup[id].friends = friends;
   // console.log(id, STATE.graphLookup[id]);
 
-  findRelations();
+  findRelationsForGraph();
 };
 
-const findRelations = () => {
+const findRelationsForGraph = () => {
   // Check if STATE.graphLookup exists and is an object
   if (!STATE.graphLookup || typeof STATE.graphLookup !== "object") {
     throw new Error("STATE.graphLookup is not a valid object");

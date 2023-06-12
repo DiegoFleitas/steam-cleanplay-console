@@ -50,7 +50,7 @@ const setupTableData = (vacLookup) => {
     };
   });
 
-  return findRelations(tableData);
+  return findRelationsForTable(tableData);
 };
 
 export const drawTable = () => {
@@ -227,7 +227,7 @@ export const drawTable = () => {
   ); // Using capture phase to handle event as soon as it propagates
 };
 
-const findRelations = (tableData) => {
+const findRelationsForTable = (tableData) => {
   if (!Array.isArray(tableData)) {
     throw new Error("tableData must be an array");
   }
