@@ -29,10 +29,6 @@ let text = `#   3481 "「VΛC」✔ Lightning⸙Dust"            [U:1:1266329853
 const inputElem = document.querySelector("#input-vac");
 inputElem.value = text;
 let allData = [];
-let elements = {
-  nodes: [],
-  edges: [],
-};
 
 document.querySelector("#button").addEventListener("click", () => {
   let input = inputElem.value;
@@ -40,98 +36,95 @@ document.querySelector("#button").addEventListener("click", () => {
     .split(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
     .filter((e) => e.trim().length > 0);
   parseSteamData();
-  //console.log(allData);
-  //console.log(STATE.graphLookup);
-
   getSteamData().then(() => {
-    //console.log(STATE.graphLookup);
+    const schema = graphSchema(STATE.graphLookup);
+    console.log("schema", schema);
 
-    const graphElements = buildGraph(elements, STATE.graphLookup);
-    //console.log("elements", elements);
-    //console.log("graphElements", graphElements);
-
-    new Graph(graphElements);
-    // new Graph(elements);
+    new Graph(schema);
   });
 });
 
 class Graph {
   constructor(elements) {
-    //console.log("constructor", elements);
-    this.cy = cytoscape({
-      container: document.getElementById("cy"),
-      userZoomingEnabled: false,
-      boxSelectionEnabled: false,
-      autounselectify: true,
-      layout: {
-        name: "cose",
-        nodeDimensionsIncludeLabels: false,
-        animate: false,
-      },
-      style: [
-        {
-          selector: "node",
-          style: {
-            "background-color": (el) => typeColors[el.attr("bans")],
-            "background-image": (el) => el.attr("img"),
-            "background-height": "100%",
-            "background-width": "100%",
-            "border-color": (el) => typeColors[el.attr("bans")],
-            "border-width": "3%",
-            color: "#000",
-            width: 30,
-            height: 30,
-            shape: "roundrectangle",
-            "font-family": "Helvetica",
-            "font-size": 8,
-            "min-zoomed-font-size": 8,
-            "overlay-opacity": 0,
+    try {
+      //console.log("constructor", elements);
+      this.cy = cytoscape({
+        container: document.getElementById("cy"),
+        userZoomingEnabled: false,
+        boxSelectionEnabled: false,
+        autounselectify: true,
+        layout: {
+          name: "cose",
+          nodeDimensionsIncludeLabels: false,
+          animate: false,
+        },
+        style: [
+          {
+            selector: "node",
+            style: {
+              "background-color": (el) => typeColors[el.attr("bans")],
+              "background-image": (el) => el.attr("img"),
+              "background-height": "100%",
+              "background-width": "100%",
+              "border-color": (el) => typeColors[el.attr("bans")],
+              "border-width": "3%",
+              color: "#000",
+              width: 30,
+              height: 30,
+              shape: "roundrectangle",
+              "font-family": "Helvetica",
+              "font-size": 8,
+              "min-zoomed-font-size": 8,
+              "overlay-opacity": 0,
+            },
           },
-        },
-        {
-          selector: "edge",
-          style: {
-            "overlay-opacity": 0,
-            "target-arrow-shape": "triangle",
-            "target-distance-from-node": 10,
-            width: 2,
-            "source-arrow-shape": "none",
+          {
+            selector: "edge",
+            style: {
+              "overlay-opacity": 0,
+              "target-arrow-shape": "triangle",
+              "target-distance-from-node": 10,
+              width: 2,
+              "source-arrow-shape": "none",
+            },
           },
-        },
-      ],
-      elements,
-    });
-
-    // Bind click event
-    this.cy.on("click", "node", (event) => {
-      //console.log("click", event);
-      const connected = event.target
-        .predecessors()
-        .union(event.target)
-        .union(event.target.successors());
-      const notConnected = this.cy.elements().not(connected);
-      notConnected.remove();
-      setTimeout(() => notConnected.restore(), 5000);
-    });
-
-    // Bind tooltip event
-    this.tips = document.createElement("div");
-    this.cy.nodes().on("mouseover", (event) => {
-      const target = event.target;
-      target.popperref = target.popper({
-        content: () => {
-          const node = event.target;
-          this.tips.innerHTML = `${node.data("name")}`;
-          this.tips.className = "node-tooltip";
-          document.body.appendChild(this.tips);
-          return this.tips;
-        },
-        popper: {
-          placement: "top-start",
-          removeOnDestroy: true,
-        },
+        ],
+        elements,
       });
-    });
+
+      // Bind click event
+      this.cy.on("click", "node", (event) => {
+        //console.log("click", event);
+        const connected = event.target
+          .predecessors()
+          .union(event.target)
+          .union(event.target.successors());
+        const notConnected = this.cy.elements().not(connected);
+        notConnected.remove();
+        setTimeout(() => notConnected.restore(), 5000);
+      });
+
+      // Bind tooltip event
+      this.tips = document.createElement("div");
+      this.cy.nodes().on("mouseover", (event) => {
+        const target = event.target;
+        target.popperref = target.popper({
+          content: () => {
+            const node = event.target;
+            this.tips.innerHTML = `${node.data("name")}`;
+            this.tips.className = "node-tooltip";
+            document.body.appendChild(this.tips);
+            return this.tips;
+          },
+          popper: {
+            placement: "top-start",
+            removeOnDestroy: true,
+          },
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   destroy() {
@@ -140,33 +133,55 @@ class Graph {
   }
 }
 
-const buildGraph = (elements, graphLookup) => {
-  for (const [key, entry] of Object.entries(graphLookup)) {
-    // console.log(entry);
-    const node = { data: entry };
-    elements.nodes.push(node);
-    if (!entry || !entry.related_steamids) continue;
-    const related = entry.related_steamids.split(" ");
-    //console.log("related", related.length, related);
+const graphSchema = (graphLookup) => {
+  const elements = {
+    nodes: [],
+    edges: [],
+  };
+  const existingEdges = new Set();
 
-    for (let i = 0; i < related.length; i++) {
-      const id = related[i];
-      if (!id || key === id) continue;
-      const edge = {
+  try {
+    for (const [key, entry] of Object.entries(graphLookup)) {
+      const node = {
         data: {
-          id: `${key}-${id}`,
-          source: key,
-          target: id,
+          id: entry.id,
+          name: entry.name,
+          relatedSteamIds: entry.relatedSteamIds,
+          img: entry.img,
+          bans: entry.bans,
         },
       };
-      const result = elements.edges.some((elem) => {
-        return elem.data.id === `${key}-${id}`;
-      });
-      if (!result) elements.edges.push(edge);
+      elements.nodes.push(node);
+
+      // console.log(
+      //   "relatedSteamIds",
+      //   typeof entry?.relatedSteamIds,
+      //   entry?.relatedSteamIds
+      // );
+      for (const id of entry?.relatedSteamIds?.split(" ")) {
+        // console.log("id", id);
+        if (!id || key === id) continue;
+
+        const edgeId = `${key}-${id}`;
+
+        if (!existingEdges.has(edgeId)) {
+          const edge = {
+            data: {
+              id: edgeId,
+              source: key,
+              target: id,
+            },
+          };
+          elements.edges.push(edge);
+          existingEdges.add(edgeId);
+        }
+      }
     }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    return elements;
   }
-  //console.log("buildGraph", elements);
-  return elements;
 };
 
 const parseSteamData = () => {

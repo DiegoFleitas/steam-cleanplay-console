@@ -1,4 +1,5 @@
 import STATE from "../state.js";
+import { discoverFriendships } from "../utils/steamUtils.js";
 
 export const onGroupsData = (data, steamid) => {
   // console.log("onGroupsData", data);
@@ -36,43 +37,15 @@ export const onSteamFriendListData = (data, id) => {
   STATE.graphLookup[id].friends = friends;
   // console.log(id, STATE.graphLookup[id]);
 
-  findRelationsForGraph();
-};
+  const graphData = Object.values(STATE.graphLookup);
 
-// TODO: share a discover relation method across the whole app
-const findRelationsForGraph = () => {
-  // Check if STATE.graphLookup exists and is an object
-  if (!STATE.graphLookup || typeof STATE.graphLookup !== "object") {
-    throw new Error("STATE.graphLookup is not a valid object");
-  }
+  const friendships = discoverFriendships(graphData);
 
-  const filteredLookup = Object.entries(STATE.graphLookup).filter(
-    ([key, entry]) => {
-      // Ensure entry and entry.friends exist
-      return entry && Array.isArray(entry.friends);
-    }
-  );
-
-  for (const [id1, entry] of filteredLookup) {
-    if (!entry || !Array.isArray(entry.friends)) continue;
-
-    const friendsSet = new Set(entry.friends.map((el) => el.steamid));
-
-    // Initialize related_steamids as an empty array
-    STATE.graphLookup[id1].related_steamids = [];
-
-    for (const [id2, user] of filteredLookup) {
-      if (id1 !== id2 && friendsSet.has(id2)) {
-        STATE.graphLookup[id1].related_steamids.push(id2);
-      }
-    }
-
-    // Convert related_steamids array into a space-separated string
-    // Remove the current steam ID if it's in related_steamids
-    STATE.graphLookup[id1].related_steamids = STATE.graphLookup[
-      id1
-    ].related_steamids
-      .filter((related_id) => related_id !== id1)
-      .join(" ");
+  // Set the related players for each player
+  for (const [_, item] of friendships) {
+    STATE.graphLookup[item.id].relatedPlayers = item.relatedPlayers;
+    STATE.graphLookup[item.id].relatedSteamIds = Array.from(
+      item.relatedPlayers
+    ).join(" ");
   }
 };

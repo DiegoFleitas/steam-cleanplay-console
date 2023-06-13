@@ -1,4 +1,5 @@
 import STATE from "../state.js";
+import { discoverFriendships } from "../utils/steamUtils.js";
 
 let table = null;
 export const clearTable = () => {
@@ -50,11 +51,31 @@ const setupTableData = (vacLookup) => {
     };
   });
 
-  return findRelationsForTable(tableData);
+  const friendships = discoverFriendships(tableData);
+  console.log("friendships", friendships);
+
+  // Set the related players for each player
+  tableData = tableData.map((row) => {
+    let relatedPersonas = "";
+    const relatedPlayers = friendships?.get(row.id)?.relatedPlayers;
+    if (relatedPlayers) {
+      relatedPersonas = Array.from(
+        relatedPlayers,
+        (id) => friendships?.get(id)?.name
+      ).join(" ");
+    }
+    return {
+      ...row,
+      relatedPersonas,
+    };
+  });
+
+  return tableData;
 };
 
 export const drawTable = () => {
-  const tableData = setupTableData(STATE.vacLookup);
+  const tableMap = setupTableData(STATE.vacLookup);
+  const tableData = Array.from(tableMap.values());
 
   tableData.sort(
     (a, b) =>
@@ -158,7 +179,15 @@ export const drawTable = () => {
         data: "timecreated_raw",
         defaultContent: "",
       },
-      { title: "Related", visible: true, data: "related", defaultContent: "" },
+      {
+        title: "Related",
+        visible: true,
+        data: "relatedPersonas",
+        render: (data, type, row) => {
+          return data || "";
+        },
+        defaultContent: "",
+      },
     ],
     columnDefs: [
       {
@@ -225,40 +254,4 @@ export const drawTable = () => {
     },
     true
   ); // Using capture phase to handle event as soon as it propagates
-};
-
-// TODO: share a discover relation method across the whole app
-const findRelationsForTable = (tableData) => {
-  if (!Array.isArray(tableData)) {
-    throw new Error("tableData must be an array");
-  }
-
-  // Convert tableData to a Map for efficient lookup
-  const tableDataMap = new Map(tableData.map((el) => [el.id, el]));
-
-  tableData.forEach((element) => {
-    // Initialize related and related_steamids as arrays instead of strings
-    element.related = [];
-    element.related_steamids = [];
-
-    const name = element.personaname;
-    element?.friends?.forEach((friend) => {
-      const friendId = friend.steamid;
-      const friendEntry = tableDataMap.get(friendId);
-      if (friendEntry) {
-        // Check if friendEntry.related exists, if not, initialize it to an empty array
-        if (!friendEntry.related) {
-          friendEntry.related = [];
-        }
-        friendEntry.related.push(name);
-        element.related_steamids.push(element.id);
-      }
-    });
-
-    // Convert related and related_steamids to strings
-    element.related = element.related.join(", ");
-    element.related_steamids = element.related_steamids.join(" ");
-  });
-
-  return tableData;
 };

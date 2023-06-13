@@ -35,3 +35,27 @@ export const getLocation = (countryCode, stateCode, cityId) => {
   // console.log("getLocation", [countryCode, stateCode, cityId], locationParts);
   return locationParts.filter((part) => part).join(", ");
 };
+
+export const discoverFriendships = (data) => {
+  // init sets
+  const dataWithSets = data.map((item) => ({
+    ...item,
+    relatedPlayers: new Set(),
+  }));
+  // map all players by their id
+  const dataMap = new Map(dataWithSets.map((item) => [item.id, item]));
+
+  for (const [_, item] of dataMap) {
+    if (!item.friends) continue; // skip if no friends
+    for (const friend of item.friends) {
+      const friendId = friend.steamid;
+      const friendItem = dataMap.get(friendId);
+      if (friendItem) {
+        item.relatedPlayers.add(friendId);
+        friendItem.relatedPlayers.add(item.id);
+      }
+    }
+  }
+
+  return dataMap;
+};
