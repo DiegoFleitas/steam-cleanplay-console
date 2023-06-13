@@ -35,7 +35,7 @@ const getRedisClient = async () => {
       console.log(options);
       redisClient = redis
         .createClient(options)
-        .on("error", (err) => {
+        .on("error", (error) => {
           console.log(`[REDIS_CLIENT_ERROR] ${error}`);
         })
         .on("connect", () => {
