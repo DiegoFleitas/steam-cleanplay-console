@@ -47,5 +47,8 @@ export const onSteamFriendListData = (data, id) => {
     STATE.graphLookup[item.id].relatedSteamIds = Array.from(
       item.relatedPlayers
     ).join(" ");
+    STATE.graphLookup[item.id].relatedCheaters = Array.from(
+      item.relatedCheaters
+    ).join(" ");
   }
 };

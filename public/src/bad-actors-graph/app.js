@@ -153,11 +153,6 @@ const graphSchema = (graphLookup) => {
       };
       elements.nodes.push(node);
 
-      // console.log(
-      //   "relatedSteamIds",
-      //   typeof entry?.relatedSteamIds,
-      //   entry?.relatedSteamIds
-      // );
       for (const id of entry?.relatedSteamIds?.split(" ")) {
         // console.log("id", id);
         if (!id || key === id) continue;
@@ -175,6 +170,26 @@ const graphSchema = (graphLookup) => {
           elements.edges.push(edge);
           existingEdges.add(edgeId);
         }
+      }
+      for (const id of entry?.relatedCheaters?.split(" ")) {
+        // console.log("id", id);
+        if (!id || key === id) continue;
+        elements.nodes.push({
+          data: {
+            id: id,
+            name: `known cheater (${id})`,
+            relatedSteamIds: "",
+            img: "/cheater.png",
+            bans: true,
+          },
+        });
+        elements.edges.push({
+          data: {
+            id: `${key}-${id}`,
+            source: key,
+            target: id,
+          },
+        });
       }
     }
   } catch (err) {
