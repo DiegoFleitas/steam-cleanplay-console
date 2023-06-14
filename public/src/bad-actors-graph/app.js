@@ -15,7 +15,7 @@ import {
 
 // TODO: get img & bans
 
-cytoscape.use(cytoscapeCola);
+// cytoscape.use(cytoscapeCola);
 cytoscape.use(cytoscapePopper);
 
 const typeColors = {
@@ -57,6 +57,7 @@ class Graph {
           name: "cose",
           nodeDimensionsIncludeLabels: false,
           animate: false,
+          fit: true,
         },
         style: [
           {

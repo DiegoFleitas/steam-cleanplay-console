@@ -9,11 +9,6 @@
       content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1"
     />
     <link href="/style.css" rel="stylesheet" />
-    <!-- emoji as favicon -->
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧼</text></svg>"
-    />
     <script src="https://unpkg.com/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
     <script src="https://unpkg.com/cytoscape-cola@2.5.1/cytoscape-cola.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -32,10 +27,16 @@
       type="text/css"
       href="https://cdn.datatables.net/1.13.0/css/jquery.dataTables.css"
     />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.css"
+    />
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script>
   </head>
   <body>
-    <div class="left" id="vac-check">
+    <div class="table-container" id="vac-check">
       <div class="row">
         <div class="jumbotron">
           <h1>Cleanplay Console 🧼</h1>
@@ -45,13 +46,27 @@
       <hr />
       <div class="inputs">
         <input id="input-vac" />
-        <button id="button" class="btn btn-bubble">Scrub cheats away™</button>
+        <button id="button" class="btn btn-bubble">
+          Wash away the cheats™
+        </button>
       </div>
       <table id="dataTable" hidden="true"></table>
       <div class="loader center" id="loader" hidden="true">
         <div class="bubble"></div>
       </div>
       <hr />
+      <script src="./src/vac-check/app.js" type="module"></script>
+    </div>
+    <div class="graph-container" id="bad-actors-graph">
+      <div class="container">
+        <div>
+          <p style="text-align: center">Social Graph</p>
+        </div>
+        <div id="cy"></div>
+      </div>
+      <script src="./src/bad-actors-graph/app.js" type="module"></script>
+    </div>
+    <div id="faq">
       <h1 class="page-header">F.A.Q</h1>
       <div class="panel panel-default">
         <div class="panel-heading" id="make">
@@ -89,18 +104,8 @@
         </div>
       </div>
       <hr />
-      <script src="./src/vac-check/app.js" type="module"></script>
     </div>
-    <div class="right" id="bad-actors-graph">
-      <div class="container">
-        <div>
-          <p style="text-align: center">Social Graph</p>
-        </div>
-        <div id="cy"></div>
-      </div>
-      <script src="./src/bad-actors-graph/app.js" type="module"></script>
-    </div>
-    <button id="draggable-button" class="floating-button">📓</button>
+    <button id="draggable-button" class="floating-button" hidden>📓</button>
     <div class="modal">
       <div class="modal-content">
         <span class="close-button">&times;</span>

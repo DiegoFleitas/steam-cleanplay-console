@@ -92,6 +92,7 @@ export const drawTable = () => {
 
   table = $("#dataTable").DataTable({
     data: tableData, // Set the data for the table
+    responsive: true,
     paging: true,
     searching: true,
     ordering: true,
