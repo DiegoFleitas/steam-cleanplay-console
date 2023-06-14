@@ -114,6 +114,7 @@ export const drawTable = () => {
           return data?.outerHTML ?? "";
         },
         defaultContent: "",
+        searchable: false,
       },
       {
         title: "Game nick",
@@ -145,6 +146,7 @@ export const drawTable = () => {
           return `${data?.outerHTML || ""}`;
         },
         defaultContent: "",
+        searchable: false,
       },
       {
         title: "VAC",
@@ -172,7 +174,14 @@ export const drawTable = () => {
         },
         defaultContent: "",
       },
-      { title: "Groups", data: "groups", defaultContent: "" },
+      {
+        title: "Groups",
+        data: "groups_html",
+        render: (data, type, row) => {
+          return `${data?.outerHTML || ""}`;
+        },
+        defaultContent: "",
+      },
       {
         title: "Created (raw)",
         visible: false,
@@ -186,6 +195,12 @@ export const drawTable = () => {
         render: (data, type, row) => {
           return data || "";
         },
+        defaultContent: "",
+      },
+      {
+        title: "Summary",
+        visible: true,
+        data: "summary",
         defaultContent: "",
       },
     ],

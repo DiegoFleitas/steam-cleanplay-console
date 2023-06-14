@@ -1,5 +1,4 @@
 import STATE from "../state.js";
-import { discoverFriendships } from "../utils/steamUtils.js";
 
 export const onGroupsData = (data, steamid) => {
   // console.log("onGroupsData", data);
@@ -36,19 +35,40 @@ export const onSteamFriendListData = (data, id) => {
   let friends = data?.friendslist?.friends || [];
   STATE.graphLookup[id].friends = friends;
   // console.log(id, STATE.graphLookup[id]);
+};
 
-  const graphData = Object.values(STATE.graphLookup);
-
-  const friendships = discoverFriendships(graphData);
-
-  // Set the related players for each player
-  for (const [_, item] of friendships) {
-    STATE.graphLookup[item.id].relatedPlayers = item.relatedPlayers;
-    STATE.graphLookup[item.id].relatedSteamIds = Array.from(
-      item.relatedPlayers
-    ).join(" ");
-    STATE.graphLookup[item.id].relatedCheaters = Array.from(
-      item.relatedCheaters
-    ).join(" ");
+export const onXMLData = (xml, id) => {
+  // console.log("xml", xml);
+  let parser = new DOMParser();
+  let xmlDoc = parser.parseFromString(xml, "text/xml");
+  // console.log("xmlDoc", xmlDoc);
+  const groups = [];
+  const elems = xmlDoc.getElementsByTagName("group");
+  for (let group of elems) {
+    const groupData = {
+      id: Number(
+        group.getElementsByTagName("groupID64")[0].childNodes[0].nodeValue
+      ),
+      url:
+        group.getElementsByTagName("groupURL")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      name:
+        group.getElementsByTagName("groupName")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      avatarIcon:
+        group.getElementsByTagName("avatarIcon")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      summary:
+        group.getElementsByTagName("summary")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      headline:
+        group.getElementsByTagName("headline")[0]?.childNodes[0]?.nodeValue ||
+        "",
+    };
+    groups.push(groupData);
   }
+
+  STATE.graphLookup[id].groups = groups;
+  STATE.graphLookup[id].summary =
+    xmlDoc.getElementsByTagName("summary")[0]?.childNodes[0]?.nodeValue || "";
 };

@@ -14,11 +14,6 @@ const sendGet = async (url) => {
   }
 };
 
-export const playerGroupsRequest = async (id) => {
-  const url = `${PROXY}https://sapihub.sheenweb.co.uk/api_player_getusergrouplist.php?&key=${SAPIHUB_KEY}&hour=24&steamid64=${id}`;
-  return sendGet(url);
-};
-
 export const playerSummariesRequest = async (ids) => {
   const dummyResponse = { response: { players: [] } };
   let steamIds = "";
@@ -147,7 +142,7 @@ export const getUserStatsForGameRequest = (ids) => {
   });
 };
 
-export const makeXMLProfileRequest = async (url) => {
+export const playerXMLRequest = async (url) => {
   // ex: https://steamcommunity.com/id/salamislide?xml=1
   if (!url) return;
   return sendGet(`${PROXY}${url}`);

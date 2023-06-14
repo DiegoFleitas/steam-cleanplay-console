@@ -1,8 +1,13 @@
 import { locations } from "./steamCountries.js";
-import { pazerlist } from "./tf2BotDetector.js";
+import { pazerList } from "./blacklists/tf2BotDetector.js";
+import { cheatingGroups } from "./blacklists/groups.js";
 
 const tf2BotDetectorMap = new Map(
-  pazerlist.players.map((player) => [player.steamid, player])
+  pazerList.players.map((player) => [player.steamid, player])
+);
+
+const cheatingGroupsMap = new Map(
+  cheatingGroups.groups.map((group) => [group.id, group])
 );
 
 export const getId = (inputSteamID) => {
@@ -47,11 +52,19 @@ export const discoverFriendships = (data) => {
     ...item,
     relatedCheaters: new Set(),
     relatedPlayers: new Set(),
+    cheatingGroups: new Set(),
   }));
   // map all players by their id
   const dataMap = new Map(dataWithSets.map((item) => [item.id, item]));
 
   for (const [_, item] of dataMap) {
+    // Check if this player is part of a cheating group
+    for (const group of item.groups) {
+      if (cheatingGroupsMap.has(group.id)) {
+        item.cheatingGroups.add(group);
+      }
+    }
+
     if (!item.friends) continue; // skip if no friends
     for (const friend of item.friends) {
       const friendId = friend.steamid;

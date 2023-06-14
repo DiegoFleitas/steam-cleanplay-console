@@ -165,20 +165,51 @@ export const onSteamUserStatsData = (data) => {
 
 export const onXMLData = (xml, id) => {
   const playerEntry = STATE.vacLookup[id];
-  playerEntry["xml"] = xml;
+  // console.log("xml", xml);
   let parser = new DOMParser();
   let xmlDoc = parser.parseFromString(xml, "text/xml");
-  playerEntry["xml_parsed"] = xmlDoc;
+  // console.log("xmlDoc", xmlDoc);
   const groups = [];
-  const elems = xmlDoc.getElementsByTagName("groupURL");
+  const elems = xmlDoc.getElementsByTagName("group");
   for (let group of elems) {
-    groups.push(group.childNodes[0].nodeValue);
+    const groupData = {
+      id: group.getElementsByTagName("groupID64")[0].childNodes[0].nodeValue,
+      url:
+        group.getElementsByTagName("groupURL")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      name:
+        group.getElementsByTagName("groupName")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      avatarIcon:
+        group.getElementsByTagName("avatarIcon")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      summary:
+        group.getElementsByTagName("summary")[0]?.childNodes[0]?.nodeValue ||
+        "",
+      headline:
+        group.getElementsByTagName("headline")[0]?.childNodes[0]?.nodeValue ||
+        "",
+    };
+    groups.push(groupData);
   }
-  console.log(groups.join());
 
-  const span = createSpan(groups.join());
-  playerEntry["groups_html"] = span;
-  playerEntry["groups"] = groups.join();
+  const anchors = [];
+  groups.forEach((group) => {
+    if (group.url) {
+      const anchor = createAnchor(
+        group.name,
+        `https://steamcommunity.com/groups/${group.url}`,
+        "_blank",
+        "padding: 2px;font-size:x-small;"
+      );
+      anchors.push(anchor);
+    }
+  });
+
+  playerEntry["groups_html"] = createDivWithChildren(...anchors);
+  playerEntry["groups"] = groups;
+  playerEntry["summary"] =
+    xmlDoc.getElementsByTagName("summary")[0]?.childNodes[0]?.nodeValue || "";
 };
 
 export const onLogsData = (response, id) => {

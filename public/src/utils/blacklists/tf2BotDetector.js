@@ -1,4 +1,4 @@
-export const pazerlist = {
+export const pazerList = {
   $schema:
     "https://raw.githubusercontent.com/PazerOP/tf2_bot_detector/master/schemas/v3/playerlist.schema.json",
   file_info: {
