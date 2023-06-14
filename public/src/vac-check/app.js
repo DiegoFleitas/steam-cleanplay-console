@@ -46,6 +46,7 @@ const processInput = async (input) => {
     document.querySelector("#loader").hidden = true;
   }
   document.getElementById("loader").hidden = false;
+  window.bubblesCursor();
 
   parseInput(input);
 

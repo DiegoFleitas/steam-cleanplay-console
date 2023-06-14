@@ -110,20 +110,43 @@ a:hover {
    resize: none;
 }
 
+btn-bubble {
+   color: white;
+   background-color: #77b11c;
+   background-repeat: no-repeat;
+ }
+ .btn-bubble:hover, .btn-bubble:focus {
+   -webkit-animation: bubbles 1s forwards ease-out;
+           animation: bubbles 1s forwards ease-out;
+   background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 104% 110% / 1.04em 1.04em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 19% 119% / 0.67em 0.67em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 71% 130% / 1.12em 1.12em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 101% 142% / 0.5em 0.5em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 11% 125% / 1.03em 1.03em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 52% 110% / 0.81em 0.81em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 69% 149% / 1.18em 1.18em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) -1% 82% / 1.03em 1.03em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 37% 103% / 0.55em 0.55em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 108% 127% / 0.92em 0.92em, radial-gradient(circle at center, rgba(0, 0, 0, 0) 30%, #eeeeff 60%, #eeeeff 65%, rgba(0, 0, 0, 0) 70%) 19% 142% / 0.62em 0.62em;
+   background-color: #77b11c;
+   background-repeat: no-repeat;
+ }
+ 
+ @-webkit-keyframes bubbles {
+   100% {
+     background-position: 98% 11%, 11% -177%, 76% -382%, 102% 10%, 5% -101%, 55% -135%, 74% -301%, 9% 34%, 43% -101%, 107% -249%, 22% -387%;
+     box-shadow: inset 0 -6.5em 0 #0072c4;
+   }
+ }
+ 
+ @keyframes bubbles {
+   100% {
+     background-position: 98% 11%, 11% -177%, 76% -382%, 102% 10%, 5% -101%, 55% -135%, 74% -301%, 9% 34%, 43% -101%, 107% -249%, 22% -387%;
+     box-shadow: inset 0 -6.5em 0 #0072c4;
+   }
+ }
+
 #button {
    padding: 10px;
    margin: 10px;
    border-radius: 5px;
    border: none;
-   resize: none;
    font-weight: bolder;
    cursor: pointer;
    background-color: #00BFFF;
-   transition: background-color 0.3s ease;
-}
-
-#button:hover {
-   background-color: #009ACD;
+   color: white;
+   text-shadow: #222222 1px 1px 1px;
 }
 
 .inputs {
@@ -160,24 +183,6 @@ table {
    padding: 5px;
    margin: 5px;
    color: #222222;
-}
-
-.loader {
-   border: 16px solid #f3f3f3; /* Light grey */
-   border-top: 16px solid #ef9849; /* orange */
-   border-radius: 50%;
-   width: 120px;
-   height: 120px;
-   animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-   0% {
-      transform: rotate(0deg);
-   }
-   100% {
-      transform: rotate(360deg);
-   }
 }
 
 .center {
