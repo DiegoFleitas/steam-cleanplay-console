@@ -169,6 +169,7 @@ export const drawTable = () => {
       { title: "Location", data: "location", defaultContent: "" },
       {
         title: "Steam nick",
+        visible: false,
         data: "personaname_html",
         render: (data, type, row) => {
           return data?.outerHTML;
@@ -191,7 +192,7 @@ export const drawTable = () => {
       },
       {
         title: "Related",
-        visible: true,
+        visible: false,
         data: "relatedPersonas",
         render: (data, type, row) => {
           return data || "";
@@ -202,6 +203,9 @@ export const drawTable = () => {
         title: "Summary",
         visible: true,
         data: "summary",
+        render: (data, type, row) => {
+          return data == "No information given." ? "" : data;
+        },
         defaultContent: "",
       },
     ],
@@ -233,6 +237,10 @@ export const drawTable = () => {
         orderable: true,
         // Use the pre-processed boolean for sorting
         data: "differentNicks",
+      },
+      {
+        targets: 14, // index of the "Summary" column
+        className: "break-word",
       },
     ],
     pageLength: 30,

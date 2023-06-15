@@ -31,6 +31,10 @@ inputElem.value = text;
 let allData = [];
 
 document.querySelector("#button").addEventListener("click", () => {
+  let element = document.querySelector("#faq");
+  if (element) {
+    element.style.display = "none";
+  }
   let input = inputElem.value;
   allData = input
     .split(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
@@ -92,6 +96,8 @@ class Graph {
         ],
         elements,
       });
+
+      this.cy.fit();
 
       // Bind click event
       this.cy.on("click", "node", (event) => {

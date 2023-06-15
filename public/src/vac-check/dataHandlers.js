@@ -206,7 +206,9 @@ export const onXMLData = (xml, id) => {
     }
   });
 
-  playerEntry["groups_html"] = createDivWithChildren(...anchors);
+  const div = createDivWithChildren(...anchors);
+  div.className = "display-column";
+  playerEntry["groups_html"] = div;
   playerEntry["groups"] = groups;
   playerEntry["summary"] =
     xmlDoc.getElementsByTagName("summary")[0]?.childNodes[0]?.nodeValue || "";
