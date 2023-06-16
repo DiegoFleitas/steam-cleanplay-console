@@ -34,11 +34,12 @@ let text = `#   3481 "「VΛC」✔ Lightning⸙Dust"            [U:1:1266329853
 
 let ids = null;
 
-const inputElem = document.querySelector("#input-vac");
+const inputElem = document.querySelector("#input-players");
 inputElem.value = text;
 
 document.querySelector("#button").addEventListener("click", () => {
   processInput(inputElem.value);
+  document.querySelector("#vac-check").style.display = "";
 });
 
 const processInput = async (input) => {

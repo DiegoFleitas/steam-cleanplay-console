@@ -6,13 +6,29 @@
 
 /* debug styles */
 
+body {
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  color: white;
+  background-color: #505050;
+  padding: 0.22rem;
+  margin: 0.22rem;
+  word-wrap: break-word;
+}
+
 .container {
   display: flex;
   height: 100vh;
+  margin: 0.625rem;
+}
+
+.inputs-container {
+  width: 30%;
+  overflow: auto;
 }
 
 .table-container {
-  width: 70%;
+  width: 40%;
   overflow: auto;
 }
 
@@ -25,10 +41,29 @@
   .container {
     flex-direction: column;
   }
-  .table-container,
+
+  .inputs-container {
+    width: 100%;
+    overflow: auto;
+  }
+
+  .table-container {
+    width: 100%;
+    overflow: auto;
+  }
+
   .graph-container {
     width: 100%;
+    overflow: auto;
   }
+
+  #faq {
+    display: none;
+  }
+}
+
+.graph-title {
+  text-align: center;
 }
 
 .floating-button {
@@ -69,8 +104,8 @@
 
 .modal-content {
   background-color: #f8f8f0;
-  padding: 20px;
-  border-radius: 5px;
+  padding: 1.3rem;
+  border-radius: 0.3rem;
   width: 500px;
   max-width: 90%;
   text-align: center;
@@ -78,30 +113,10 @@
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0.625rem;
+  right: 0.625rem;
   font-size: 24px;
   cursor: pointer;
-}
-
-textarea {
-  width: 100%;
-  height: 200px;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  resize: none;
-  font-size: 16px;
-}
-
-body {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1rem;
-  color: white;
-  background-color: #505050;
-  padding: 0.22rem;
-  margin: 0.22rem;
-  word-wrap: break-word;
 }
 
 pre {
@@ -109,7 +124,8 @@ pre {
 }
 
 .logo {
-  max-width: 2rem;
+  width: 5vw; /* adjusts size based on viewport width */
+  height: auto; /* maintains aspect ratio */
 }
 
 .cleanplay-font {
@@ -124,7 +140,7 @@ pre {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 5px;
+  gap: 0.3rem;
 }
 
 .brand h1,
@@ -135,7 +151,7 @@ pre {
 }
 
 .jumbotron h1 {
-  font-size: 2rem;
+  font-size: calc(1rem + 1vw); /* adjusts size based on viewport width */
   padding: 0.13rem 0;
   margin: 0.13rem 0;
 }
@@ -154,18 +170,15 @@ pre {
 a {
   color: #20b2aa;
   text-decoration: none;
-  padding: 2px;
+  padding: 0.13rem;
 }
 
 a:hover {
   text-decoration: underline;
 }
 
-#input-vac {
-  width: 80%;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
+#input-players {
+  border-radius: 0.3rem;
   border: none;
   resize: none;
 }
@@ -287,9 +300,9 @@ btn-bubble {
 }
 
 #button {
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
+  padding: 0.625rem;
+  margin: 0.625rem;
+  border-radius: 0.3rem;
   border: none;
   font-weight: bolder;
   cursor: pointer;
@@ -298,19 +311,33 @@ btn-bubble {
   text-shadow: #222222 1px 1px 1px;
 }
 
+.button-container {
+  display: flex;
+  align-items: center;
+}
+
+.textarea-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 65%;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 10rem;
+  border-radius: 0.3rem;
+  font-family: "Sarpanch", sans-serif;
+  font-size: 16px;
+  color: #333333;
+}
+
 .inputs {
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.page-header {
-  padding: 2px;
-  margin: 2px;
-}
-
-.panel-default * {
-  margin: 10px;
+  padding: 1rem;
 }
 
 .modal-content * {
@@ -343,16 +370,16 @@ table {
 .node-tooltip {
   background-color: #333;
   color: #fff;
-  padding: 2px;
-  border-radius: 4px;
+  padding: 0.13rem;
+  border-radius: 0.3rem;
   z-index: 1000;
 }
 
 .tooltip {
   background-color: #333;
   color: #fff;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 0.625rem;
+  border-radius: 0.3rem;
   font-size: 12px;
   z-index: 1000;
   display: none;
