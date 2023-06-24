@@ -1,11 +1,15 @@
 import { locations } from "./steamCountries.js";
 import { pazerList } from "./blacklists/pazer/tf2BotDetector.js";
-import { cheatingGroups } from "./blacklists/pazer/groups.js";
+import { cheatingGroups } from "./blacklists/pazer/untrustedGroups.js";
 import { mcd } from "./blacklists/megascatterbomb/cheaterDatabase.js";
+import { customList } from "./blacklists/custom/tf2BotDetector.js";
+import { customCheatingGroups } from "./blacklists/custom/untrustedGroups.js";
 
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/playerlist.official.json
 const tf2BotDetectorMap = new Map(
-  pazerList.players.map((player) => [player.steamid, player])
+  pazerList.players
+    .filter((player) => player.attributes.includes("cheater"))
+    .map((player) => [player.steamid, player])
 );
 
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/untrusted_groups.official.json
@@ -15,6 +19,17 @@ const cheatingGroupsMap = new Map(
 
 // @see https://megascatterbomb.com/mcd
 const cheaterDbMap = new Map(mcd.map((player) => [player.id, player]));
+
+// custom blacklist in tf2botdetector format
+const tf2BotDetectorCustomMap = new Map(
+  customList.players
+    .filter((player) => player.attributes.includes("cheater"))
+    .map((player) => [player.steamid, player])
+);
+
+const cheatingGroupsCustomMap = new Map(
+  customCheatingGroups.groups.map((group) => [group.id, group])
+);
 
 export const getId = (inputSteamID) => {
   try {
@@ -68,8 +83,16 @@ export const discoverFriendships = (data) => {
     // Check if this player is part of a cheating group
     for (const group of item.groups) {
       if (cheatingGroupsMap.has(group.id)) {
+        group.description =
+          group.description || cheatingGroupsMap.get(group.id).description;
         item.cheatingGroups.add(group);
         item.blacklist.add("tf2botdetector");
+      } else if (cheatingGroupsCustomMap.has(group.id)) {
+        group.description =
+          group.description ||
+          cheatingGroupsCustomMap.get(group.id).description;
+        item.cheatingGroups.add(group);
+        item.blacklist.add("custom");
       }
     }
 
@@ -89,6 +112,9 @@ export const discoverFriendships = (data) => {
       } else if (cheaterDbMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
         item.blacklist.add("mcd");
+      } else if (tf2BotDetectorCustomMap.has(friendId)) {
+        item.relatedCheaters.add(friendId);
+        item.blacklist.add("custom");
       }
     }
   }

@@ -94,14 +94,23 @@ class Graph {
 
       // Bind click event
       this.cy.on("click", "node", (event) => {
-        //console.log("click", event);
-        const connected = event.target
+        // hide not connected nodes for 5 seconds
+        const node = event.target;
+        const connected = node
           .predecessors()
-          .union(event.target)
-          .union(event.target.successors());
+          .union(node)
+          .union(node.successors());
         const notConnected = this.cy.elements().not(connected);
         notConnected.remove();
         setTimeout(() => notConnected.restore(), 5000);
+        // open profile
+        const data = node.data();
+        if (data?.id) {
+          window.open(
+            `https://steamcommunity.com/profiles/${data?.id}`,
+            "_blank"
+          );
+        }
       });
 
       // Bind tooltip event
@@ -185,6 +194,8 @@ const graphSchema = (graphLookup) => {
           img = "/img/mcd.jpg";
         } else if (entry?.blacklist?.has("tf2botdetector")) {
           img = "/img/tf2botdetector.png";
+        } else if (entry?.blacklist?.has("custom")) {
+          img = "/img/custom.png";
         }
 
         elements.nodes.push({
@@ -209,7 +220,7 @@ const graphSchema = (graphLookup) => {
           data: {
             id: group.id,
             name: `known cheater group - ${
-              group.url || group.name || group.id
+              group.url || group.name || group.description || group.id
             }`,
             relatedSteamIds: "",
             img: "/img/tf2botdetector.png",

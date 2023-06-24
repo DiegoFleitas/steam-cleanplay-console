@@ -12,3 +12,7 @@
 
 # misc
 *.log
+
+# other
+/public/src/utils/blacklists/custom
+convert-pazerlist.js
