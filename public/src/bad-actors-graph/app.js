@@ -199,7 +199,9 @@ const graphSchema = (graphLookup) => {
         elements.nodes.push({
           data: {
             id: id,
-            name: `known cheater (${id})`,
+            name: `known cheater (${id}) ${Array.from(
+              entry?.blacklist ?? []
+            ).join("/")}`,
             relatedSteamIds: "",
             img: img,
             bans: true,
