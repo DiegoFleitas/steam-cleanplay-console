@@ -1,7 +1,8 @@
 import { locations } from "./steamCountries.js";
-import { pazerList } from "./blacklists/pazer/tf2BotDetector.js";
-import { cheatingGroups } from "./blacklists/pazer/untrustedGroups.js";
-import { mcd } from "./blacklists/megascatterbomb/cheaterDatabase.js";
+import { pazerList } from "./blacklists/tf2BotDetector/pazerList.js";
+import { cheatingGroups } from "./blacklists/tf2BotDetector/untrustedGroups.js";
+import { mcdList } from "./blacklists/megascatterbomb/megaCheaterDatabase.js";
+import { tacobotList } from "./blacklists/tacobot/tacobotList.js";
 import { customList } from "./blacklists/custom/tf2BotDetector.js";
 import { customCheatingGroups } from "./blacklists/custom/untrustedGroups.js";
 
@@ -18,7 +19,12 @@ const cheatingGroupsMap = new Map(
 );
 
 // @see https://megascatterbomb.com/mcd
-const cheaterDbMap = new Map(mcd.map((player) => [player.id, player]));
+const cheaterDbMap = new Map(mcdList.map((player) => [player.id, player]));
+
+// @see https://api.tacobot.tf/public/tf2bd/v1
+const tacobotMap = new Map(
+  tacobotList.players.map((player) => [player.steamid, player])
+);
 
 // custom blacklist in tf2botdetector format
 const tf2BotDetectorCustomMap = new Map(
@@ -105,14 +111,20 @@ export const discoverFriendships = (data) => {
         friendItem.relatedPlayers.add(item.id);
       }
 
-      // Check if this friend is a cheater
+      // Check if this friend is a known cheater
       if (tf2BotDetectorMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
         item.blacklist.add("tf2botdetector");
-      } else if (cheaterDbMap.has(friendId)) {
+      }
+      if (cheaterDbMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
         item.blacklist.add("mcd");
-      } else if (tf2BotDetectorCustomMap.has(friendId)) {
+      }
+      if (tacobotMap.has(friendId)) {
+        item.relatedCheaters.add(friendId);
+        item.blacklist.add("tacobot");
+      }
+      if (tf2BotDetectorCustomMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
         item.blacklist.add("custom");
       }

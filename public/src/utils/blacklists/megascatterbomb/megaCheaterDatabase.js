@@ -1,4 +1,4 @@
-export const mcd = [
+export const mcdList = [
   {
     id: "76561199291189951",
     id3: "[U:1:1330924223]",
@@ -67289,4 +67289,4 @@ export const mcd = [
     y: -3107.9938242315034,
     aliases: ["mybotchannelwhen"],
   },
-]
+];

@@ -185,15 +185,13 @@ const graphSchema = (graphLookup) => {
         if (!id || key === id) continue;
 
         let img = "";
-        if (
-          entry?.blacklist?.has("mcd") &&
-          entry?.blacklist?.has("tf2botdetector")
-        ) {
-          img = "/img/all.jpg";
+        // TODO: dynamic pie-like img for shared cheaters?
+        if (entry?.blacklist?.has("tf2botdetector")) {
+          img = "/img/tf2botdetector.png";
+        } else if (entry?.blacklist?.has("tacobot")) {
+          img = "/img/tacobot.jpg";
         } else if (entry?.blacklist?.has("mcd")) {
           img = "/img/mcd.jpg";
-        } else if (entry?.blacklist?.has("tf2botdetector")) {
-          img = "/img/tf2botdetector.png";
         } else if (entry?.blacklist?.has("custom")) {
           img = "/img/custom.png";
         }
