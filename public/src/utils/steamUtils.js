@@ -86,6 +86,7 @@ export const discoverFriendships = (data) => {
   const dataMap = new Map(dataWithSets.map((item) => [item.id, item]));
 
   for (const [_, item] of dataMap) {
+    if (!item?.groups?.length) continue; // skip if no groups
     // Check if this player is part of a cheating group
     for (const group of item.groups) {
       if (cheatingGroupsMap.has(group.id)) {
