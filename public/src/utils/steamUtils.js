@@ -40,6 +40,11 @@ const cheatingGroupsCustomMap = new Map(
 export const getId = (inputSteamID) => {
   try {
     const steamID = new SteamID(inputSteamID);
+    if (steamID && steamID?.type === 4) {
+      // ignore server ids
+      // console.log("Invalid Steam ID: ", inputSteamID);
+      return null;
+    }
     const steam64identifier = steamID.getSteamID64();
     // console.log(inputSteamID, steam64identifier);
     return steam64identifier;
