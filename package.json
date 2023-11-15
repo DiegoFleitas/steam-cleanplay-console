@@ -1,5 +1,5 @@
 {
-  "name": "cleanplay-console-dtofo0ea4m",
+  "name": "cleanplay-console",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -35,6 +35,7 @@
   "devDependencies": {
     "concurrently": "^8.0.1",
     "cross-var": "^1.1.0",
+    "steamid": "^2.0.0",
     "vite": "^4.2.1"
   }
 }
