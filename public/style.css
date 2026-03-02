@@ -9,22 +9,46 @@
 body {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1rem;
-  color: white;
-  background-color: #505050;
-  padding: 0.22rem;
-  margin: 0.22rem;
+  color: #f9fafb;
+  background: radial-gradient(circle at top left, #111827, #020617 55%, #000000);
+  padding: 1.5rem;
+  margin: 0;
   word-wrap: break-word;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
 }
 
 .container {
   display: flex;
-  height: 100vh;
-  margin: 0.625rem;
+  flex-direction: row;
+  gap: 1.25rem;
+  max-width: 1200px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.92);
+  border-radius: 0.75rem;
+  box-shadow: 0 22px 45px rgba(15, 23, 42, 0.85);
+  padding: 1.5rem 1.75rem;
+  box-sizing: border-box;
+}
+
+.inputs-container,
+.table-container,
+.graph-container {
+  background: radial-gradient(circle at top, rgba(30, 64, 175, 0.2), rgba(15, 23, 42, 0.8));
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: auto;
 }
 
 .inputs-container {
   width: 30%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .table-container {
@@ -34,7 +58,8 @@ body {
 
 .graph-container {
   width: 30%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (max-width: 768px) {
@@ -124,8 +149,8 @@ pre {
 }
 
 .logo {
-  width: 5vw; /* adjusts size based on viewport width */
-  height: auto; /* maintains aspect ratio */
+  width: clamp(18px, 1.8vw, 28px);
+  height: auto;
 }
 
 .cleanplay-font {
@@ -137,17 +162,24 @@ pre {
 }
 
 .brand {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.3rem;
+  display: inline-block;
 }
 
 .brand h1,
 .brand img {
-  display: inline;
   margin: 0;
   padding: 0;
+}
+
+.cleanplay-font {
+  font-family: "Orbitron", sans-serif;
+  display: block;
+}
+
+.console-font,
+.logo {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .jumbotron h1 {
@@ -329,8 +361,16 @@ textarea {
   min-height: 10rem;
   border-radius: 0.3rem;
   font-family: "Sarpanch", sans-serif;
-  font-size: 16px;
-  color: #333333;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  background-color: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  padding: 0.75rem;
+  box-sizing: border-box;
+}
+
+textarea::placeholder {
+  color: #6b7280;
 }
 
 .inputs {
@@ -358,7 +398,7 @@ table {
 
 #bad-actors-graph #cy {
   width: 100%;
-  height: 60rem;
+  height: min(42rem, 70vh);
   display: flex;
   z-index: 1;
 }
