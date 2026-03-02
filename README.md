@@ -4,12 +4,25 @@ A web-based tool to check if players in a Team Fortress 2 or Counter-Strike: Glo
 
 ## Development
 
-Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration
+Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration.
 
 PRE: You need to have docker to run the image at /redis folder
 
 - Rename .env.example to .env & update the values
 - Run `npm run dev`
+
+## Tests
+
+Vitest is used for both backend and frontend tests.
+
+- **Run all tests**: `pnpm test`
+- **Watch mode**: `pnpm test:watch`
+- **Test UI**: `pnpm test:ui`
+
+Test files live under the `tests` folder:
+
+- Backend tests in `tests/backend` (Node environment)
+- Frontend and UI tests in `tests/frontend` (jsdom / DOM-focused)
 
 ## Troubleshooting
 

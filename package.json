@@ -6,7 +6,9 @@
   "type": "module",
   "packageManager": "pnpm@10.30.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
     "fe:dev": "vite",
     "fe:serve": "vite preview",
     "be:dev": "nodemon server.js",
@@ -34,9 +36,13 @@
     "ua-parser-js": "^1.0.35"
   },
   "devDependencies": {
+    "@vitest/ui": "^2.1.9",
     "concurrently": "^8.0.1",
     "cross-var": "^1.1.0",
+    "jsdom": "^24.1.3",
     "steamid": "^2.0.0",
-    "vite": "^4.2.1"
+    "supertest": "^7.2.2",
+    "vite": "^4.2.1",
+    "vitest": "^2.1.9"
   }
 }
