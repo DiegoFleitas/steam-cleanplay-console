@@ -17,11 +17,15 @@ const hasBuild = fs.existsSync(path.join(distDir, "index.html"));
 
 const app = express();
 
-// Serve built frontend at / when available (avoids serving raw .ts with wrong MIME)
+// Serve only the built frontend at /. Never serve public/index.html (it references .ts and breaks when served by Express).
 app.get("/", (req, res) => {
-  res.sendFile(hasBuild ? "index.html" : "index.html", {
-    root: hasBuild ? distDir : publicDir,
-  });
+  if (!hasBuild) {
+    res.status(503).set("Content-Type", "text/plain").send(
+      "Frontend not built. Run `pnpm build` and try again.",
+    );
+    return;
+  }
+  res.sendFile("index.html", { root: distDir });
 });
 if (hasBuild) {
   app.use(express.static(distDir));

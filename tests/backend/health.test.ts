@@ -8,4 +8,3 @@ describe("health endpoints", () => {
     expect(res.text).toBe("OK");
   });
 });
-

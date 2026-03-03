@@ -12,6 +12,8 @@ PRE: You need to have docker to run the image at /redis folder
 - Run `npm run dev`
 - **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
 
+Production and `pnpm start` require a built frontend. Run `pnpm build` before `pnpm start` (or use `pnpm start`, which runs the build first). If you open http://localhost:3000 when no build exists, the server returns **503 Service Unavailable** with the message "Frontend not built. Run \`pnpm build\` and try again."
+
 ## Tests
 
 Vitest is used for both backend and frontend tests.

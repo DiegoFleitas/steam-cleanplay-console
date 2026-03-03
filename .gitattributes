@@ -1,1 +1,7 @@
-* text=auto
+# Exclude remaining JavaScript from GitHub language stats (Linguist)
+# so the repo is reported as TypeScript.
+vite.config.js linguist-generated=true
+public/src/utils/steamUtils.js linguist-generated=true
+public/src/utils/steamCountries.js linguist-generated=true
+public/src/utils/blacklists/**/*.js linguist-generated=true
+tests/**/*.js linguist-generated=true

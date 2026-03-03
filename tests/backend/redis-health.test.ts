@@ -19,4 +19,3 @@ describe("redis health endpoint", () => {
     spy.mockRestore();
   });
 });
-
