@@ -1,6 +1,7 @@
 import axiosHelper from "../helpers/axios.js";
 const axios = axiosHelper();
 import { getCacheValue, setCacheValue } from "../helpers/redis.js";
+import { getSteamApiKey } from "../helpers/config.js";
 
 const cacheTtl = process.env.CACHE_TTL || 60; // minutes
 
@@ -48,7 +49,12 @@ const addApiKeyToUrl = (url) => {
   const domain = urlObj.hostname;
   switch (domain) {
     case "api.steampowered.com":
-      urlObj.searchParams.append("key", process.env.STEAM_API_KEY);
+      {
+        const apiKey = getSteamApiKey();
+        if (apiKey) {
+          urlObj.searchParams.append("key", apiKey);
+        }
+      }
       break;
     default:
       break;
