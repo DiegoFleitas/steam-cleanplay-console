@@ -1,14 +1,14 @@
-import { cheatingGroups } from "../../public/src/utils/blacklists/custom/untrustedGroups.js";
+import { customCheatingGroups } from "../../public/src/utils/blacklists/custom/untrustedGroups.js";
 import { customList } from "../../public/src/utils/blacklists/custom/tf2BotDetector.js";
 
 describe("blacklist utilities", () => {
   it("cheatingGroups has a non-empty groups array", () => {
-    expect(Array.isArray(cheatingGroups.groups)).toBe(true);
-    expect(cheatingGroups.groups.length).toBeGreaterThan(0);
+    expect(Array.isArray(customCheatingGroups.groups)).toBe(true);
+    expect(customCheatingGroups.groups.length).toBeGreaterThan(0);
   });
 
   it("each cheatingGroup entry has id and description", () => {
-    for (const group of cheatingGroups.groups) {
+    for (const group of customCheatingGroups.groups) {
       expect(group).toHaveProperty("id");
       expect(typeof group.id === "number" || typeof group.id === "string").toBe(
         true,
