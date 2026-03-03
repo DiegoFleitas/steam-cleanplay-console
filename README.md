@@ -10,6 +10,7 @@ PRE: You need to have docker to run the image at /redis folder
 
 - Rename .env.example to .env & update the values
 - Run `npm run dev`
+- **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
 
 ## Tests
 

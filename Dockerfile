@@ -17,11 +17,13 @@ WORKDIR /app
 # to install all modules: "npm install --production=false".
 # Ref: https://docs.npmjs.com/cli/v9/commands/npm-install#description
 
-ENV NODE_ENV production
-
 COPY . .
 
-RUN npm install
+# Install all deps (including dev) so we can run the frontend build
+RUN npm install --include=dev
+RUN npm run build
+RUN npm prune --omit=dev
+
 FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"

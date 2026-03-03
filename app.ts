@@ -1,5 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 import { session } from "./middleware/index.js";
@@ -7,13 +10,23 @@ import { logging } from "diegos-fly-logger/index.mjs";
 import { proxy } from "./controllers/index.js";
 import { isHealthy } from "./helpers/redis.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const publicDir = path.join(__dirname, "public");
+const distDir = path.join(publicDir, "dist");
+const hasBuild = fs.existsSync(path.join(distDir, "index.html"));
+
 const app = express();
 
-app.use(express.static("public"));
-
+// Serve built frontend at / when available (avoids serving raw .ts with wrong MIME)
 app.get("/", (req, res) => {
-  res.sendFile("/dist/index.html", { root: __dirname });
+  res.sendFile(hasBuild ? "index.html" : "index.html", {
+    root: hasBuild ? distDir : publicDir,
+  });
 });
+if (hasBuild) {
+  app.use(express.static(distDir));
+}
+app.use(express.static(publicDir));
 
 app.use(session);
 

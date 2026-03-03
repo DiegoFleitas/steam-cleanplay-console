@@ -6,8 +6,8 @@
   "type": "module",
   "packageManager": "pnpm@10.30.0",
   "scripts": {
-    "test": "vitest",
-    "test:ci": "vitest run",
+    "test": "vite build && vitest",
+    "test:ci": "vite build && vitest run",
     "typecheck": "tsc --noEmit",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
