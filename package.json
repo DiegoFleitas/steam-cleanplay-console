@@ -38,7 +38,7 @@
     "cookie-session": "^2.0.0",
     "diegos-fly-logger": "^1.0.1",
     "dotenv": "^16.0.3",
-    "express": "^4.17.1",
+    "express": "^5.2.1",
     "morgan": "^1.10.0",
     "redis": "^4.6.4",
     "tsx": "^4.21.0",
