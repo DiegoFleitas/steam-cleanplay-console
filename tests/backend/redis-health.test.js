@@ -1,6 +1,6 @@
 import request from "supertest";
-import app from "../../app.js";
-import * as redisHelper from "../../helpers/redis.js";
+import app from "../../app.ts";
+import * as redisHelper from "../../helpers/redis.ts";
 
 describe("redis health endpoint", () => {
   it("returns 200 OK when redis is healthy", async () => {

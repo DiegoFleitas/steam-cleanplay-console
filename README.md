@@ -16,13 +16,19 @@ PRE: You need to have docker to run the image at /redis folder
 Vitest is used for both backend and frontend tests.
 
 - **Run all tests**: `pnpm test`
+- **Run tests once (CI)**: `pnpm test:ci`
 - **Watch mode**: `pnpm test:watch`
 - **Test UI**: `pnpm test:ui`
+- **TypeScript check**: `pnpm typecheck`
 
 Test files live under the `tests` folder:
 
 - Backend tests in `tests/backend` (Node environment)
 - Frontend and UI tests in `tests/frontend` (jsdom / DOM-focused)
+
+## TypeScript
+
+The app is written in TypeScript. Backend entry is `server.ts` (run with `tsx`). New modules should be added in `.ts`; prefer type inference and avoid `any` where practical. Data-only blacklist files under `public/src/utils/blacklists` remain JavaScript.
 
 ## Troubleshooting
 

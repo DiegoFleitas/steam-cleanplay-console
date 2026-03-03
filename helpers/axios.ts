@@ -1,9 +1,7 @@
-import axios from "axios";
+import axios, { type AxiosInstance } from "axios";
 import https from "https";
 
-const instance = axios.create({
-  // Config options
-});
+const instance: AxiosInstance = axios.create({});
 
 instance.interceptors.request.use((config) => {
   console.log(`[axios] Sending request to ${config.url}`);
@@ -12,26 +10,22 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (error: { config: unknown; response?: { status?: number; headers?: { "retry-after"?: string } } }) => {
     const { config, response } = error;
-    if (response.status === 429) {
-      // console.log(response);
-      const retryAfter = response.headers["retry-after"] || 1;
+    if (response?.status === 429) {
+      const retryAfter = response.headers?.["retry-after"] || 1;
       console.log(`[axios] Rate limit exceeded, retrying in ${retryAfter} (s)`);
-      // Retry the request after a certain amount of time
       return new Promise((resolve) => {
-        setTimeout(() => resolve(axios(config)), retryAfter * 1000);
+        setTimeout(() => resolve(axios(config as Parameters<typeof axios>[0])), Number(retryAfter) * 1000);
       });
     }
-    // console.log(error);
     return Promise.reject(error);
   }
 );
 
-// allow reusing existing connections (performance)
-export default (keepAlive) => {
+export default function (keepAlive?: boolean): AxiosInstance {
   if (keepAlive) {
     instance.defaults.httpsAgent = new https.Agent({ keepAlive: true });
   }
   return instance;
-};
+}
