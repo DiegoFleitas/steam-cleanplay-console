@@ -3,8 +3,6 @@ import { pazerList } from "./blacklists/tf2BotDetector/pazerList.js";
 import { cheatingGroups } from "./blacklists/tf2BotDetector/untrustedGroups.js";
 import { mcdList } from "./blacklists/megascatterbomb/megaCheaterDatabase.js";
 import { tacobotList } from "./blacklists/tacobot/tacobotList.js";
-import { customList } from "./blacklists/custom/tf2BotDetector.js";
-import { customCheatingGroups } from "./blacklists/custom/untrustedGroups.js";
 
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/playerlist.official.json
 const tf2BotDetectorMap = new Map(
@@ -26,16 +24,11 @@ const tacobotMap = new Map(
   tacobotList.players.map((player) => [player.steamid, player])
 );
 
-// custom blacklist in tf2botdetector format
-const tf2BotDetectorCustomMap = new Map(
-  customList.players
-    .filter((player) => player.attributes.includes("cheater"))
-    .map((player) => [player.steamid, player])
-);
-
-const cheatingGroupsCustomMap = new Map(
-  customCheatingGroups.groups.map((group) => [group.id, group])
-);
+// Custom blacklists are optional and user-provided.
+// By default, maps are empty so the app and tests do not
+// depend on large, ignored files under public/src/utils/blacklists/custom.
+const tf2BotDetectorCustomMap = new Map();
+const cheatingGroupsCustomMap = new Map();
 
 export const getId = (inputSteamID) => {
   try {
