@@ -1,29 +1,25 @@
-import SteamID from "steamid";
-import { locations } from "./steamCountries.js";
-import { pazerList } from "./blacklists/tf2BotDetector/pazerList.js";
-import { cheatingGroups } from "./blacklists/tf2BotDetector/untrustedGroups.js";
-import { mcdList } from "./blacklists/megascatterbomb/megaCheaterDatabase.js";
-import { tacobotList } from "./blacklists/tacobot/tacobotList.js";
+import SteamID from 'steamid';
+import { mcdList } from './blacklists/megascatterbomb/megaCheaterDatabase.js';
+import { tacobotList } from './blacklists/tacobot/tacobotList.js';
+import { pazerList } from './blacklists/tf2BotDetector/pazerList.js';
+import { cheatingGroups } from './blacklists/tf2BotDetector/untrustedGroups.js';
+import { locations } from './steamCountries.js';
 
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/playerlist.official.json
 const tf2BotDetectorMap = new Map(
   pazerList.players
-    .filter((player) => player.attributes.includes("cheater"))
-    .map((player) => [player.steamid, player])
+    .filter((player) => player.attributes.includes('cheater'))
+    .map((player) => [player.steamid, player]),
 );
 
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/untrusted_groups.official.json
-const cheatingGroupsMap = new Map(
-  cheatingGroups.groups.map((group) => [group.id, group])
-);
+const cheatingGroupsMap = new Map(cheatingGroups.groups.map((group) => [group.id, group]));
 
 // @see https://megascatterbomb.com/mcd
 const cheaterDbMap = new Map(mcdList.map((player) => [player.id, player]));
 
 // @see https://api.tacobot.tf/public/tf2bd/v1
-const tacobotMap = new Map(
-  tacobotList.players.map((player) => [player.steamid, player])
-);
+const tacobotMap = new Map(tacobotList.players.map((player) => [player.steamid, player]));
 
 // Custom blacklists are optional and user-provided.
 // By default, maps are empty so the app and tests do not
@@ -52,24 +48,21 @@ export const getLocation = (countryCode, stateCode, cityId) => {
   let locationParts = [];
 
   if (locations?.[countryCode]) {
-    locationParts.push(locations?.[countryCode]?.countryName || "");
+    locationParts.push(locations?.[countryCode]?.countryName || '');
 
     if (locations?.[countryCode]?.states?.[stateCode]) {
-      locationParts.push(
-        locations?.[countryCode]?.states?.[stateCode]?.stateName || ""
-      );
+      locationParts.push(locations?.[countryCode]?.states?.[stateCode]?.stateName || '');
 
       if (locations?.[countryCode]?.states?.[stateCode]?.cities?.[cityId]) {
         locationParts.push(
-          locations?.[countryCode]?.states?.[stateCode]?.cities?.[cityId]
-            .cityName || ""
+          locations?.[countryCode]?.states?.[stateCode]?.cities?.[cityId].cityName || '',
         );
       }
     }
   }
 
   // console.log("getLocation", [countryCode, stateCode, cityId], locationParts);
-  return locationParts.filter((part) => part).join(", ");
+  return locationParts.filter((part) => part).join(', ');
 };
 
 export const discoverFriendships = (data) => {
@@ -89,16 +82,13 @@ export const discoverFriendships = (data) => {
     // Check if this player is part of a cheating group
     for (const group of item.groups) {
       if (cheatingGroupsMap.has(group.id)) {
-        group.description =
-          group.description || cheatingGroupsMap.get(group.id).description;
+        group.description = group.description || cheatingGroupsMap.get(group.id).description;
         item.cheatingGroups.add(group);
-        item.blacklist.add("tf2botdetector");
+        item.blacklist.add('tf2botdetector');
       } else if (cheatingGroupsCustomMap.has(group.id)) {
-        group.description =
-          group.description ||
-          cheatingGroupsCustomMap.get(group.id).description;
+        group.description = group.description || cheatingGroupsCustomMap.get(group.id).description;
         item.cheatingGroups.add(group);
-        item.blacklist.add("custom");
+        item.blacklist.add('custom');
       }
     }
 
@@ -114,19 +104,19 @@ export const discoverFriendships = (data) => {
       // Check if this friend is a known cheater
       if (tf2BotDetectorMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
-        item.blacklist.add("tf2botdetector");
+        item.blacklist.add('tf2botdetector');
       }
       if (cheaterDbMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
-        item.blacklist.add("mcd");
+        item.blacklist.add('mcd');
       }
       if (tacobotMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
-        item.blacklist.add("tacobot");
+        item.blacklist.add('tacobot');
       }
       if (tf2BotDetectorCustomMap.has(friendId)) {
         item.relatedCheaters.add(friendId);
-        item.blacklist.add("custom");
+        item.blacklist.add('custom');
       }
     }
   }

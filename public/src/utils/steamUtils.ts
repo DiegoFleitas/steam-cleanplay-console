@@ -1,9 +1,9 @@
-import SteamID from "steamid";
-import { locations } from "./steamCountries.js";
-import { pazerList } from "./blacklists/tf2BotDetector/pazerList.js";
-import { cheatingGroups } from "./blacklists/tf2BotDetector/untrustedGroups.js";
-import { mcdList } from "./blacklists/megascatterbomb/megaCheaterDatabase.js";
-import { tacobotList } from "./blacklists/tacobot/tacobotList.js";
+import SteamID from 'steamid';
+import { mcdList } from './blacklists/megascatterbomb/megaCheaterDatabase.js';
+import { tacobotList } from './blacklists/tacobot/tacobotList.js';
+import { pazerList } from './blacklists/tf2BotDetector/pazerList.js';
+import { cheatingGroups } from './blacklists/tf2BotDetector/untrustedGroups.js';
+import { locations } from './steamCountries.js';
 
 type PlayerId = string;
 
@@ -26,23 +26,23 @@ type Player = {
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/playerlist.official.json
 const tf2BotDetectorMap = new Map<PlayerId, unknown>(
   pazerList.players
-    .filter((player: any) => player.attributes.includes("cheater"))
-    .map((player: any) => [player.steamid as PlayerId, player])
+    .filter((player: any) => player.attributes.includes('cheater'))
+    .map((player: any) => [player.steamid as PlayerId, player]),
 );
 
 // @see https://github.com/PazerOP/tf2_bot_detector/blob/master/staging/cfg/untrusted_groups.official.json
 const cheatingGroupsMap = new Map<number | string, Group>(
-  cheatingGroups.groups.map((group: any) => [group.id, group])
+  cheatingGroups.groups.map((group: any) => [group.id, group]),
 );
 
 // @see https://megascatterbomb.com/mcd
 const cheaterDbMap = new Map<PlayerId, unknown>(
-  mcdList.map((player: any) => [player.id as PlayerId, player])
+  mcdList.map((player: any) => [player.id as PlayerId, player]),
 );
 
 // @see https://api.tacobot.tf/public/tf2bd/v1
 const tacobotMap = new Map<PlayerId, unknown>(
-  tacobotList.players.map((player: any) => [player.steamid as PlayerId, player])
+  tacobotList.players.map((player: any) => [player.steamid as PlayerId, player]),
 );
 
 // Custom blacklists are optional and user-provided.
@@ -65,34 +65,26 @@ export const getId = (inputSteamID: string): string | null => {
   }
 };
 
-export const getLocation = (
-  countryCode?: string,
-  stateCode?: string,
-  cityId?: number
-): string => {
+export const getLocation = (countryCode?: string, stateCode?: string, cityId?: number): string => {
   const locationParts: string[] = [];
 
-  if (countryCode && locations?.[countryCode]) {
-    locationParts.push(locations?.[countryCode]?.countryName || "");
+  const locationsByCode = locations as Record<string, any>;
 
-    if (stateCode && locations?.[countryCode]?.states?.[stateCode]) {
-      locationParts.push(
-        locations?.[countryCode]?.states?.[stateCode]?.stateName || ""
-      );
+  if (countryCode && locationsByCode?.[countryCode]) {
+    const country = locationsByCode[countryCode];
+    locationParts.push(country?.countryName || '');
 
-      if (
-        cityId !== undefined &&
-        locations?.[countryCode]?.states?.[stateCode]?.cities?.[cityId]
-      ) {
-        locationParts.push(
-          locations?.[countryCode]?.states?.[stateCode]?.cities?.[cityId]
-            .cityName || ""
-        );
+    if (stateCode && country?.states?.[stateCode]) {
+      const state = country.states[stateCode];
+      locationParts.push(state?.stateName || '');
+
+      if (cityId !== undefined && state?.cities?.[cityId]) {
+        locationParts.push(state.cities[cityId].cityName || '');
       }
     }
   }
 
-  return locationParts.filter((part) => part).join(", ");
+  return locationParts.filter((part) => part).join(', ');
 };
 
 export const discoverFriendships = (data: Player[]): Map<PlayerId, Player> => {
@@ -104,9 +96,7 @@ export const discoverFriendships = (data: Player[]): Map<PlayerId, Player> => {
     blacklist: new Set<string>(),
   }));
 
-  const dataMap = new Map<PlayerId, Player>(
-    dataWithSets.map((item) => [item.id, item])
-  );
+  const dataMap = new Map<PlayerId, Player>(dataWithSets.map((item) => [item.id, item]));
 
   for (const [, item] of dataMap) {
     if (!item?.groups?.length) continue;
@@ -116,12 +106,12 @@ export const discoverFriendships = (data: Player[]): Map<PlayerId, Player> => {
         const source = cheatingGroupsMap.get(group.id)!;
         group.description = group.description || source.description;
         item.cheatingGroups!.add(group);
-        item.blacklist!.add("tf2botdetector");
+        item.blacklist!.add('tf2botdetector');
       } else if (cheatingGroupsCustomMap.has(group.id)) {
         const source = cheatingGroupsCustomMap.get(group.id)!;
         group.description = group.description || source.description;
         item.cheatingGroups!.add(group);
-        item.blacklist!.add("custom");
+        item.blacklist!.add('custom');
       }
     }
 
@@ -136,23 +126,22 @@ export const discoverFriendships = (data: Player[]): Map<PlayerId, Player> => {
 
       if (tf2BotDetectorMap.has(friendId)) {
         item.relatedCheaters!.add(friendId);
-        item.blacklist!.add("tf2botdetector");
+        item.blacklist!.add('tf2botdetector');
       }
       if (cheaterDbMap.has(friendId)) {
         item.relatedCheaters!.add(friendId);
-        item.blacklist!.add("mcd");
+        item.blacklist!.add('mcd');
       }
       if (tacobotMap.has(friendId)) {
         item.relatedCheaters!.add(friendId);
-        item.blacklist!.add("tacobot");
+        item.blacklist!.add('tacobot');
       }
       if (tf2BotDetectorCustomMap.has(friendId)) {
         item.relatedCheaters!.add(friendId);
-        item.blacklist!.add("custom");
+        item.blacklist!.add('custom');
       }
     }
   }
 
   return dataMap;
 };
-

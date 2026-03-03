@@ -1,22 +1,21 @@
-import { defineConfig } from "vitest/config";
-import path from "node:path";
+import path from 'node:path';
+import { defineConfig } from 'vitest/config';
 
 const config = defineConfig({
   test: {
     globals: true,
-    environment: "node",
-    include: ["tests/**/*.test.[jt]s"],
+    environment: 'node',
+    include: ['tests/**/*.test.[jt]s'],
     environmentMatchGlobs: [
-      ["tests/backend/**", "node"],
-      ["tests/frontend/**", "jsdom"],
+      ['tests/backend/**', 'node'],
+      ['tests/frontend/**', 'jsdom'],
     ],
   },
   resolve: {
     alias: {
-      "@src": path.resolve(__dirname, "public/src"),
+      '@src': path.resolve(__dirname, 'public/src'),
     },
   },
 });
 
 export default config;
-

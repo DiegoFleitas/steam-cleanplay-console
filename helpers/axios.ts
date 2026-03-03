@@ -1,5 +1,5 @@
-import axios, { type AxiosInstance } from "axios";
-import https from "https";
+import https from 'https';
+import axios, { type AxiosInstance } from 'axios';
 
 const instance: AxiosInstance = axios.create({});
 
@@ -10,17 +10,23 @@ instance.interceptors.request.use((config) => {
 
 instance.interceptors.response.use(
   (response) => response,
-  (error: { config: unknown; response?: { status?: number; headers?: { "retry-after"?: string } } }) => {
+  (error: {
+    config: unknown;
+    response?: { status?: number; headers?: { 'retry-after'?: string } };
+  }) => {
     const { config, response } = error;
     if (response?.status === 429) {
-      const retryAfter = response.headers?.["retry-after"] || 1;
+      const retryAfter = response.headers?.['retry-after'] || 1;
       console.log(`[axios] Rate limit exceeded, retrying in ${retryAfter} (s)`);
       return new Promise((resolve) => {
-        setTimeout(() => resolve(axios(config as Parameters<typeof axios>[0])), Number(retryAfter) * 1000);
+        setTimeout(
+          () => resolve(axios(config as Parameters<typeof axios>[0])),
+          Number(retryAfter) * 1000,
+        );
       });
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default function (keepAlive?: boolean): AxiosInstance {

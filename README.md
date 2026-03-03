@@ -33,6 +33,25 @@ Test files live under the `tests` folder:
 
 The app is written in TypeScript. Backend entry is `server.ts` (run with `tsx`). New modules should be added in `.ts`; prefer type inference and avoid `any` where practical. Data-only blacklist files under `public/src/utils/blacklists` remain JavaScript.
 
+## Coding standards
+
+- **Linting**: ESLint with TypeScript support.
+  - Run lint: `pnpm lint`
+  - Auto-fix lint issues: `pnpm lint:fix`
+- **Formatting**: Prettier (with import sorting).
+  - Format code: `pnpm format`
+  - Check formatting (CI-safe): `pnpm format:check`
+- **Type checking**: strict TypeScript options enabled for app code.
+  - Run typecheck: `pnpm typecheck`
+- **CI**:
+  - GitHub Actions run `pnpm lint`, `pnpm typecheck`, `pnpm test:ci`, and `pnpm build` on pushes/PRs.
+  - Deploy workflow also runs lint, typecheck, and tests before deploying to Fly.io.
+- **Dependencies & security**:
+  - Dependabot is configured to open weekly dependency update PRs.
+  - Basic dependency audit: `pnpm audit --prod`
+- **Pre-commit hooks**:
+  - Husky + lint-staged run ESLint and Prettier on staged files before each commit.
+
 ## Troubleshooting
 
 - Read `redis/README.md`

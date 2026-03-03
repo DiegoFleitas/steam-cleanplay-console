@@ -1,6 +1,6 @@
-import { getCache, setCache } from "./localCache.js";
+import { getCache, setCache } from './localCache.js';
 
-const PROXY = "";
+const PROXY = '';
 
 const sendGet = async (url: string): Promise<unknown> => {
   try {
@@ -13,13 +13,11 @@ const sendGet = async (url: string): Promise<unknown> => {
   }
 };
 
-export const playerSummariesRequest = async (
-  ids: string[]
-): Promise<unknown[]> => {
+export const playerSummariesRequest = async (ids: string[]): Promise<unknown[]> => {
   const dummyResponse = { response: { players: [] as unknown[] } };
   let steamIds: string[] = [];
   const cachedResults: unknown[] = [];
-  const cacheLabel = "ISTEAMUSER/GETPLAYERSUMMARIES";
+  const cacheLabel = 'ISTEAMUSER/GETPLAYERSUMMARIES';
   for (let index = 0; index < ids.length; index++) {
     const cachedResult = await getCache(ids[index], cacheLabel);
     if (cachedResult) {
@@ -27,16 +25,14 @@ export const playerSummariesRequest = async (
     }
   }
   if (cachedResults.length) {
-    const cachedIds = cachedResults.map(
-      (result) => (result as { steamid: string }).steamid
-    );
+    const cachedIds = cachedResults.map((result) => (result as { steamid: string }).steamid);
     steamIds = ids.filter((id) => !cachedIds.includes(id));
   } else {
     steamIds = ids;
   }
 
   if (steamIds.length) {
-    const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=${steamIds.join(",")}`;
+    const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?steamids=${steamIds.join(',')}`;
     const result = (await sendGet(url)) as { response: { players: unknown[] } };
     if (result?.response?.players) {
       for (let i = 0; i < result.response.players.length; i++) {
@@ -44,10 +40,7 @@ export const playerSummariesRequest = async (
         await setCache(player.steamid, player, cacheLabel);
       }
       if (cachedResults.length) {
-        return dummyResponse.response.players.concat(
-          cachedResults,
-          result.response.players
-        );
+        return dummyResponse.response.players.concat(cachedResults, result.response.players);
       }
       return dummyResponse.response.players.concat(result.response.players);
     }
@@ -59,7 +52,7 @@ export const playerBansRequest = async (ids: string[]): Promise<unknown[]> => {
   const dummyResponse = { players: [] as unknown[] };
   let steamIds: string[] = [];
   const cachedResults: unknown[] = [];
-  const cacheLabel = "ISTEAMUSER/GETPLAYERBANS";
+  const cacheLabel = 'ISTEAMUSER/GETPLAYERBANS';
   for (let index = 0; index < ids.length; index++) {
     const cachedResult = await getCache(ids[index], cacheLabel);
     if (cachedResult) {
@@ -67,15 +60,13 @@ export const playerBansRequest = async (ids: string[]): Promise<unknown[]> => {
     }
   }
   if (cachedResults.length) {
-    const cachedIds = cachedResults.map(
-      (result) => (result as { SteamId: string }).SteamId
-    );
+    const cachedIds = cachedResults.map((result) => (result as { SteamId: string }).SteamId);
     steamIds = ids.filter((id) => !cachedIds.includes(id));
   } else {
     steamIds = ids;
   }
   if (steamIds.length) {
-    const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamIds.join(",")}`;
+    const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids=${steamIds.join(',')}`;
     const result = (await sendGet(url)) as { players: unknown[] };
     if (result?.players) {
       for (let i = 0; i < result.players.length; i++) {
@@ -96,9 +87,7 @@ export const playerFriendListRequest = async (id: string): Promise<unknown> => {
   return sendGet(url);
 };
 
-export const playerSteamlevelRequest = (
-  ids: string[]
-): Promise<unknown[]> => {
+export const playerSteamlevelRequest = (ids: string[]): Promise<unknown[]> => {
   const results: unknown[] = [];
   return new Promise((resolve, reject) => {
     for (let i = 0; i < ids.length; i++) {
@@ -123,9 +112,7 @@ export const playerOwnedGamesRequest = async (id: string): Promise<unknown> => {
   return sendGet(url);
 };
 
-export const getUserStatsForGameRequest = (
-  ids: string[]
-): Promise<unknown[]> => {
+export const getUserStatsForGameRequest = (ids: string[]): Promise<unknown[]> => {
   const results: unknown[] = [];
   return new Promise((resolve, reject) => {
     for (let i = 0; i < ids.length; i++) {

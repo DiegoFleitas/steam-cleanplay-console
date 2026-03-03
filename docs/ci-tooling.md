@@ -30,4 +30,3 @@ If you later want to cache pnpm packages:
 
 - Use `pnpm store path` and `actions/cache` explicitly.
 - Do **not** enable `cache: pnpm` in `actions/setup-node` when also using `pnpm/action-setup`, to avoid conflicting cache strategies.
-

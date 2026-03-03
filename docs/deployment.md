@@ -39,4 +39,3 @@ flyctl secrets set STEAM_API_KEY="your-key" FLYIO_REDIS_URL="redis://..." -a <ap
 ```
 
 For more operational commands, see the main `README.md` (`fly:logs`, `fly:stop`, `fly:start`, etc.).
-

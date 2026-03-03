@@ -4,26 +4,24 @@ declare global {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   window.bubblesCursor = function bubblesCursor() {
     let width = window.innerWidth;
-    let height = window.innerHeight;
     const cursor = { x: width / 2, y: width / 2 };
     const particles: Particle[] = [];
 
     const bindEvents = () => {
-      document.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("resize", onWindowResize);
+      document.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('resize', onWindowResize);
 
       setTimeout(() => {
-        document.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("resize", onWindowResize);
+        document.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('resize', onWindowResize);
       }, 20000);
     };
 
     const onWindowResize = () => {
       width = window.innerWidth;
-      height = window.innerHeight;
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -56,18 +54,17 @@ document.addEventListener("DOMContentLoaded", () => {
     class Particle {
       lifeSpan = 250;
       initialStyles: Record<string, string> = {
-        position: "absolute",
-        display: "block",
-        pointerEvents: "none",
-        zIndex: "10000000",
-        width: "5px",
-        height: "5px",
-        willChange: "transform",
-        background: "#e6f1f7",
-        boxShadow:
-          "-1px 0px #6badd3, 0px -1px #6badd3, 1px 0px #3a92c5, 0px 1px #3a92c5",
-        borderRadius: "3px",
-        overflow: "hidden",
+        position: 'absolute',
+        display: 'block',
+        pointerEvents: 'none',
+        zIndex: '10000000',
+        width: '5px',
+        height: '5px',
+        willChange: 'transform',
+        background: '#e6f1f7',
+        boxShadow: '-1px 0px #6badd3, 0px -1px #6badd3, 1px 0px #3a92c5, 0px 1px #3a92c5',
+        borderRadius: '3px',
+        overflow: 'hidden',
       };
       velocity!: { x: number; y: number };
       position!: { x: number; y: number };
@@ -79,10 +76,10 @@ document.addEventListener("DOMContentLoaded", () => {
           y: -0.4 + Math.random() * -1,
         };
         this.position = { x: x - 10, y: y - 10 };
-        this.element = document.createElement("span");
+        this.element = document.createElement('span');
         applyProperties(this.element, this.initialStyles);
         this.update();
-        const container = document.querySelector(".container");
+        const container = document.querySelector('.container');
         container?.appendChild(this.element);
       }
 
@@ -100,10 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const applyProperties = (
-      target: HTMLElement,
-      properties: Record<string, string>
-    ) => {
+    const applyProperties = (target: HTMLElement, properties: Record<string, string>) => {
       for (const key in properties) {
         (target.style as unknown as Record<string, string>)[key] = properties[key];
       }
