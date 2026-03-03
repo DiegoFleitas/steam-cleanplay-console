@@ -31,8 +31,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: pnpm test:ci
+      - name: Lint, typecheck, and test
+        run: |
+          pnpm lint
+          pnpm typecheck
+          pnpm test:ci
 
       - name: Setup Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@v1

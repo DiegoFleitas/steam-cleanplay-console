@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -51,15 +51,12 @@
           <textarea id="input-players" onpaste=""></textarea>
         </div>
         <div class="button-container">
-          <button id="button" class="btn btn-bubble">
-            Wash away the cheats™
-          </button>
+          <button id="button" class="btn btn-bubble">Wash away the cheats™</button>
         </div>
       </div>
       <div class="table-container" id="vac-check">
         <div id="empty-state" class="empty-state">
-          Paste your in-game `status` output above and click the button to
-          inspect players.
+          Paste your in-game `status` output above and click the button to inspect players.
         </div>
         <table id="dataTable" hidden="true"></table>
         <div class="loader center" id="loader" hidden="true">
@@ -91,12 +88,9 @@
               Copy the output, we only need the user data ex:
               <pre># 809 "❣г๏zเt๏❣" [U:1:172149372] 29:11 100 0 active</pre>
             </li>
+            <li>Paste all the user data into the prompt and click the button.</li>
             <li>
-              Paste all the user data into the prompt and click the button.
-            </li>
-            <li>
-              That's it! the table shows if any player was banned recently among
-              other stuff ;).
+              That's it! the table shows if any player was banned recently among other stuff ;).
             </li>
           </ul>
         </div>
@@ -105,8 +99,8 @@
         </div>
         <div class="panel-body">
           <p>
-            I wanted an easier way to identify cheaters on TF2 public servers,
-            since encountering them became something very frequent.
+            I wanted an easier way to identify cheaters on TF2 public servers, since encountering
+            them became something very frequent.
           </p>
         </div>
       </div>
@@ -125,19 +119,19 @@
   </body>
   <script>
     function formatText(text) {
-      return text.replace(/(?<!\n)#\s+/g, "\n# ").trim();
+      return text.replace(/(?<!\n)#\s+/g, '\n# ').trim();
     }
 
-    document.getElementById("input-players").addEventListener("paste", (e) => {
+    document.getElementById('input-players').addEventListener('paste', (e) => {
       // cancel paste
       e.preventDefault();
 
-      const text = (e.originalEvent || e).clipboardData.getData("text/plain");
+      const text = (e.originalEvent || e).clipboardData.getData('text/plain');
       e.target.value = formatText(text);
     });
 
-    window.addEventListener("load", function () {
-      const textarea = document.getElementById("input-players");
+    window.addEventListener('load', function () {
+      const textarea = document.getElementById('input-players');
       textarea.value = formatText(textarea.value);
     });
   </script>

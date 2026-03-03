@@ -34,4 +34,3 @@ See `.env.example` for all currently expected variables and sample values.
 ```bash
 flyctl secrets set STEAM_API_KEY="your-key" FLYIO_REDIS_URL="redis://..." -a <app-name>
 ```
-

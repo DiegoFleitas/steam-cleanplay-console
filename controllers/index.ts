@@ -1,1 +1,1 @@
-export { proxy } from "./proxy.js";
+export { proxy } from './proxy.js';

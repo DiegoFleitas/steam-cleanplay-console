@@ -33,7 +33,7 @@ pnpm test:ui
 - Prefer the `@src` alias in tests instead of deep relative paths, for example:
 
 ```js
-import { getLocation } from "@src/utils/steamUtils.js";
+import { getLocation } from '@src/utils/steamUtils.js';
 ```
 
 - For very large data files (like blacklist lists), use small fixtures or mocks:
@@ -45,4 +45,3 @@ import { getLocation } from "@src/utils/steamUtils.js";
 - Backend tests that rely on `STEAM_API_KEY`:
   - `tests/backend/proxy.test.js` sets a default `process.env.STEAM_API_KEY = "test-steam-api-key"` in `beforeEach`.
   - This means **no real Steam API key or CI secret is required** to run tests locally or in CI.
-

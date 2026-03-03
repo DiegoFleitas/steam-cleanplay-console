@@ -11,6 +11,11 @@
     "typecheck": "tsc --noEmit",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
+    "lint": "eslint . --ext .ts,.tsx,.mts",
+    "lint:fix": "eslint . --ext .ts,.tsx,.mts --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "audit": "pnpm audit --prod",
     "fe:dev": "vite",
     "fe:serve": "vite preview",
     "be:dev": "nodemon -e ts -x tsx server.ts",
@@ -22,7 +27,8 @@
     "fly:logs": "npx cross-var flyctl logs -a $npm_package_name",
     "fly:stop": "npx cross-var flyctl scale count 0 -a $npm_package_name",
     "fly:start": "npx cross-var flyctl scale count 1 -a $npm_package_name",
-    "fly:ssh": "npx cross-var flyctl ssh console -a $npm_package_name"
+    "fly:ssh": "npx cross-var flyctl ssh console -a $npm_package_name",
+    "prepare": "husky"
   },
   "author": "",
   "license": "ISC",
@@ -39,19 +45,37 @@
     "ua-parser-js": "^1.0.35"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@types/body-parser": "^1.19.6",
     "@types/cookie-session": "^2.0.49",
     "@types/express": "^5.0.6",
     "@types/jsdom": "^28.0.0",
     "@types/node": "^25.3.3",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "@vitest/ui": "^2.1.9",
     "concurrently": "^8.0.1",
     "cross-var": "^1.1.0",
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "jsdom": "^24.1.3",
+    "lint-staged": "^16.3.2",
     "nodemon": "^3.1.14",
+    "prettier": "^3.8.1",
     "steamid": "^2.0.0",
     "supertest": "^7.2.2",
     "typescript": "^5.9.3",
     "vite": "^4.2.1",
     "vitest": "^2.1.9"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,html,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

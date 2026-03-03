@@ -7,7 +7,7 @@
 /* debug styles */
 
 body {
-  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 1rem;
   color: #f9fafb;
   background: radial-gradient(circle at top left, #111827, #020617 55%, #000000);
@@ -152,11 +152,11 @@ pre {
 }
 
 .cleanplay-font {
-  font-family: "Orbitron", sans-serif;
+  font-family: 'Orbitron', sans-serif;
 }
 
 .console-font {
-  font-family: "Sarpanch", sans-serif;
+  font-family: 'Sarpanch', sans-serif;
 }
 
 .brand {
@@ -170,7 +170,7 @@ pre {
 }
 
 .cleanplay-font {
-  font-family: "Orbitron", sans-serif;
+  font-family: 'Orbitron', sans-serif;
   display: block;
 }
 
@@ -222,7 +222,8 @@ btn-bubble {
 .btn-bubble:focus {
   -webkit-animation: bubbles 1s forwards ease-out;
   animation: bubbles 1s forwards ease-out;
-  background: radial-gradient(
+  background:
+    radial-gradient(
         circle at center,
         rgba(0, 0, 0, 0) 30%,
         #eeeeff 60%,
@@ -284,7 +285,8 @@ btn-bubble {
         #eeeeff 60%,
         #eeeeff 65%,
         rgba(0, 0, 0, 0) 70%
-      ) -1% 82% / 1.03em 1.03em,
+      ) -1%
+      82% / 1.03em 1.03em,
     radial-gradient(
         circle at center,
         rgba(0, 0, 0, 0) 30%,
@@ -315,16 +317,36 @@ btn-bubble {
 
 @-webkit-keyframes bubbles {
   100% {
-    background-position: 98% 11%, 11% -177%, 76% -382%, 102% 10%, 5% -101%,
-      55% -135%, 74% -301%, 9% 34%, 43% -101%, 107% -249%, 22% -387%;
+    background-position:
+      98% 11%,
+      11% -177%,
+      76% -382%,
+      102% 10%,
+      5% -101%,
+      55% -135%,
+      74% -301%,
+      9% 34%,
+      43% -101%,
+      107% -249%,
+      22% -387%;
     box-shadow: inset 0 -6.5em 0 #0072c4;
   }
 }
 
 @keyframes bubbles {
   100% {
-    background-position: 98% 11%, 11% -177%, 76% -382%, 102% 10%, 5% -101%,
-      55% -135%, 74% -301%, 9% 34%, 43% -101%, 107% -249%, 22% -387%;
+    background-position:
+      98% 11%,
+      11% -177%,
+      76% -382%,
+      102% 10%,
+      5% -101%,
+      55% -135%,
+      74% -301%,
+      9% 34%,
+      43% -101%,
+      107% -249%,
+      22% -387%;
     box-shadow: inset 0 -6.5em 0 #0072c4;
   }
 }
@@ -358,7 +380,7 @@ textarea {
   height: 100%;
   min-height: 10rem;
   border-radius: 0.3rem;
-  font-family: "Sarpanch", sans-serif;
+  font-family: 'Sarpanch', sans-serif;
   font-size: 0.95rem;
   color: #e5e7eb;
   background-color: rgba(15, 23, 42, 0.85);
@@ -437,7 +459,7 @@ table {
   padding: 0.3125rem;
 }
 
-input[type="search"] {
+input[type='search'] {
   color: black;
   background-color: #f3f3f3 !important;
 }

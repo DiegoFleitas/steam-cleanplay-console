@@ -7,18 +7,28 @@
     "allowJs": true,
     "checkJs": false,
     "strict": false,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "types": ["node", "vitest"],
     "baseUrl": ".",
     "outDir": "./dist-ts"
   },
-  "include": ["server.ts", "app.ts", "middleware", "helpers", "controllers", "public/src", "tests", "vite.config.*"],
-  "exclude": ["node_modules", "dist", "dist-ts"]
+  "include": [
+    "server.ts",
+    "app.ts",
+    "middleware",
+    "helpers",
+    "controllers",
+    "public/src",
+    "vite.config.*"
+  ],
+  "exclude": ["node_modules", "dist", "dist-ts", "tests"]
 }
-
