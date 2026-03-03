@@ -1,0 +1,104 @@
+import request from "supertest";
+import app from "../../app.js";
+
+vi.mock("../../helpers/axios.js", () => {
+  const get = vi.fn();
+  const post = vi.fn();
+  const axiosInstance = { get, post };
+  const factory = () => axiosInstance;
+  return { __esModule: true, default: factory, axiosInstance };
+});
+
+vi.mock("../../helpers/redis.js", async () => {
+  const actual = await vi.importActual("../../helpers/redis.js");
+  return {
+    ...actual,
+    getCacheValue: vi.fn(),
+    setCacheValue: vi.fn(),
+  };
+});
+
+describe("proxy endpoint", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns 404 when url is missing", async () => {
+    const res = await request(app).get("/api/proxy/");
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ message: "Url not found" });
+  });
+
+  it("returns cached response when available", async () => {
+    const { getCacheValue } = await import("../../helpers/redis.js");
+    getCacheValue.mockResolvedValue({ foo: "bar" });
+
+    const res = await request(app).get(
+      "/api/proxy/https://api.steampowered.com/test"
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ foo: "bar" });
+  });
+
+  it("proxies GET request and caches response on cache miss", async () => {
+    const { getCacheValue, setCacheValue } = await import(
+      "../../helpers/redis.js"
+    );
+    const { axiosInstance } = await import("../../helpers/axios.js");
+
+    getCacheValue.mockResolvedValue(null);
+    axiosInstance.get.mockResolvedValue({
+      status: 200,
+      data: { ok: true },
+    });
+
+    const res = await request(app).get(
+      "/api/proxy/https://api.steampowered.com/test"
+    );
+
+    expect(axiosInstance.get).toHaveBeenCalledTimes(1);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true });
+    expect(setCacheValue).toHaveBeenCalledTimes(1);
+  });
+
+  it("forwards non-401 error status codes as 500 by default", async () => {
+    const { getCacheValue } = await import("../../helpers/redis.js");
+    const { axiosInstance } = await import("../../helpers/axios.js");
+
+    getCacheValue.mockResolvedValue(null);
+    axiosInstance.get.mockRejectedValue({
+      response: { status: 500, statusText: "Internal Error" },
+    });
+
+    const res = await request(app).get(
+      "/api/proxy/https://api.steampowered.com/test"
+    );
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: "Internal Server Error" });
+  });
+
+  it("forwards 401 error with original response body", async () => {
+    const { getCacheValue } = await import("../../helpers/redis.js");
+    const { axiosInstance } = await import("../../helpers/axios.js");
+
+    getCacheValue.mockResolvedValue(null);
+    axiosInstance.get.mockRejectedValue({
+      response: {
+        status: 401,
+        statusText: "Unauthorized",
+        data: { reason: "invalid key" },
+      },
+    });
+
+    const res = await request(app).get(
+      "/api/proxy/https://api.steampowered.com/test"
+    );
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ reason: "invalid key" });
+  });
+});
+
