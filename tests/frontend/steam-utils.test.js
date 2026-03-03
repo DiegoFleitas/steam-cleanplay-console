@@ -1,8 +1,8 @@
-vi.mock("../../public/src/utils/blacklists/custom/untrustedGroups.js", () => ({
+vi.mock("@src/utils/blacklists/custom/untrustedGroups.js", () => ({
   customCheatingGroups: { groups: [] },
 }));
 
-import { getLocation, discoverFriendships } from "../../public/src/utils/steamUtils.js";
+import { getLocation, discoverFriendships } from "@src/utils/steamUtils.js";
 
 describe("steamUtils.getLocation", () => {
   it("returns empty string when location data is missing", () => {

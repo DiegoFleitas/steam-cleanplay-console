@@ -1,5 +1,5 @@
-import { customCheatingGroups } from "../../public/src/utils/blacklists/custom/untrustedGroups.js";
-import { customList } from "../../public/src/utils/blacklists/custom/tf2BotDetector.js";
+import { customCheatingGroups } from "@src/utils/blacklists/custom/untrustedGroups.js";
+import { customList } from "@src/utils/blacklists/custom/tf2BotDetector.js";
 
 describe("blacklist utilities", () => {
   it("cheatingGroups has a non-empty groups array", () => {
