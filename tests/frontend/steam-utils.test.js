@@ -1,7 +1,3 @@
-vi.mock("@src/utils/blacklists/custom/untrustedGroups.js", () => ({
-  customCheatingGroups: { groups: [] },
-}));
-
 import { getLocation, discoverFriendships } from "@src/utils/steamUtils.js";
 
 describe("steamUtils.getLocation", () => {
