@@ -21,6 +21,9 @@ vi.mock("../../helpers/redis.js", async () => {
 describe("proxy endpoint", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    if (!process.env.STEAM_API_KEY) {
+      process.env.STEAM_API_KEY = "test-steam-api-key";
+    }
   });
 
   it("returns 404 when url is missing", async () => {
@@ -61,6 +64,29 @@ describe("proxy endpoint", () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true });
     expect(setCacheValue).toHaveBeenCalledTimes(1);
+  });
+
+  it("injects STEAM_API_KEY into Steam API requests", async () => {
+    const { getCacheValue } = await import("../../helpers/redis.js");
+    const { axiosInstance } = await import("../../helpers/axios.js");
+
+    process.env.STEAM_API_KEY = "injected-key";
+    getCacheValue.mockResolvedValue(null);
+    axiosInstance.get.mockResolvedValue({
+      status: 200,
+      data: { ok: true },
+    });
+
+    const res = await request(app).get(
+      "/api/proxy/https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/",
+    );
+
+    expect(res.status).toBe(200);
+    expect(axiosInstance.get).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.get.mock.calls[0][0]).toContain(
+      "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/",
+    );
+    expect(axiosInstance.get.mock.calls[0][0]).toContain("key=injected-key");
   });
 
   it("forwards non-401 error status codes as 500 by default", async () => {
