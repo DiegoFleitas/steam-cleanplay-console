@@ -1,7 +1,7 @@
 import request from "supertest";
-import app from "../../app.js";
+import app from "../../app.ts";
 
-vi.mock("../../helpers/axios.js", () => {
+vi.mock("../../helpers/axios.ts", () => {
   const get = vi.fn();
   const post = vi.fn();
   const axiosInstance = { get, post };
@@ -9,8 +9,8 @@ vi.mock("../../helpers/axios.js", () => {
   return { __esModule: true, default: factory, axiosInstance };
 });
 
-vi.mock("../../helpers/redis.js", async () => {
-  const actual = await vi.importActual("../../helpers/redis.js");
+vi.mock("../../helpers/redis.ts", async () => {
+  const actual = await vi.importActual("../../helpers/redis.ts");
   return {
     ...actual,
     getCacheValue: vi.fn(),
@@ -33,7 +33,7 @@ describe("proxy endpoint", () => {
   });
 
   it("returns cached response when available", async () => {
-    const { getCacheValue } = await import("../../helpers/redis.js");
+    const { getCacheValue } = await import("../../helpers/redis.ts");
     getCacheValue.mockResolvedValue({ foo: "bar" });
 
     const res = await request(app).get(
@@ -46,9 +46,9 @@ describe("proxy endpoint", () => {
 
   it("proxies GET request and caches response on cache miss", async () => {
     const { getCacheValue, setCacheValue } = await import(
-      "../../helpers/redis.js"
+      "../../helpers/redis.ts"
     );
-    const { axiosInstance } = await import("../../helpers/axios.js");
+    const { axiosInstance } = await import("../../helpers/axios.ts");
 
     getCacheValue.mockResolvedValue(null);
     axiosInstance.get.mockResolvedValue({
@@ -67,8 +67,8 @@ describe("proxy endpoint", () => {
   });
 
   it("injects STEAM_API_KEY into Steam API requests", async () => {
-    const { getCacheValue } = await import("../../helpers/redis.js");
-    const { axiosInstance } = await import("../../helpers/axios.js");
+    const { getCacheValue } = await import("../../helpers/redis.ts");
+    const { axiosInstance } = await import("../../helpers/axios.ts");
 
     process.env.STEAM_API_KEY = "injected-key";
     getCacheValue.mockResolvedValue(null);
@@ -90,8 +90,8 @@ describe("proxy endpoint", () => {
   });
 
   it("forwards non-401 error status codes as 500 by default", async () => {
-    const { getCacheValue } = await import("../../helpers/redis.js");
-    const { axiosInstance } = await import("../../helpers/axios.js");
+    const { getCacheValue } = await import("../../helpers/redis.ts");
+    const { axiosInstance } = await import("../../helpers/axios.ts");
 
     getCacheValue.mockResolvedValue(null);
     axiosInstance.get.mockRejectedValue({
@@ -107,8 +107,8 @@ describe("proxy endpoint", () => {
   });
 
   it("forwards 401 error with original response body", async () => {
-    const { getCacheValue } = await import("../../helpers/redis.js");
-    const { axiosInstance } = await import("../../helpers/axios.js");
+    const { getCacheValue } = await import("../../helpers/redis.ts");
+    const { axiosInstance } = await import("../../helpers/axios.ts");
 
     getCacheValue.mockResolvedValue(null);
     axiosInstance.get.mockRejectedValue({

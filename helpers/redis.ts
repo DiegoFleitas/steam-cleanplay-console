@@ -1,9 +1,9 @@
-import redis from "redis";
+import redis, { type RedisClientType } from "redis";
 import crypto from "crypto";
 
-let redisClient = null;
+let redisClient: RedisClientType | null = null;
 
-export const isHealthy = async () => {
+export const isHealthy = async (): Promise<boolean> => {
   const client = await getRedisClient();
   if (!client) {
     return false;
@@ -17,25 +17,20 @@ export const isHealthy = async () => {
   }
 };
 
-// create a Redis client instance if it doesn't exist, or return the existing one
-const getRedisClient = async () => {
+const getRedisClient = async (): Promise<RedisClientType | null> => {
   if (!redisClient) {
     try {
       const options = {
         url: process.env.FLYIO_REDIS_URL || "redis://localhost:6379",
-        disableOfflineQueue: true, // reject commands when client is reconnecting
-        poolOptions: {
-          max: 100,
-          min: 5,
-          maxWaitingClients: 50,
-          testOnBorrow: true,
-          acquireTimeoutMillis: 10000, // 10 seconds
+        disableOfflineQueue: true,
+        socket: {
+          connectTimeout: 10000,
         },
       };
       console.log("[REDIS_OPTIONS]", options);
-      redisClient = redis
-        .createClient(options)
-        .on("error", (error) => {
+      redisClient = redis.createClient(options) as RedisClientType;
+      redisClient
+        .on("error", (error: Error) => {
           console.log(`[REDIS_CLIENT_ERROR] ${error}`);
           throw error;
         })
@@ -50,8 +45,7 @@ const getRedisClient = async () => {
   return redisClient;
 };
 
-// get a value from Redis cache
-export const getCacheValue = async (key) => {
+export const getCacheValue = async (key: string): Promise<unknown> => {
   const client = await getRedisClient();
   if (!client) {
     return null;
@@ -63,8 +57,8 @@ export const getCacheValue = async (key) => {
       ? console.log(`[REDIS_MISS] ${hashedKey} (${key})`)
       : console.log(`[REDIS_HIT] ${hashedKey} (${key})`);
     try {
-      return JSON.parse(value);
-    } catch (error) {
+      return JSON.parse(value) as unknown;
+    } catch {
       return value;
     }
   } catch (error) {
@@ -73,8 +67,11 @@ export const getCacheValue = async (key) => {
   }
 };
 
-// set a value in Redis cache with a TTL (time-to-live) in minutes
-export const setCacheValue = async (key, value, ttl = 60) => {
+export const setCacheValue = async (
+  key: string,
+  value: unknown,
+  ttl: number = 60
+): Promise<boolean | null> => {
   const client = await getRedisClient();
   if (!client) {
     return null;
@@ -84,16 +81,15 @@ export const setCacheValue = async (key, value, ttl = 60) => {
     const hashedKey = getCacheKey(key);
     const result = await client.set(hashedKey, serializedValue, { EX: ttl });
     console.log(`[REDIS_SET] ${hashedKey} (${key}) TTL: ${ttl}`);
-
     return result === "OK";
   } catch (error) {
     console.log(`[REDIS_SET_ERROR] (${key}) ${error}`);
+    return null;
   }
 };
 
-const getCacheKey = (str) => {
+const getCacheKey = (str: string): string => {
   const hash = crypto.createHash("sha256");
   hash.update(str);
-  // since upstash is shared, we need to namespace the keys
-  return `${process.env.FLY_APP_NAME}:${hash.digest("hex")}`;
+  return `${process.env.FLY_APP_NAME || "app"}:${hash.digest("hex")}`;
 };
