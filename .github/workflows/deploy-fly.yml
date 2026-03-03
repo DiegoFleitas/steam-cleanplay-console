@@ -35,7 +35,7 @@ jobs:
         run: pnpm test:ci
 
       - name: Setup Flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@v2
+        uses: superfly/flyctl-actions/setup-flyctl@v1
 
       - name: Deploy to Fly.io
         run: pnpm fly:deploy
