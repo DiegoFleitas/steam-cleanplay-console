@@ -39,7 +39,7 @@ jobs:
         run: pnpm test:ci
 
       - name: Run lint (if present)
-        run: pnpm lint --if-present
+        run: pnpm run lint --if-present
 
       - name: Build frontend
         run: pnpm build
