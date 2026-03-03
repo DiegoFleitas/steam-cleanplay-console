@@ -43,19 +43,38 @@ document.querySelector("#button").addEventListener("click", () => {
 });
 
 const processInput = async (input) => {
-  if (!input) {
-    document.querySelector("#loader").hidden = true;
+  const trimmedInput = input.trim();
+
+  if (!trimmedInput) {
+    document.getElementById("loader").hidden = true;
+    document.getElementById("dataTable").hidden = true;
+    const emptyState = document.getElementById("empty-state");
+    if (emptyState) emptyState.hidden = false;
+    return;
   }
+
+  const emptyState = document.getElementById("empty-state");
+  if (emptyState) emptyState.hidden = true;
   document.getElementById("loader").hidden = false;
   window.bubblesCursor();
 
-  parseInput(input);
+  parseInput(trimmedInput);
 
   ids = Object.keys(STATE.vacLookup);
   STATE.tableData = [];
   clearTable();
 
   try {
+    if (!ids.length) {
+      document.getElementById("loader").hidden = true;
+      document.getElementById("dataTable").hidden = true;
+      if (emptyState) {
+        emptyState.textContent = "No valid Steam IDs were found in the input.";
+        emptyState.hidden = false;
+      }
+      return;
+    }
+
     await fetchData(ids);
     drawTable();
     // $(document).ready(() => {
