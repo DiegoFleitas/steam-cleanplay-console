@@ -28,6 +28,8 @@ export function parseStatusInput(input: string): ParseStatusResult {
   const lines = input.split(/\r?\n/);
 
   for (const line of lines) {
+    STEAM_ID_PATTERN.lastIndex = 0;
+    QUOTED_NAME_PATTERN.lastIndex = 0;
     const idMatches = [...line.matchAll(STEAM_ID_PATTERN)];
     const nameMatches = [...line.matchAll(QUOTED_NAME_PATTERN)];
 

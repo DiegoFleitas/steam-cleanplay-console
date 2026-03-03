@@ -1,3 +1,4 @@
+import SteamID from "steamid";
 import { locations } from "./steamCountries.js";
 import { pazerList } from "./blacklists/tf2BotDetector/pazerList.js";
 import { cheatingGroups } from "./blacklists/tf2BotDetector/untrustedGroups.js";

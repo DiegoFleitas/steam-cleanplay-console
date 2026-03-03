@@ -1,5 +1,23 @@
 import { parseStatusInput } from "@src/vac-check/parseStatusInput.ts";
 
+// Mock getId so tests don't depend on SteamID library in jsdom
+vi.mock("@src/utils/steamUtils.js", () => {
+  const STEAM64_BASE = BigInt("76561197960265728");
+  return {
+    getId: (raw: string): string | null => {
+      const uMatch = raw.match(/\[U:1:(\d+)\]/);
+      if (uMatch) return String(STEAM64_BASE + BigInt(uMatch[1]));
+      const sMatch = raw.match(/STEAM_[01]:[01]:(\d+)/);
+      if (sMatch) {
+        const y = raw.includes("STEAM_1:") ? 1 : 0;
+        const z = Number(sMatch[1]);
+        return String(STEAM64_BASE + BigInt(z) * BigInt(2) + BigInt(y));
+      }
+      return null;
+    },
+  };
+});
+
 describe("parseStatusInput", () => {
   describe("TF2 status format ([U:1:xxx])", () => {
     it("extracts one player from a TF2 status line", () => {
