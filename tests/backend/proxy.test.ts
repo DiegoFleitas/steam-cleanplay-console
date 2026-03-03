@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import request from "supertest";
 import app from "../../app.ts";
 
@@ -10,7 +11,7 @@ vi.mock("../../helpers/axios.ts", () => {
 });
 
 vi.mock("../../helpers/redis.ts", async () => {
-  const actual = await vi.importActual("../../helpers/redis.ts");
+  const actual = await vi.importActual<typeof import("../../helpers/redis.ts")>("../../helpers/redis.ts");
   return {
     ...actual,
     getCacheValue: vi.fn(),
@@ -34,7 +35,7 @@ describe("proxy endpoint", () => {
 
   it("returns cached response when available", async () => {
     const { getCacheValue } = await import("../../helpers/redis.ts");
-    getCacheValue.mockResolvedValue({ foo: "bar" });
+    (getCacheValue as Mock).mockResolvedValue({ foo: "bar" });
 
     const res = await request(app).get(
       "/api/proxy/https://api.steampowered.com/test"
@@ -50,8 +51,8 @@ describe("proxy endpoint", () => {
     );
     const { axiosInstance } = await import("../../helpers/axios.ts");
 
-    getCacheValue.mockResolvedValue(null);
-    axiosInstance.get.mockResolvedValue({
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockResolvedValue({
       status: 200,
       data: { ok: true },
     });
@@ -71,30 +72,30 @@ describe("proxy endpoint", () => {
     const { axiosInstance } = await import("../../helpers/axios.ts");
 
     process.env.STEAM_API_KEY = "injected-key";
-    getCacheValue.mockResolvedValue(null);
-    axiosInstance.get.mockResolvedValue({
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockResolvedValue({
       status: 200,
       data: { ok: true },
     });
 
     const res = await request(app).get(
-      "/api/proxy/https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/",
+      "/api/proxy/https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
     );
 
     expect(res.status).toBe(200);
     expect(axiosInstance.get).toHaveBeenCalledTimes(1);
-    expect(axiosInstance.get.mock.calls[0][0]).toContain(
-      "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/",
+    expect((axiosInstance.get as Mock).mock.calls[0][0]).toContain(
+      "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
     );
-    expect(axiosInstance.get.mock.calls[0][0]).toContain("key=injected-key");
+    expect((axiosInstance.get as Mock).mock.calls[0][0]).toContain("key=injected-key");
   });
 
   it("forwards non-401 error status codes as 500 by default", async () => {
     const { getCacheValue } = await import("../../helpers/redis.ts");
     const { axiosInstance } = await import("../../helpers/axios.ts");
 
-    getCacheValue.mockResolvedValue(null);
-    axiosInstance.get.mockRejectedValue({
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockRejectedValue({
       response: { status: 500, statusText: "Internal Error" },
     });
 
@@ -110,8 +111,8 @@ describe("proxy endpoint", () => {
     const { getCacheValue } = await import("../../helpers/redis.ts");
     const { axiosInstance } = await import("../../helpers/axios.ts");
 
-    getCacheValue.mockResolvedValue(null);
-    axiosInstance.get.mockRejectedValue({
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockRejectedValue({
       response: {
         status: 401,
         statusText: "Unauthorized",
@@ -127,4 +128,3 @@ describe("proxy endpoint", () => {
     expect(res.body).toEqual({ reason: "invalid key" });
   });
 });
-

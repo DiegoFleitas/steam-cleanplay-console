@@ -28,4 +28,3 @@ describe("steamUtils.discoverFriendships", () => {
     expect(result.get("2")).toBeDefined();
   });
 });
-

@@ -13,7 +13,7 @@ describe("blacklist utilities", () => {
     for (const group of customCheatingGroups.groups) {
       expect(group).toHaveProperty("id");
       expect(typeof group.id === "number" || typeof group.id === "string").toBe(
-        true,
+        true
       );
       expect(group).toHaveProperty("description");
       expect(typeof group.description).toBe("string");
@@ -36,4 +36,3 @@ describe("blacklist utilities", () => {
     }
   });
 });
-

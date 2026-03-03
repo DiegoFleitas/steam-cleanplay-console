@@ -1,18 +1,21 @@
 import request from "supertest";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import app from "../../app.ts";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe("root route", () => {
   it("serves built frontend HTML instead of raw TypeScript when a build exists", async () => {
     const distIndexPath = path.join(
       __dirname,
-      "../../public/dist/index.html",
+      "../../public/dist/index.html"
     );
 
     if (!fs.existsSync(distIndexPath)) {
       throw new Error(
-        "Expected public/dist/index.html to exist. Run `pnpm build` before running this test.",
+        "Expected public/dist/index.html to exist. Run `pnpm build` before running this test."
       );
     }
 
@@ -22,8 +25,7 @@ describe("root route", () => {
     expect(res.headers["content-type"]).toMatch(/html/);
 
     // The built HTML should not reference raw .ts entrypoints or /src/ paths.
-    expect(res.text).not.toMatch(/\.ts\"/);
-    expect(res.text).not.toMatch(/src=\"\/?src\//);
+    expect(res.text).not.toMatch(/\.ts"/);
+    expect(res.text).not.toMatch(/src="\/?src\//);
   });
 });
-
