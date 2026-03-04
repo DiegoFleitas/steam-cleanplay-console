@@ -17,7 +17,7 @@ body::before {
     transparent 6px
   );
   mix-blend-mode: lighten;
-  /* animation: crt-flicker 2.2s infinite linear; */
+  /* Performance-optimized: scanline overlay removed */
 }
 
 @keyframes crt-flicker {
@@ -112,13 +112,13 @@ body {
   width: 100%;
   background: var(--crt-panel);
   border-radius: 0.75rem;
-  box-shadow: 0 0 32px var(--crt-green), 0 0 8px var(--crt-blue);
   padding: 2.5rem 3.5rem 2.5rem 2rem;
   box-sizing: border-box;
   min-height: 100vh;
   border: var(--crt-border);
   position: relative;
   z-index: 1;
+  /* box-shadow removed for performance */
 }
 
 .inputs-container,
@@ -130,7 +130,7 @@ body {
   box-sizing: border-box;
   overflow: auto;
   border: 1.5px solid var(--crt-blue);
-  box-shadow: 0 0 12px var(--crt-blue);
+  /* box-shadow removed for performance */
 }
 
 .inputs-container {
@@ -142,8 +142,7 @@ body {
   margin-top: 2.5rem;
   margin-bottom: 1.5rem;
   z-index: 2;
-  box-shadow: 0 8px 32px var(--crt-blue), 0 0 0 transparent;
-  transform: translateY(1.5rem) skewY(-2deg);
+  /* box-shadow and transform removed for performance */
 }
 
 .table-container {
@@ -153,8 +152,7 @@ body {
   margin-top: 0.5rem;
   margin-bottom: 2.5rem;
   z-index: 3;
-  box-shadow: 0 12px 40px var(--crt-green), 0 0 0 transparent;
-  transform: translateY(-1.5rem) skewY(1.5deg);
+  /* box-shadow and transform removed for performance */
 }
 
 .graph-container {
@@ -165,8 +163,7 @@ body {
   margin-top: 3.5rem;
   margin-bottom: 0.5rem;
   z-index: 2;
-  box-shadow: 0 8px 32px var(--crt-magenta), 0 0 0 transparent;
-  transform: translateY(2.5rem) skewY(-1deg);
+  /* box-shadow and transform removed for performance */
 }
 
 @media screen and (max-width: 1024px) {
@@ -463,14 +460,14 @@ btn-bubble {
   background: var(--crt-green);
   color: #18201c;
   text-shadow: 0 0 4px var(--crt-green);
-  box-shadow: 0 0 12px var(--crt-green);
   transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+  /* box-shadow removed for performance */
 }
 
 #button:hover, #button:focus {
   background: #6fd6ff;
   color: #18201c;
-  box-shadow: 0 0 20px var(--crt-blue);
+  /* box-shadow removed for performance */
 }
 
 .button-container {
@@ -520,7 +517,7 @@ table {
   background-color: #181f1c;
   color: var(--crt-green);
   border: 1.5px solid var(--crt-green);
-  box-shadow: 0 0 8px var(--crt-green);
+  /* box-shadow removed for performance */
 }
 
 .center {
