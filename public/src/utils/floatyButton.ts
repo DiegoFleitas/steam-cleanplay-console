@@ -2,23 +2,46 @@ const floatingButton = document.querySelector('.floating-button') as HTMLElement
 const modal = document.querySelector('.modal') as HTMLElement | null;
 const closeButton = document.querySelector('.close-button') as HTMLElement | null;
 
-let isFirstClick = true;
+const openModal = () => {
+  if (modal) modal.style.display = 'flex';
+};
+
+const closeModal = () => {
+  if (modal) modal.style.display = 'none';
+};
 
 floatingButton?.addEventListener('click', () => {
-  if (isFirstClick && modal) {
-    modal.style.display = 'flex';
-    isFirstClick = false;
+  if (!modal) return;
+  const isOpen = modal.style.display === 'flex';
+  if (isOpen) {
+    closeModal();
+  } else {
+    openModal();
   }
 });
 
 closeButton?.addEventListener('click', () => {
-  if (modal) modal.style.display = 'none';
+  closeModal();
 });
 
+// Close when right-clicking anywhere
 window.addEventListener('contextmenu', (event: Event) => {
   event.preventDefault();
-  if (modal) modal.style.display = 'none';
-  isFirstClick = true;
+  closeModal();
+});
+
+// Close when clicking the dark backdrop (but not the content)
+modal?.addEventListener('click', (event: MouseEvent) => {
+  if (event.target === modal) {
+    closeModal();
+  }
+});
+
+// Close on Escape key
+window.addEventListener('keydown', (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
 });
 
 const draggableButton = document.getElementById('draggable-button');
