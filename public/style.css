@@ -190,25 +190,37 @@ body {
 
 .floating-button {
   position: fixed;
-  left: calc(70% - 25px);
-  top: 7px;
-  background-color: #f44336;
-  color: #f8f8f0;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  right: 1.75rem;
+  bottom: 1.75rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 24px;
+  justify-content: center;
+  font-size: 1.4rem;
   cursor: pointer;
-  z-index: 9999;
+  background: var(--crt-panel);
+  color: var(--crt-green);
+  border: 2px solid var(--crt-green);
+  box-shadow: 0 0 10px var(--crt-green), 0 0 4px var(--crt-blue);
+  z-index: 20;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out;
+}
+
+.floating-button:hover {
+  transform: translateY(-2px);
+  background: var(--crt-panel-glow);
+  box-shadow: 0 0 14px var(--crt-green), 0 0 6px var(--crt-blue);
+}
+
+.floating-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 6px var(--crt-green), 0 0 3px var(--crt-blue);
 }
 
 #draggable-button {
-  position: absolute;
   cursor: move;
-  z-index: 9999;
 }
 
 .modal {
@@ -217,27 +229,30 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 9998;
+  z-index: 30;
 }
 
 .modal-content {
-  background-color: #f8f8f0;
-  padding: 1.3rem;
-  border-radius: 0.3rem;
-  width: 500px;
+  background: linear-gradient(135deg, var(--crt-panel-glow), var(--crt-panel));
+  padding: 1.5rem 1.75rem 1.75rem;
+  border-radius: 0.75rem;
+  width: 540px;
   max-width: 90%;
   text-align: center;
+  border: 2px solid var(--crt-green);
+  box-shadow: 0 0 18px var(--crt-green), 0 0 8px var(--crt-blue);
+  position: relative;
 }
 
 .close-button {
   position: absolute;
-  top: 0.625rem;
-  right: 0.625rem;
-  font-size: 24px;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-size: 1.5rem;
   cursor: pointer;
 }
 
@@ -508,8 +523,15 @@ textarea::placeholder {
   padding: 1rem;
 }
 
-.modal-content * {
-  color: black;
+.modal-content h2,
+.modal-content h3 {
+  color: var(--crt-green);
+  margin-top: 0.25rem;
+}
+
+.modal-content textarea#text {
+  margin-top: 1rem;
+  min-height: 9rem;
 }
 
 table {
