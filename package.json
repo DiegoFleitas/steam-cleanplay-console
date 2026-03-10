@@ -52,7 +52,7 @@
     "@types/jsdom": "^28.0.0",
     "@types/node": "^25.3.3",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
-    "@typescript-eslint/parser": "^8.56.1",
+    "@typescript-eslint/parser": "^8.57.0",
     "@vitest/ui": "^2.1.9",
     "concurrently": "^8.0.1",
     "cross-var": "^1.1.0",
