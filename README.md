@@ -1,3 +1,5 @@
+[![Tests](https://github.com/DiegoFleitas/steam-cleanplay-console/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DiegoFleitas/steam-cleanplay-console/actions/workflows/ci.yml)
+
 # Steam Cleanplay Console
 
 A web-based tool to check if players in a Team Fortress 2 or Counter-Strike: Global Offensive matches have any Steam bans. It also features a social graph to visualize the relationships between players based on their Steam friendships / relevant groups.
