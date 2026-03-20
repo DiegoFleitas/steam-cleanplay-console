@@ -1,4 +1,4 @@
-[![Tests](https://github.com/DiegoFleitas/steam-cleanplay-console/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DiegoFleitas/steam-cleanplay-console/actions/workflows/ci.yml)
+[![Tests](https://github.com/DiegoFleitas/steam-cleanplay-console/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DiegoFleitas/steam-cleanplay-console/actions/workflows/ci.yml)
 
 # Steam Cleanplay Console
 
