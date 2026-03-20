@@ -10,6 +10,10 @@ export interface State {
   isTF2: boolean;
   isCSGO: boolean;
   tableData: unknown[];
+  // Shared button-run coordination across independent frontend bundles.
+  // Prevents multiple rapid clicks from starting overlapping fetch batches.
+  activeButtonClickTimeStamp: number | null;
+  pendingButtonTasks: number;
 }
 
 const state: State = {
@@ -18,6 +22,8 @@ const state: State = {
   isTF2: false,
   isCSGO: false,
   tableData: [],
+  activeButtonClickTimeStamp: null,
+  pendingButtonTasks: 0,
 };
 
 export default state;
