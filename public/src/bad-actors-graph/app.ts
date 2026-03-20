@@ -30,16 +30,44 @@ const typeColors: Record<string, string> = {
 const inputElem = document.querySelector('#input-players') as HTMLTextAreaElement;
 let allData: string[] = [];
 
-document.querySelector('#button')?.addEventListener('click', () => {
-  const input = inputElem?.value ?? '';
-  allData = input.split(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g).filter((e) => e.trim().length > 0);
-  parseSteamData();
-  getSteamData().then(() => {
+document.querySelector('#button')?.addEventListener('click', async (event: MouseEvent) => {
+  const buttonElem = document.querySelector('#button') as HTMLButtonElement | null;
+  const ts = event.timeStamp;
+
+  // Ignore clicks belonging to a different run while a previous run is still in-flight.
+  if (STATE.activeButtonClickTimeStamp !== null && STATE.activeButtonClickTimeStamp !== ts) {
+    return;
+  }
+
+  // First handler to run for this click disables the UI until all handlers finish.
+  if (STATE.activeButtonClickTimeStamp === null) {
+    STATE.activeButtonClickTimeStamp = ts;
+    if (buttonElem) buttonElem.disabled = true;
+  }
+
+  STATE.pendingButtonTasks += 1;
+
+  try {
+    const input = inputElem?.value ?? '';
+    allData = input.split(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g).filter((e) => e.trim().length > 0);
+
+    // Reset between runs to avoid stale nodes.
+    STATE.graphLookup = {};
+
+    parseSteamData();
+    await getSteamData();
+
     const schema = graphSchema(STATE.graphLookup);
     console.log('graph schema', schema);
     (document.querySelector('#vac-check') as HTMLElement).style.display = '';
     new Graph(schema);
-  });
+  } finally {
+    STATE.pendingButtonTasks = Math.max(0, STATE.pendingButtonTasks - 1);
+    if (STATE.pendingButtonTasks === 0) {
+      STATE.activeButtonClickTimeStamp = null;
+      if (buttonElem) buttonElem.disabled = false;
+    }
+  }
 });
 
 class Graph {
