@@ -28,9 +28,33 @@ let ids: string[] | null = null;
 const inputElem = document.querySelector('#input-players') as HTMLTextAreaElement;
 if (inputElem) inputElem.value = text;
 
-document.querySelector('#button')?.addEventListener('click', () => {
-  processInput(inputElem?.value ?? '');
-  (document.querySelector('#vac-check') as HTMLElement).style.display = '';
+document.querySelector('#button')?.addEventListener('click', async (event: MouseEvent) => {
+  const buttonElem = document.querySelector('#button') as HTMLButtonElement | null;
+  const ts = event.timeStamp;
+
+  // Ignore clicks belonging to a different run while a previous run is still in-flight.
+  if (STATE.activeButtonClickTimeStamp !== null && STATE.activeButtonClickTimeStamp !== ts) {
+    return;
+  }
+
+  // First handler to run for this click disables the UI until all handlers finish.
+  if (STATE.activeButtonClickTimeStamp === null) {
+    STATE.activeButtonClickTimeStamp = ts;
+    if (buttonElem) buttonElem.disabled = true;
+  }
+
+  STATE.pendingButtonTasks += 1;
+
+  try {
+    await processInput(inputElem?.value ?? '');
+    (document.querySelector('#vac-check') as HTMLElement).style.display = '';
+  } finally {
+    STATE.pendingButtonTasks = Math.max(0, STATE.pendingButtonTasks - 1);
+    if (STATE.pendingButtonTasks === 0) {
+      STATE.activeButtonClickTimeStamp = null;
+      if (buttonElem) buttonElem.disabled = false;
+    }
+  }
 });
 
 const processInput = async (input: string): Promise<void> => {

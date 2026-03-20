@@ -5,6 +5,11 @@ import { getCacheValue, setCacheValue } from '../helpers/redis.js';
 
 const axios = axiosHelper();
 const cacheTtl = Number(process.env.CACHE_TTL) || 60; // minutes
+type ProxyResult = { status: number; data: unknown };
+
+// Coalesce identical in-flight requests for the same URL+method+body.
+// This prevents stampedes when the cache is cold and the user clicks rapidly.
+const inFlight = new Map<string, Promise<ProxyResult>>();
 
 function addApiKeyToUrl(url: string): string {
   const urlObj = new URL(url);
@@ -35,25 +40,44 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     }
     let response: { status: number; data?: unknown };
 
-    const cacheKey = `proxy:${method}:${url}:${JSON.stringify(req.body ?? {})}`;
-    const cachedResponse = await getCacheValue(cacheKey);
-    if (cachedResponse) {
-      console.log('Response found (cached)');
-      return res.status(200).json(cachedResponse);
+    // Keep cache/in-flight keys stable for GET requests (front-end only uses GET here).
+    // For GET, any req.body variations would otherwise prevent coalescing.
+    const bodyKey = method === 'GET' ? '' : JSON.stringify(req.body ?? {});
+    const cacheKey = `proxy:${method}:${url}:${bodyKey}`;
+
+    const existingInFlight = inFlight.get(cacheKey);
+    if (existingInFlight) {
+      const result = await existingInFlight;
+      return res.status(result.status).json(result.data);
     }
 
-    switch (method) {
-      case 'GET':
-        response = await axios.get(addApiKeyToUrl(url));
-        break;
-      case 'POST':
-        response = await axios.post(addApiKeyToUrl(url));
-        break;
-      default:
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
-    await setCacheValue(cacheKey, response?.data, cacheTtl);
-    return res.status(response.status).json(response?.data);
+    const responsePromise: Promise<ProxyResult> = (async () => {
+      const cachedResponse = await getCacheValue(cacheKey);
+      if (cachedResponse) {
+        console.log('Response found (cached)');
+        return { status: 200, data: cachedResponse };
+      }
+
+      switch (method) {
+        case 'GET':
+          response = await axios.get(addApiKeyToUrl(url));
+          break;
+        case 'POST':
+          response = await axios.post(addApiKeyToUrl(url));
+          break;
+        default:
+          return { status: 405, data: { error: 'Method Not Allowed' } };
+      }
+
+      await setCacheValue(cacheKey, response?.data, cacheTtl);
+      return { status: response.status, data: response.data };
+    })().finally(() => {
+      inFlight.delete(cacheKey);
+    });
+
+    inFlight.set(cacheKey, responsePromise);
+    const result = await responsePromise;
+    return res.status(result.status).json(result.data);
   } catch (error: unknown) {
     const err = error as { response?: { status?: number; statusText?: string; data?: unknown } };
     const status = err?.response?.status ?? 500;
