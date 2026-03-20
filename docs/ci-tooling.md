@@ -1,6 +1,6 @@
 ## CI Tooling
 
-- **Node.js**: GitHub Actions workflows use `node-version: 20.x` via `actions/setup-node@v4`.
+- **Node.js**: GitHub Actions workflows use `node-version: 24.x` via `actions/setup-node@v6`.
 - **pnpm**: pnpm is installed via `pnpm/action-setup@v4` with `version: 10.30.0`.
 - **Package manager lock**: `package.json` declares `"packageManager": "pnpm@10.30.0"` to keep local and CI environments aligned.
 

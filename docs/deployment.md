@@ -16,7 +16,7 @@ GitHub Actions and Fly.io work together to build and deploy the app.
 - Workflow file: `.github/workflows/deploy-fly.yml`.
 - Key steps:
   - Checkout code.
-  - Setup Node 20.x and pnpm 10.30.0.
+  - Setup Node 24.x and pnpm 10.30.0.
   - Install dependencies with `pnpm install --frozen-lockfile`.
   - Run tests via `pnpm test:ci`.
   - Setup Flyctl and run `pnpm fly:deploy`.
