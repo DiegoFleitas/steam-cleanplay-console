@@ -24,7 +24,7 @@ app.get('/', (_req, res) => {
     res
       .status(503)
       .set('Content-Type', 'text/plain')
-      .send('Frontend not built. Run `pnpm build` and try again.');
+      .send('Frontend not built. Run `bun run build` and try again.');
     return;
   }
   res.sendFile('index.html', { root: distDir });
