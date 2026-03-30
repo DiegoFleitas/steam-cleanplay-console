@@ -55,7 +55,7 @@
     "@types/node": "^25.3.3",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
-    "@vitest/ui": "^2.1.9",
+    "@vitest/ui": "^4.1.2",
     "concurrently": "^8.0.1",
     "cross-var": "^1.1.0",
     "eslint": "^9.39.3",
