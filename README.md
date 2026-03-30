@@ -11,20 +11,20 @@ Vite is used for development and building the front-end application. It provides
 PRE: You need to have docker to run the image at /redis folder
 
 - Rename .env.example to .env & update the values
-- Run `npm run dev`
+- Run `bun run dev`
 - **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
 
-Production and `pnpm start` require a built frontend. Run `pnpm build` before `pnpm start` (or use `pnpm start`, which runs the build first). If you open http://localhost:3000 when no build exists, the server returns **503 Service Unavailable** with the message "Frontend not built. Run \`pnpm build\` and try again."
+Production and `bun run start` require a built frontend. Run `bun run build` before `bun run start`. If you open http://localhost:3000 when no build exists, the server returns **503 Service Unavailable** with the message "Frontend not built. Run \`bun run build\` and try again."
 
 ## Tests
 
 Vitest is used for both backend and frontend tests.
 
-- **Run all tests**: `pnpm test`
-- **Run tests once (CI)**: `pnpm test:ci`
-- **Watch mode**: `pnpm test:watch`
-- **Test UI**: `pnpm test:ui`
-- **TypeScript check**: `pnpm typecheck`
+- **Run all tests**: `bun run test`
+- **Run tests once (CI)**: `bun run test:ci`
+- **Watch mode**: `bun run test:watch`
+- **Test UI**: `bun run test:ui`
+- **TypeScript check**: `bun run typecheck`
 
 Test files live under the `tests` folder:
 
@@ -33,24 +33,24 @@ Test files live under the `tests` folder:
 
 ## TypeScript
 
-The app is written in TypeScript. Backend entry is `server.ts` (run with `tsx`). New modules should be added in `.ts`; prefer type inference and avoid `any` where practical. Data-only blacklist files under `public/src/utils/blacklists` remain JavaScript.
+The app is written in TypeScript. Backend entry is `server.ts` (run with Bun). New modules should be added in `.ts`; prefer type inference and avoid `any` where practical. Data-only blacklist files under `public/src/utils/blacklists` remain JavaScript.
 
 ## Coding standards
 
 - **Linting**: ESLint with TypeScript support.
-  - Run lint: `pnpm lint`
-  - Auto-fix lint issues: `pnpm lint:fix`
+  - Run lint: `bun run lint`
+  - Auto-fix lint issues: `bun run lint:fix`
 - **Formatting**: Prettier (with import sorting).
-  - Format code: `pnpm format`
-  - Check formatting (CI-safe): `pnpm format:check`
+  - Format code: `bun run format`
+  - Check formatting (CI-safe): `bun run format:check`
 - **Type checking**: strict TypeScript options enabled for app code.
-  - Run typecheck: `pnpm typecheck`
+  - Run typecheck: `bun run typecheck`
 - **CI**:
-  - GitHub Actions run `pnpm lint`, `pnpm typecheck`, `pnpm test:ci`, and `pnpm build` on pushes/PRs.
+  - GitHub Actions run `bun run lint`, `bun run typecheck`, `bun run test:ci`, and `bun run build` on pushes/PRs.
   - Deploy workflow also runs lint, typecheck, and tests before deploying to Fly.io.
 - **Dependencies & security**:
   - Dependabot is configured to open weekly dependency update PRs.
-  - Basic dependency audit: `pnpm audit --prod`
+  - Basic dependency audit: `bun audit`
 - **Pre-commit hooks**:
   - Husky + lint-staged run ESLint and Prettier on staged files before each commit.
 
@@ -61,20 +61,20 @@ The app is written in TypeScript. Backend entry is `server.ts` (run with `tsx`).
 ## Deployment
 
 - Replace "name" & "app" strings with your new app name at package.json at fly.toml (respectively)
-- Run `npm i`
+- Run `bun install`
 - Rename .env.example to .env
 - Run `flyctl launch`
-- When prompted for a builder, select builtin Nodejs.
-- Run `npm run fly:deploy` (for future deployments only this command will be needed)
+- When prompted for a builder, choose the **Dockerfile** build (the image uses Bun).
+- Run `bun run fly:deploy` (for future deployments only this command will be needed)
 
 ## Stopping / Starting app
 
-- `npm run fly:stop`
-- `npm run fly:start`
+- `bun run fly:stop`
+- `bun run fly:start`
 
 ## Read app secrets
 
-- `npm run fly:ssh`
+- `bun run fly:ssh`
 - type `env`
 - quit with `exit`
 
@@ -88,7 +88,7 @@ Add them to .env file. Alternatively use fly.io built command but note those tak
 
 From terminal
 
-- `npm run fly:logs`
+- `bun run fly:logs`
 
 ## Redis
 

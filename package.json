@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.ts",
   "type": "module",
-  "packageManager": "pnpm@10.30.0",
+  "packageManager": "bun@1.3.11",
   "engines": {
-    "node": ">=24"
+    "bun": ">=1.1.0"
   },
   "scripts": {
     "test": "vite build && vitest",
@@ -18,19 +18,19 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.mts --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "audit": "pnpm audit --prod",
+    "audit": "bun audit",
     "fe:dev": "vite",
     "fe:serve": "vite preview",
-    "be:dev": "nodemon -e ts -x tsx server.ts",
-    "start": "tsx server.ts",
+    "be:dev": "bun --watch server.ts",
+    "start": "bun server.ts",
     "build": "vite build",
-    "dev": "concurrently \"npm:fe:dev\" \"npm:be:dev\"",
-    "app": "npx cross-var echo $npm_package_name",
+    "dev": "concurrently \"bun run fe:dev\" \"bun run be:dev\"",
+    "app": "bunx cross-var echo $npm_package_name",
     "fly:deploy": "flyctl deploy",
-    "fly:logs": "npx cross-var flyctl logs -a $npm_package_name",
-    "fly:stop": "npx cross-var flyctl scale count 0 -a $npm_package_name",
-    "fly:start": "npx cross-var flyctl scale count 1 -a $npm_package_name",
-    "fly:ssh": "npx cross-var flyctl ssh console -a $npm_package_name",
+    "fly:logs": "bunx cross-var flyctl logs -a $npm_package_name",
+    "fly:stop": "bunx cross-var flyctl scale count 0 -a $npm_package_name",
+    "fly:start": "bunx cross-var flyctl scale count 1 -a $npm_package_name",
+    "fly:ssh": "bunx cross-var flyctl ssh console -a $npm_package_name",
     "prepare": "husky"
   },
   "author": "",
@@ -44,7 +44,6 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "redis": "^4.6.4",
-    "tsx": "^4.21.0",
     "ua-parser-js": "^1.0.35"
   },
   "devDependencies": {
@@ -64,7 +63,6 @@
     "husky": "^9.1.7",
     "jsdom": "^24.1.3",
     "lint-staged": "^16.3.2",
-    "nodemon": "^3.1.14",
     "prettier": "^3.8.1",
     "steamid": "^2.0.0",
     "supertest": "^7.2.2",

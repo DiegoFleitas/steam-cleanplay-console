@@ -13,19 +13,19 @@
 - Run all tests once (CI-style):
 
 ```bash
-pnpm test:ci
+bun run test:ci
 ```
 
 - Run all tests in watch mode:
 
 ```bash
-pnpm test:watch
+bun run test:watch
 ```
 
 - Run the Vitest UI:
 
 ```bash
-pnpm test:ui
+bun run test:ui
 ```
 
 ### Import conventions

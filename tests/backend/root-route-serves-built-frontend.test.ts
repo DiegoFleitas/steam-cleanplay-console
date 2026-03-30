@@ -12,7 +12,7 @@ describe('root route', () => {
 
     if (!fs.existsSync(distIndexPath)) {
       throw new Error(
-        'Expected public/dist/index.html to exist. Run `pnpm build` before running this test.',
+        'Expected public/dist/index.html to exist. Run `bun run build` before running this test.',
       );
     }
 
