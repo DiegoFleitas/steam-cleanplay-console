@@ -44,7 +44,7 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "redis": "^4.6.4",
-    "ua-parser-js": "^1.0.35"
+    "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
