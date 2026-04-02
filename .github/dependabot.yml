@@ -1,8 +1,12 @@
 version: 2
 updates:
-  - package-ecosystem: 'bun'
-    directory: '/'
+  - package-ecosystem: "bun"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 10
-    target-branch: 'main'
+      interval: "weekly"
+    open-pull-requests-limit: 1
+    target-branch: "main"
+    groups:
+      all-deps:
+        patterns:
+          - "*"
