@@ -31,7 +31,7 @@
     "fly:stop": "bunx cross-var flyctl scale count 0 -a $npm_package_name",
     "fly:start": "bunx cross-var flyctl scale count 1 -a $npm_package_name",
     "fly:ssh": "bunx cross-var flyctl ssh console -a $npm_package_name",
-    "prepare": "husky"
+    "setup:hooks": "node ./node_modules/husky/bin.js"
   },
   "author": "",
   "license": "ISC",
