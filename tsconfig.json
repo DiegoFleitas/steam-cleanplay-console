@@ -18,7 +18,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "types": ["node", "vitest"],
-    "baseUrl": ".",
     "outDir": "./dist-ts"
   },
   "include": [
