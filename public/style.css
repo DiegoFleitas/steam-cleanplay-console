@@ -21,19 +21,43 @@ body::before {
 }
 
 @keyframes crt-flicker {
-  0%, 100% { opacity: 0.12; }
-  10% { opacity: 0.18; }
-  20% { opacity: 0.10; }
-  30% { opacity: 0.15; }
-  40% { opacity: 0.13; }
-  50% { opacity: 0.20; }
-  60% { opacity: 0.11; }
-  70% { opacity: 0.16; }
-  80% { opacity: 0.09; }
-  90% { opacity: 0.14; }
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  10% {
+    opacity: 0.18;
+  }
+  20% {
+    opacity: 0.1;
+  }
+  30% {
+    opacity: 0.15;
+  }
+  40% {
+    opacity: 0.13;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 0.11;
+  }
+  70% {
+    opacity: 0.16;
+  }
+  80% {
+    opacity: 0.09;
+  }
+  90% {
+    opacity: 0.14;
+  }
 }
 
-.container, .inputs-container, .table-container, .graph-container {
+.container,
+.inputs-container,
+.table-container,
+.graph-container {
   position: relative;
   overflow: hidden;
 }
@@ -69,9 +93,14 @@ body::before {
 /* Button Press Animation */
 #button:active {
   filter: brightness(1.2) blur(0.5px);
-  box-shadow: 0 0 32px var(--crt-accent), 0 0 16px var(--crt-magenta);
+  box-shadow:
+    0 0 32px var(--crt-accent),
+    0 0 16px var(--crt-magenta);
   transform: scale(0.97);
-  transition: filter 0.1s, box-shadow 0.1s, transform 0.1s;
+  transition:
+    filter 0.1s,
+    box-shadow 0.1s,
+    transform 0.1s;
 }
 /* debug styles */
 
@@ -203,20 +232,29 @@ body {
   background: var(--crt-panel);
   color: var(--crt-green);
   border: 2px solid var(--crt-green);
-  box-shadow: 0 0 10px var(--crt-green), 0 0 4px var(--crt-blue);
+  box-shadow:
+    0 0 10px var(--crt-green),
+    0 0 4px var(--crt-blue);
   z-index: 20;
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.15s ease-out,
+    background 0.15s ease-out;
 }
 
 .floating-button:hover {
   transform: translateY(-2px);
   background: var(--crt-panel-glow);
-  box-shadow: 0 0 14px var(--crt-green), 0 0 6px var(--crt-blue);
+  box-shadow:
+    0 0 14px var(--crt-green),
+    0 0 6px var(--crt-blue);
 }
 
 .floating-button:active {
   transform: translateY(0);
-  box-shadow: 0 0 6px var(--crt-green), 0 0 3px var(--crt-blue);
+  box-shadow:
+    0 0 6px var(--crt-green),
+    0 0 3px var(--crt-blue);
 }
 
 #draggable-button {
@@ -244,7 +282,9 @@ body {
   max-width: 90%;
   text-align: center;
   border: 2px solid var(--crt-green);
-  box-shadow: 0 0 18px var(--crt-green), 0 0 8px var(--crt-blue);
+  box-shadow:
+    0 0 18px var(--crt-green),
+    0 0 8px var(--crt-blue);
   position: relative;
 }
 
@@ -266,10 +306,13 @@ pre {
 }
 
 /* Display font for headers */
-.cleanplay-font, .console-font {
+.cleanplay-font,
+.console-font {
   font-family: 'Share Tech Mono', 'IBM Plex Mono', monospace;
   letter-spacing: 0.04em;
-  text-shadow: 0 0 12px var(--crt-green), 0 0 2px var(--crt-blue);
+  text-shadow:
+    0 0 12px var(--crt-green),
+    0 0 2px var(--crt-blue);
   color: var(--crt-green);
 }
 
@@ -475,11 +518,15 @@ btn-bubble {
   background: var(--crt-green);
   color: #18201c;
   text-shadow: 0 0 4px var(--crt-green);
-  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    color 0.2s;
   /* box-shadow removed for performance */
 }
 
-#button:hover, #button:focus {
+#button:hover,
+#button:focus {
   background: #6fd6ff;
   color: #18201c;
   /* box-shadow removed for performance */
@@ -556,7 +603,7 @@ table {
 }
 
 #bad-actors-graph .other {
-  z-index: 999 important!;
+  z-index: 999 !important;
 }
 
 .node-tooltip {
@@ -615,7 +662,8 @@ input[type='search'] {
 }
 
 @keyframes blink-cursor-bg {
-  0%, 50% {
+  0%,
+  50% {
     background-image: linear-gradient(
       to right,
       transparent 0.48em,
@@ -625,12 +673,9 @@ input[type='search'] {
       transparent 100%
     );
   }
-  51%, 100% {
-    background-image: linear-gradient(
-      to right,
-      transparent 0%,
-      transparent 100%
-    );
+  51%,
+  100% {
+    background-image: linear-gradient(to right, transparent 0%, transparent 100%);
   }
 }
 
@@ -656,8 +701,14 @@ input[type='search'].blinking-cursor::after {
 }
 
 @keyframes blink-cursor {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .display-column {
