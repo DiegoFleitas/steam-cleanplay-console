@@ -34,7 +34,10 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script>
     <!-- Retro-futuristic fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IBM+Plex+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="container">
@@ -135,16 +138,17 @@
       textarea.value = formatText(textarea.value);
     });
   </script>
-    <script>
-      // Add blinking-cursor class to DataTables search input after DOM is ready
-      document.addEventListener('DOMContentLoaded', function () {
-        const interval = setInterval(() => {
-          const searchInput = document.querySelector('input[type="search"]');
-          if (searchInput) {
-            searchInput.classList.add('blinking-cursor');
-            clearInterval(interval);
-          }
-        }, 100);
-      });
-    </script>
+  <script>
+    // Add blinking-cursor class to DataTables search input after DOM is ready
+    document.addEventListener('DOMContentLoaded', function () {
+      const interval = setInterval(() => {
+        const searchInput = document.querySelector('input[type="search"]');
+        if (searchInput) {
+          searchInput.classList.add('blinking-cursor');
+          setTimeout(() => searchInput.focus(), 0);
+          clearInterval(interval);
+        }
+      }, 100);
+    });
+  </script>
 </html>
