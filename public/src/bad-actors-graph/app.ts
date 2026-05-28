@@ -298,12 +298,16 @@ const getSteamData = async (): Promise<void> => {
   await runWithConcurrency(
     ids,
     async (id) => {
-      const [friendListData, xmlData] = await Promise.all([
-        playerFriendListRequest(id),
-        playerXMLRequest(`https://steamcommunity.com/profiles/${id}/?xml=1`),
-      ]);
-      onSteamFriendListData(friendListData, id);
-      onXMLData(xmlData as string, id);
+      try {
+        const [friendListData, xmlData] = await Promise.all([
+          playerFriendListRequest(id),
+          playerXMLRequest(`https://steamcommunity.com/profiles/${id}/?xml=1`),
+        ]);
+        onSteamFriendListData(friendListData, id);
+        onXMLData(xmlData as string, id);
+      } catch (err) {
+        console.log(`[graph] error fetching data for ${id}:`, err);
+      }
     },
     5,
   );

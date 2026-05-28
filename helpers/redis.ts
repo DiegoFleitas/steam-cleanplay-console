@@ -39,6 +39,7 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
         disableOfflineQueue: true,
         socket: {
           connectTimeout: 10000,
+          reconnectStrategy: false as const,
         },
       };
       console.log('[REDIS_OPTIONS]', options);
@@ -54,6 +55,8 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
     } catch (error) {
       console.error(error);
       redisDisabled = true;
+      redisClient?.quit().catch(() => {});
+      redisClient = null;
     }
   }
   return redisClient;
