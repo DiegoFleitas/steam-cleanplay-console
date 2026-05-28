@@ -6,26 +6,33 @@ import { getCacheValue } from '../helpers/redis.js';
 const axios = axiosHelper();
 type ProxyResult = { status: number; data: unknown };
 
+const ALLOWED_DOMAINS = new Set(['api.steampowered.com', 'steamcommunity.com', 'logs.tf']);
+
 // Coalesce identical in-flight requests for the same URL+method+body.
 // This prevents stampedes when the cache is cold and the user clicks rapidly.
 const inFlight = new Map<string, Promise<ProxyResult>>();
 
+function validateUrl(rawUrl: string): URL {
+  const urlObj = new URL(rawUrl);
+  if (!['http:', 'https:'].includes(urlObj.protocol)) {
+    throw Object.assign(new Error('Invalid protocol'), { status: 400 });
+  }
+  if (!ALLOWED_DOMAINS.has(urlObj.hostname)) {
+    throw Object.assign(new Error('Domain not allowed'), { status: 403 });
+  }
+  return urlObj;
+}
+
 function addApiKeyToUrl(url: string): string {
-  const urlObj = new URL(url);
-  const domain = urlObj.hostname;
-  switch (domain) {
-    case 'api.steampowered.com': {
-      const apiKey = getSteamApiKey();
-      if (apiKey) {
-        urlObj.searchParams.append('key', apiKey);
-      }
-      break;
+  const urlObj = validateUrl(url);
+  if (urlObj.hostname === 'api.steampowered.com') {
+    const apiKey = getSteamApiKey();
+    if (apiKey) {
+      urlObj.searchParams.append('key', apiKey);
     }
-    default:
-      break;
   }
   const result = urlObj.toString();
-  console.log(result);
+  console.log(`[proxy] Fetching: ${urlObj.origin}${urlObj.pathname}`);
   return result;
 }
 
@@ -77,12 +84,20 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     const result = await responsePromise;
     return res.status(result.status).json(result.data);
   } catch (error: unknown) {
-    const err = error as { response?: { status?: number; statusText?: string; data?: unknown } };
-    const status = err?.response?.status ?? 500;
-    console.log(`[proxy] ${status} ${err?.response?.statusText ?? ''}`);
+    const err = error as {
+      status?: number;
+      message?: string;
+      response?: { status?: number; statusText?: string; data?: unknown };
+    };
+    const status = err?.status ?? err?.response?.status ?? 500;
+    const message = err?.message ?? err?.response?.statusText ?? 'Internal Server Error';
+    console.log(`[proxy] ${status} ${message}`);
     if (status === 401 || status === 429) {
       const data = err?.response?.data ?? {};
       return res.status(status).json(data);
+    }
+    if (status === 400 || status === 403) {
+      return res.status(status).json({ error: message });
     }
     return res.status(status).json({ error: 'Internal Server Error' });
   }
