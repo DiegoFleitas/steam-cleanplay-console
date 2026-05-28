@@ -5,7 +5,7 @@ let redisClient: RedisClientType | null = null;
 let redisDisabled = false;
 
 const isRedisConfigured = (): boolean => {
-  const url = process.env.FLYIO_REDIS_URL;
+  const url = process.env.REDIS_URL;
   return !!url && url.length > 0;
 };
 
@@ -24,7 +24,7 @@ export const isHealthy = async (): Promise<boolean> => {
 };
 
 const getRedisClient = async (): Promise<RedisClientType | null> => {
-  if (redisDisabled) {
+  if (redisDisabled || process.env.VERCEL) {
     return null;
   }
   if (!redisClient) {
@@ -35,7 +35,7 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
     }
     try {
       const options = {
-        url: process.env.FLYIO_REDIS_URL || 'redis://localhost:6379',
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
         disableOfflineQueue: true,
         socket: {
           connectTimeout: 10000,
@@ -107,5 +107,5 @@ export const setCacheValue = async (
 const getCacheKey = (str: string): string => {
   const hash = crypto.createHash('sha256');
   hash.update(str);
-  return `${process.env.FLY_APP_NAME || 'app'}:${hash.digest('hex')}`;
+  return `app:${hash.digest('hex')}`;
 };
