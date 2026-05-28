@@ -38,6 +38,7 @@ export const onSteamFriendListData = (data: unknown, id: string): void => {
 };
 
 export const onXMLData = (xml: string, id: string): void => {
+  if (!xml) return;
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xml, 'text/xml');
   const groups: { id: number; url: string; name: string }[] = [];
