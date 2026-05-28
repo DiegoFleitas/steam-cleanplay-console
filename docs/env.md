@@ -11,14 +11,8 @@ Environment variables are loaded via `dotenv` (see `app.ts`) and read at runtime
     - In `NODE_ENV=production` or `NODE_ENV=staging`, missing `STEAM_API_KEY` throws an error.
     - In development/test, missing `STEAM_API_KEY` logs a warning and returns an empty string, so you can run the app without a real key.
 
-- **`FLY_APP_NAME`**
-  - Logical app name used by Fly.io tooling.
-
-- **`FLYIO_REDIS_URL`**
-  - Connection string for the Upstash Redis instance used by the app.
-
-- **`PRETTIFY_LOGS`**
-  - Optional flag to control log formatting when using the Fly logger.
+- **`REDIS_URL`**
+  - Connection string for a local Redis instance. Only used in local development; Redis is disabled on Vercel.
 
 See `.env.example` for all currently expected variables and sample values.
 
@@ -28,9 +22,5 @@ See `.env.example` for all currently expected variables and sample values.
   - Backend tests set a dummy `STEAM_API_KEY` in `beforeEach`, so they do not depend on real secrets.
   - Other env vars are generally not required for unit tests.
 
-- **Production / staging**:
-  - Set `STEAM_API_KEY`, `FLYIO_REDIS_URL`, and any other required values as Fly secrets:
-
-```bash
-flyctl secrets set STEAM_API_KEY="your-key" FLYIO_REDIS_URL="redis://..." -a <app-name>
-```
+- **Production (Vercel)**:
+  - Set `STEAM_API_KEY` in the Vercel project dashboard (Settings → Environment Variables).
