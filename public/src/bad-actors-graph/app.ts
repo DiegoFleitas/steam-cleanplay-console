@@ -5,6 +5,7 @@ import {
   playerSummariesRequest,
   playerXMLRequest,
 } from '../utils/apiRequests.js';
+import { runWithConcurrency } from '../utils/concurrency.js';
 import { discoverFriendships, getId } from '../utils/steamUtils.js';
 import { onBansData, onSteamFriendListData, onSummaryData, onXMLData } from './dataHandlers.js';
 
@@ -287,26 +288,25 @@ const parseSteamData = (): void => {
 const getSteamData = async (): Promise<void> => {
   const ids = Object.keys(STATE.graphLookup);
 
-  const playerSummaries = playerSummariesRequest(ids);
-  const playerBans = playerBansRequest(ids);
-  const playerDataPromises: Promise<unknown>[] = [];
-
-  for (const id of ids) {
-    playerDataPromises.push(
-      Promise.all([
-        playerFriendListRequest(id),
-        playerXMLRequest(`https://steamcommunity.com/profiles/${id}/?xml=1`),
-      ]).then(([friendListData, xmlData]) => {
-        onSteamFriendListData(friendListData, id);
-        onXMLData(xmlData as string, id);
-      }),
-    );
-  }
-
-  const [summaryData, bansData] = await Promise.all([playerSummaries, playerBans]);
+  const [summaryData, bansData] = await Promise.all([
+    playerSummariesRequest(ids),
+    playerBansRequest(ids),
+  ]);
   if (summaryData) onSummaryData(summaryData);
   if (bansData) onBansData(bansData);
-  await Promise.all(playerDataPromises);
+
+  await runWithConcurrency(
+    ids,
+    async (id) => {
+      const [friendListData, xmlData] = await Promise.all([
+        playerFriendListRequest(id),
+        playerXMLRequest(`https://steamcommunity.com/profiles/${id}/?xml=1`),
+      ]);
+      onSteamFriendListData(friendListData, id);
+      onXMLData(xmlData as string, id);
+    },
+    5,
+  );
 
   const graphData = Object.values(STATE.graphLookup) as Parameters<typeof discoverFriendships>[0];
   const friendships = discoverFriendships(graphData);
