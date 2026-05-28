@@ -1,10 +1,21 @@
 import { getCache, setCache } from './localCache.js';
 
 const PROXY = '';
+let rateLimited = false;
+
+export const isRateLimited = (): boolean => rateLimited;
+export const clearRateLimit = (): void => {
+  rateLimited = false;
+};
 
 const sendGet = async (url: string): Promise<unknown> => {
   try {
     const response = await fetch(`/api/proxy/${url}`);
+    if (response.status === 429) {
+      console.warn('[RATE_LIMIT] Steam API rate limit hit');
+      rateLimited = true;
+      return undefined;
+    }
     const data = await response.json();
     return data;
   } catch (err) {
@@ -83,33 +94,53 @@ export const playerBansRequest = async (ids: string[]): Promise<unknown[]> => {
 };
 
 export const playerFriendListRequest = async (id: string): Promise<unknown> => {
+  const cacheLabel = 'ISTEAMUSER/GETFRIENDLIST';
+  const cached = await getCache(id, cacheLabel);
+  if (cached) return cached;
   const url = `${PROXY}https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?steamid=${id}&relationship=friend`;
-  return sendGet(url);
+  const result = await sendGet(url);
+  if (result) await setCache(id, result, cacheLabel);
+  return result;
 };
 
-export const playerSteamlevelRequest = (ids: string[]): Promise<unknown[]> => {
+export const playerSteamlevelRequest = async (ids: string[]): Promise<unknown[]> => {
+  const cacheLabel = 'IPLAYERSERVICE/GETSTEAMLEVEL';
   const results: unknown[] = [];
-  return new Promise((resolve, reject) => {
-    for (let i = 0; i < ids.length; i++) {
-      const steamid = ids[i];
-      const url = `${PROXY}https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?steamid=${steamid}`;
-      sendGet(url)
-        .then((result) => {
-          const item = result ?? {};
-          (item as { steamid: string }).steamid = steamid;
-          results.push(item);
-          if (i === ids.length - 1) {
-            resolve(results);
-          }
-        })
-        .catch((error) => reject(error));
+  const uncachedIds: string[] = [];
+  for (let i = 0; i < ids.length; i++) {
+    const cached = await getCache(ids[i], cacheLabel);
+    if (cached) {
+      results.push(cached);
+    } else {
+      uncachedIds.push(ids[i]);
     }
-  });
+  }
+  if (uncachedIds.length) {
+    const fetched = await Promise.all(
+      uncachedIds.map(async (steamid) => {
+        const url = `${PROXY}https://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?steamid=${steamid}`;
+        const result = (await sendGet(url)) as Record<string, unknown> | undefined;
+        const item = { steamid, ...(result ?? {}) } as {
+          steamid: string;
+          response?: { player_level?: number };
+        };
+        if (result) await setCache(steamid, item, cacheLabel);
+        return item;
+      }),
+    );
+    results.push(...fetched);
+  }
+  return results;
 };
 
 export const playerOwnedGamesRequest = async (id: string): Promise<unknown> => {
+  const cacheLabel = 'IPLAYERSERVICE/GETOWNEDGAMES';
+  const cached = await getCache(id, cacheLabel);
+  if (cached) return cached;
   const url = `${PROXY}https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?steamid=${id}&include_played_free_games=1`;
-  return sendGet(url);
+  const result = await sendGet(url);
+  if (result) await setCache(id, result, cacheLabel);
+  return result;
 };
 
 export const getUserStatsForGameRequest = (ids: string[]): Promise<unknown[]> => {

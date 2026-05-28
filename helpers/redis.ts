@@ -2,6 +2,12 @@ import crypto from 'crypto';
 import redis, { type RedisClientType } from 'redis';
 
 let redisClient: RedisClientType | null = null;
+let redisDisabled = false;
+
+const isRedisConfigured = (): boolean => {
+  const url = process.env.FLYIO_REDIS_URL;
+  return !!url && url.length > 0;
+};
 
 export const isHealthy = async (): Promise<boolean> => {
   const client = await getRedisClient();
@@ -18,7 +24,15 @@ export const isHealthy = async (): Promise<boolean> => {
 };
 
 const getRedisClient = async (): Promise<RedisClientType | null> => {
+  if (redisDisabled) {
+    return null;
+  }
   if (!redisClient) {
+    if (!isRedisConfigured()) {
+      redisDisabled = true;
+      console.log('[REDIS] No URL configured; caching disabled.');
+      return null;
+    }
     try {
       const options = {
         url: process.env.FLYIO_REDIS_URL || 'redis://localhost:6379',
@@ -32,7 +46,6 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
       redisClient
         .on('error', (error: Error) => {
           console.log(`[REDIS_CLIENT_ERROR] ${error}`);
-          throw error;
         })
         .on('connect', () => {
           console.log('Connected to Redis');
@@ -40,6 +53,7 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
       await redisClient.connect();
     } catch (error) {
       console.error(error);
+      redisDisabled = true;
     }
   }
   return redisClient;

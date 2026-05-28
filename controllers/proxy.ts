@@ -1,10 +1,9 @@
 import type { Request, Response } from 'express';
 import axiosHelper from '../helpers/axios.js';
 import { getSteamApiKey } from '../helpers/config.js';
-import { getCacheValue, setCacheValue } from '../helpers/redis.js';
+import { getCacheValue } from '../helpers/redis.js';
 
 const axios = axiosHelper();
-const cacheTtl = Number(process.env.CACHE_TTL) || 60; // minutes
 type ProxyResult = { status: number; data: unknown };
 
 // Coalesce identical in-flight requests for the same URL+method+body.
@@ -69,7 +68,6 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
           return { status: 405, data: { error: 'Method Not Allowed' } };
       }
 
-      await setCacheValue(cacheKey, response?.data, cacheTtl);
       return { status: response.status, data: response.data };
     })().finally(() => {
       inFlight.delete(cacheKey);
@@ -82,7 +80,7 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     const err = error as { response?: { status?: number; statusText?: string; data?: unknown } };
     const status = err?.response?.status ?? 500;
     console.log(`[proxy] ${status} ${err?.response?.statusText ?? ''}`);
-    if (status === 401) {
+    if (status === 401 || status === 429) {
       const data = err?.response?.data ?? {};
       return res.status(status).json(data);
     }
