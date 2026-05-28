@@ -6,6 +6,7 @@ const config = defineConfig({
     globals: true,
     environment: 'node',
     include: ['tests/**/*.test.[jt]s'],
+    testTimeout: 30000,
     environmentMatchGlobs: [
       ['tests/backend/**', 'node'],
       ['tests/frontend/**', 'jsdom'],

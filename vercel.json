@@ -3,6 +3,7 @@
   "outputDirectory": "public/dist",
   "installCommand": "bun install",
   "devCommand": "bun run dev",
+  "rewrites": [{ "source": "/api/(.*)", "destination": "/api" }],
   "functions": {
     "api/index.ts": {
       "maxDuration": 10
