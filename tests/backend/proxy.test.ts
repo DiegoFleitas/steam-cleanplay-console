@@ -122,6 +122,42 @@ describe('proxy endpoint', () => {
     expect(res.body).toEqual({});
   });
 
+  it('accepts target URL as query parameter', async () => {
+    const { getCacheValue } = await import('../../helpers/redis.ts');
+    const { axiosInstance } = await import('../../helpers/axios.ts');
+
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockResolvedValue({
+      status: 200,
+      data: { ok: true },
+    });
+
+    const res = await request(app).get(
+      '/api/proxy?url=https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true });
+    expect(axiosInstance.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('accepts URL-encoded target URL as query parameter', async () => {
+    const { getCacheValue } = await import('../../helpers/redis.ts');
+    const { axiosInstance } = await import('../../helpers/axios.ts');
+
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockResolvedValue({
+      status: 200,
+      data: { ok: true },
+    });
+
+    const res = await request(app).get('/api/proxy?url=https%3A%2F%2Fapi.steampowered.com%2Ftest');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true });
+    expect(axiosInstance.get).toHaveBeenCalledTimes(1);
+  });
+
   it('decodes URL-encoded target URL before proxying', async () => {
     const { getCacheValue } = await import('../../helpers/redis.ts');
     const { axiosInstance } = await import('../../helpers/axios.ts');

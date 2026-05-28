@@ -4,7 +4,7 @@ const PROXY = '';
 
 const sendGet = async (url: string): Promise<unknown> => {
   try {
-    const response = await fetch(`/api/proxy/${encodeURIComponent(url)}`);
+    const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`);
     const data = await response.json();
     return data;
   } catch (err) {
