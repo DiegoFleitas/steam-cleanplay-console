@@ -73,7 +73,7 @@ export function __resetCache(): void {
 }
 
 export const proxy = async (req: Request, res: Response): Promise<Response | void> => {
-  const url = req.originalUrl.replace('/api/proxy/', '');
+  const url = decodeURIComponent(req.originalUrl.replace('/api/proxy/', ''));
   const { method } = req;
   try {
     if (!url) {

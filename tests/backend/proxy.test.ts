@@ -122,6 +122,26 @@ describe('proxy endpoint', () => {
     expect(res.body).toEqual({});
   });
 
+  it('decodes URL-encoded target URL before proxying', async () => {
+    const { getCacheValue } = await import('../../helpers/redis.ts');
+    const { axiosInstance } = await import('../../helpers/axios.ts');
+
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockResolvedValue({
+      status: 200,
+      data: { ok: true },
+    });
+
+    const res = await request(app).get('/api/proxy/https%3A%2F%2Fapi.steampowered.com%2Ftest');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ ok: true });
+    expect(axiosInstance.get).toHaveBeenCalledTimes(1);
+    expect((axiosInstance.get as Mock).mock.calls[0][0]).toContain(
+      'https://api.steampowered.com/test?key=',
+    );
+  });
+
   it('forwards 401 error with original response body', async () => {
     const { getCacheValue } = await import('../../helpers/redis.ts');
     const { axiosInstance } = await import('../../helpers/axios.ts');
