@@ -27,7 +27,9 @@ describe('proxy endpoint', () => {
       process.env.STEAM_API_KEY = 'test-steam-api-key';
     }
     const { __resetCache } = await import('../../controllers/proxy.ts');
+    const { __resetThrottle } = await import('../../helpers/throttle.ts');
     __resetCache();
+    __resetThrottle();
   });
 
   it('returns 404 when url is missing', async () => {
@@ -101,7 +103,7 @@ describe('proxy endpoint', () => {
     expect(res.body).toEqual({ error: 'Internal Server Error' });
   });
 
-  it('forwards 429 error with original response body', async () => {
+  it('handles 429 gracefully with empty response body', async () => {
     const { getCacheValue } = await import('../../helpers/redis.ts');
     const { axiosInstance } = await import('../../helpers/axios.ts');
 
@@ -116,8 +118,8 @@ describe('proxy endpoint', () => {
 
     const res = await request(app).get('/api/proxy/https://api.steampowered.com/test');
 
-    expect(res.status).toBe(429);
-    expect(res.body).toEqual({ retry_after: 60 });
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({});
   });
 
   it('forwards 401 error with original response body', async () => {

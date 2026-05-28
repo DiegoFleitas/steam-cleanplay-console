@@ -1,21 +1,10 @@
 import { getCache, setCache } from './localCache.js';
 
 const PROXY = '';
-let rateLimited = false;
-
-export const isRateLimited = (): boolean => rateLimited;
-export const clearRateLimit = (): void => {
-  rateLimited = false;
-};
 
 const sendGet = async (url: string): Promise<unknown> => {
   try {
     const response = await fetch(`/api/proxy/${url}`);
-    if (response.status === 429) {
-      console.warn('[RATE_LIMIT] Steam API rate limit hit');
-      rateLimited = true;
-      return undefined;
-    }
     const data = await response.json();
     return data;
   } catch (err) {

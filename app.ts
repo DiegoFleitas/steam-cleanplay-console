@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import { config as dotenvConfig } from 'dotenv';
 import express from 'express';
+import helmet from 'helmet';
 import { proxy } from './controllers/index.js';
 import { session } from './middleware/index.js';
 
@@ -12,6 +13,33 @@ dotenvConfig();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://unpkg.com', 'https://cdn.datatables.net', "'unsafe-inline'"],
+        styleSrc: [
+          "'self'",
+          'https://cdnjs.cloudflare.com',
+          'https://cdn.datatables.net',
+          'https://fonts.googleapis.com',
+          "'unsafe-inline'",
+        ],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        imgSrc: [
+          "'self'",
+          'https://avatars.steamstatic.com',
+          'https://steamcdn-a.akamaihd.net',
+          'data:',
+        ],
+        connectSrc: ["'self'"],
+        frameAncestors: ["'none'"],
+      },
+    },
+  }),
+);
 
 // On Vercel, static files are served by the CDN, not Express.
 if (!process.env.VERCEL) {

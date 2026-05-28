@@ -8,7 +8,7 @@ const CSGO_APP_ID = 730;
 
 const createSpan = (content: string): HTMLSpanElement => {
   const span = document.createElement('span');
-  span.innerHTML = content;
+  span.textContent = content;
   return span;
 };
 
@@ -19,7 +19,7 @@ const createAnchor = (
   style = '',
 ): HTMLAnchorElement => {
   const anchor = document.createElement('a');
-  anchor.innerHTML = content;
+  anchor.textContent = content;
   anchor.href = href;
   anchor.target = target;
   anchor.style.cssText = style;
@@ -47,7 +47,7 @@ const createSpanWithChildren = (...children: Node[]): HTMLSpanElement => {
 
 const createDiv = (content: string, style = ''): HTMLDivElement => {
   const div = document.createElement('div');
-  div.innerHTML = content;
+  div.textContent = content;
   div.style.cssText = style;
   return div;
 };
