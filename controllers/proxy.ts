@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import axiosHelper from '../helpers/axios.js';
 import { getSteamApiKey } from '../helpers/config.js';
 import { getCacheValue, setCacheValue } from '../helpers/redis.js';
+import { acquireToken } from '../helpers/throttle.js';
 
 const axios = axiosHelper();
 type ProxyResult = { status: number; data: unknown };
@@ -104,12 +105,17 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
         return { status: 200, data: cachedResponse };
       }
 
+      const targetUrl = addApiKeyToUrl(url);
+      if (targetUrl.includes('api.steampowered.com')) {
+        await acquireToken();
+      }
+
       switch (method) {
         case 'GET':
-          response = await axios.get(addApiKeyToUrl(url));
+          response = await axios.get(targetUrl);
           break;
         case 'POST':
-          response = await axios.post(addApiKeyToUrl(url));
+          response = await axios.post(targetUrl);
           break;
         default:
           return { status: 405, data: { error: 'Method Not Allowed' } };
@@ -142,6 +148,10 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
         console.log('[CACHE] Serving stale on rate limit');
         res.set('X-Cache', 'STALE');
         return res.status(stale.status).json(stale.data);
+      }
+      if (status === 429) {
+        console.log('[CACHE] Rate limited, no stale cache - returning empty');
+        return res.status(200).json({});
       }
       const data = err?.response?.data ?? {};
       return res.status(status).json(data);

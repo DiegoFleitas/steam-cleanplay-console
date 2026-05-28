@@ -121,20 +121,28 @@ export const drawTable = (): void => {
         data: 'link_html',
         render: (_data: unknown, _type: unknown, row: Record<string, unknown>) => {
           if (row?.differentNicks) {
-            const element = document.createElement('div');
-            element.innerHTML = `<del>${row?.gameNickOuterHTML}</del><br>${row?.steamNickOuterHTML}`;
-            const del = element.querySelector('del');
-            if (del) {
-              del.classList.add('has-tooltip');
-              (del as HTMLElement).dataset.tooltip =
-                'This player in-game nick differs from their steam account name.';
-            }
-            return element.innerHTML;
+            const container = document.createElement('div');
+            const del = document.createElement('del');
+            del.classList.add('has-tooltip');
+            del.dataset.tooltip = 'This player in-game nick differs from their steam account name.';
+            const gameWrapper = document.createElement('div');
+            gameWrapper.innerHTML = row?.gameNickOuterHTML as string;
+            if (gameWrapper.firstChild) del.appendChild(gameWrapper.firstChild);
+            container.appendChild(del);
+            container.appendChild(document.createElement('br'));
+            const steamWrapper = document.createElement('div');
+            steamWrapper.innerHTML = row?.steamNickOuterHTML as string;
+            if (steamWrapper.firstChild) container.appendChild(steamWrapper.firstChild);
+            return container.innerHTML;
           }
-          return (
-            (row?.gameNickOuterHTML as string) ??
-            `<a href="https://steamcommunity.com/profiles/${row?.id}" target="_blank">${row?.name}</a>`
-          );
+          if (row?.gameNickOuterHTML) {
+            return row.gameNickOuterHTML as string;
+          }
+          const fallbackAnchor = document.createElement('a');
+          fallbackAnchor.href = `https://steamcommunity.com/profiles/${row?.id}`;
+          fallbackAnchor.target = '_blank';
+          fallbackAnchor.textContent = row?.name as string;
+          return fallbackAnchor.outerHTML;
         },
         defaultContent: '',
       },

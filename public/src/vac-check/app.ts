@@ -1,7 +1,5 @@
 import STATE from '../state.js';
 import {
-  clearRateLimit,
-  isRateLimited,
   playerBansRequest,
   playerFriendListRequest,
   playerLogsRequest,
@@ -107,29 +105,8 @@ const processInput = async (input: string): Promise<void> => {
   }
 };
 
-const showRateLimitBanner = (): void => {
-  const existing = document.getElementById('rate-limit-banner');
-  if (existing) return;
-  const banner = document.createElement('div');
-  banner.id = 'rate-limit-banner';
-  banner.style.cssText =
-    'background: #800000; color: #fff; padding: 12px 16px; margin: 8px 0; border-radius: 4px; font-size: 14px; text-align: center;';
-  banner.textContent =
-    'Steam API rate limit reached. Some data may be missing. Try again in a minute.';
-  const vacCheck = document.getElementById('vac-check');
-  if (vacCheck) vacCheck.prepend(banner);
-};
-
-const clearRateLimitBanner = (): void => {
-  const banner = document.getElementById('rate-limit-banner');
-  if (banner) banner.remove();
-};
-
 const fetchData = async (ids: string[]): Promise<void> => {
   try {
-    clearRateLimit();
-    clearRateLimitBanner();
-
     const bansResponse = await playerBansRequest(ids);
     if (bansResponse) onBansData(bansResponse);
 
@@ -140,8 +117,6 @@ const fetchData = async (ids: string[]): Promise<void> => {
     await runWithConcurrency(players, fetchPlayerData, 5);
 
     onSteamLevelData(await playerSteamlevelRequest(ids));
-
-    if (isRateLimited()) showRateLimitBanner();
   } catch (error) {
     console.error(error);
   } finally {
