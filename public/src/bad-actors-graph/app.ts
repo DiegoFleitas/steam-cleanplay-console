@@ -313,7 +313,7 @@ const getSteamData = async (): Promise<void> => {
   );
 
   const graphData = Object.values(STATE.graphLookup) as Parameters<typeof discoverFriendships>[0];
-  const friendships = discoverFriendships(graphData);
+  const friendships = await discoverFriendships(graphData);
 
   for (const [, item] of friendships) {
     const entry = item as {
