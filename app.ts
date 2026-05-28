@@ -44,7 +44,7 @@ app.use(session);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.all('/api/proxy/:url(*)', async (req, res) => {
+app.all('/api/proxy/{*url}', async (req, res) => {
   res.setHeader('Cache-Control', 'public, max-age=3600');
   return proxy(req, res);
 });
