@@ -8,9 +8,7 @@ A web-based tool to check if players in a Team Fortress 2 or Counter-Strike: Glo
 
 Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration.
 
-PRE: You need to have docker to run the image at /redis folder
-
-- Rename .env.example to .env & update the values
+- Rename `.env.example` to `.env` & update the values (at minimum `STEAM_API_KEY`)
 - Run `bun run dev`
 - **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
 
@@ -47,59 +45,54 @@ The app is written in TypeScript. Backend entry is `server.ts` (run with Bun). N
   - Run typecheck: `bun run typecheck`
 - **CI**:
   - GitHub Actions run `bun run lint`, `bun run typecheck`, `bun run test:ci`, and `bun run build` on pushes/PRs.
-  - Deploy workflow also runs lint, typecheck, and tests before deploying to Fly.io.
 - **Dependencies & security**:
   - Dependabot is configured to open weekly dependency update PRs.
   - Basic dependency audit: `bun audit`
 - **Pre-commit hooks**:
   - Husky + lint-staged run ESLint and Prettier on staged files before each commit.
 
-## Troubleshooting
+## Deployment (Vercel)
 
-- Read `redis/README.md`
+The app is deployed on Vercel (Hobby/free tier). The frontend is built as a static site and served by Vercel's CDN. The Express backend runs as a serverless function handling `/api/proxy/*` requests.
 
-## Deployment
+### Automatic deploys
 
-- Replace "name" & "app" strings with your new app name at package.json at fly.toml (respectively)
-- Run `bun install`
-- Rename .env.example to .env
-- Run `flyctl launch`
-- When prompted for a builder, choose the **Dockerfile** build (the image uses Bun).
-- Run `bun run fly:deploy` (for future deployments only this command will be needed)
+Pushes to the `main` branch are automatically deployed via the Vercel GitHub integration.
 
-## Stopping / Starting app
+### Required environment variables
 
-- `bun run fly:stop`
-- `bun run fly:start`
+Set these in your Vercel project dashboard (Settings → Environment Variables):
 
-## Read app secrets
+| Variable        | Description                                        |
+| --------------- | -------------------------------------------------- |
+| `STEAM_API_KEY` | Steam Web API key (required for the proxy to work) |
 
-- `bun run fly:ssh`
-- type `env`
-- quit with `exit`
+### Manual deploy
 
-## Set app secrets
+```bash
+vercel --prod
+```
 
-Add them to .env file. Alternatively use fly.io built command but note those take precedence over the ones at .env
+### Local preview of production build
 
-- `flyctl secrets set SECRET="myvalue" -a <app-name>`
+```bash
+bun run build
+bun run start
+```
 
-## Read server logs
+## Environment Variables
 
-From terminal
+See `.env.example` for all expected variables.
 
-- `bun run fly:logs`
+| Variable        | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `STEAM_API_KEY` | Steam Web API key (required in production)            |
+| `REDIS_URL`     | Redis connection string (optional, for local caching) |
 
-## Redis
+## Redis (local development only)
 
-Upstash Redis can be created with `flyctl redis create`
+The proxy can optionally cache responses in Redis. Redis is **disabled on Vercel** (serverless functions don't support persistent TCP connections). For local dev, set `REDIS_URL` in `.env` and run Redis locally:
 
-- `flyctl redis list` & copy redis name
-- `flyctl redis status <redis-name>` & then copy the Private URL & set the proper env variable at the .env file
-
-## Other
-
-Currently hosted free of charge on Fly.io
-
-- https://fly.io/blog/shipping-logs/
-- https://fly.io/docs/reference/redis/
+```bash
+redis-server
+```
