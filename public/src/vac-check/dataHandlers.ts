@@ -98,48 +98,50 @@ export const onBansData = (players: unknown[]): void => {
   });
 };
 
-export const onSummaryData = (players: unknown[]): void => {
-  (
-    players as {
-      steamid: string;
-      communityvisibilitystate?: number;
-      personaname?: string;
-      profileurl?: string;
-      timecreated?: number;
-      avatarmedium?: string;
-      loccountrycode?: string;
-      locstatecode?: string;
-      loccityid?: number;
-    }[]
-  ).forEach((player) => {
-    const playerEntry = STATE.vacLookup[player.steamid];
-    if (!playerEntry) return;
-    const span = createSpan(player.communityvisibilitystate !== 3 ? 'hidden' : 'public');
-    playerEntry['profile_html'] = span;
-    playerEntry['profile'] = span.textContent;
-    playerEntry['link_html'] =
-      (playerEntry['link_html'] as HTMLAnchorElement) ||
-      createAnchor(player.personaname ?? '', player.profileurl ?? '', '_blank');
-    playerEntry['personaname'] = player.personaname;
-    playerEntry['personaname_html'] = createAnchor(
-      player.personaname ?? '',
-      player.profileurl ?? '',
-      '_blank',
-    );
-    playerEntry['profileurl'] = player.profileurl;
-    playerEntry['visibility'] = player.communityvisibilitystate;
-    playerEntry['avatar'] = player.avatarmedium;
-    playerEntry['avatar_html'] = createImage(player.avatarmedium ?? '');
-    playerEntry['timecreated_raw'] = player.timecreated;
-    const created = new Date((player.timecreated ?? 0) * 1000);
-    playerEntry['timecreated'] = player.timecreated ? moment(created).fromNow() : '';
-    playerEntry['location'] = getLocation(
-      player?.loccountrycode,
-      player?.locstatecode,
-      player?.loccityid,
-    );
-    playerEntry['summary'] = player;
-  });
+export const onSummaryData = async (players: unknown[]): Promise<void> => {
+  await Promise.all(
+    (
+      players as {
+        steamid: string;
+        communityvisibilitystate?: number;
+        personaname?: string;
+        profileurl?: string;
+        timecreated?: number;
+        avatarmedium?: string;
+        loccountrycode?: string;
+        locstatecode?: string;
+        loccityid?: number;
+      }[]
+    ).map(async (player) => {
+      const playerEntry = STATE.vacLookup[player.steamid];
+      if (!playerEntry) return;
+      const span = createSpan(player.communityvisibilitystate !== 3 ? 'hidden' : 'public');
+      playerEntry['profile_html'] = span;
+      playerEntry['profile'] = span.textContent;
+      playerEntry['link_html'] =
+        (playerEntry['link_html'] as HTMLAnchorElement) ||
+        createAnchor(player.personaname ?? '', player.profileurl ?? '', '_blank');
+      playerEntry['personaname'] = player.personaname;
+      playerEntry['personaname_html'] = createAnchor(
+        player.personaname ?? '',
+        player.profileurl ?? '',
+        '_blank',
+      );
+      playerEntry['profileurl'] = player.profileurl;
+      playerEntry['visibility'] = player.communityvisibilitystate;
+      playerEntry['avatar'] = player.avatarmedium;
+      playerEntry['avatar_html'] = createImage(player.avatarmedium ?? '');
+      playerEntry['timecreated_raw'] = player.timecreated;
+      const created = new Date((player.timecreated ?? 0) * 1000);
+      playerEntry['timecreated'] = player.timecreated ? moment(created).fromNow() : '';
+      playerEntry['location'] = await getLocation(
+        player?.loccountrycode,
+        player?.locstatecode,
+        player?.loccityid,
+      );
+      playerEntry['summary'] = player;
+    }),
+  );
 };
 
 export const onSteamLevelData = (data: unknown[]): void => {

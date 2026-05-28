@@ -18,7 +18,9 @@ export const clearTable = (): void => {
   }
 };
 
-const setupTableData = (vacLookup: Record<string, Record<string, unknown>>): unknown[] => {
+const setupTableData = async (
+  vacLookup: Record<string, Record<string, unknown>>,
+): Promise<unknown[]> => {
   const uniqueIds = new Set<string>();
   let tableData: Record<string, unknown>[] = [];
 
@@ -60,7 +62,9 @@ const setupTableData = (vacLookup: Record<string, Record<string, unknown>>): unk
     };
   });
 
-  const friendships = discoverFriendships(tableData as Parameters<typeof discoverFriendships>[0]);
+  const friendships = await discoverFriendships(
+    tableData as Parameters<typeof discoverFriendships>[0],
+  );
 
   tableData = tableData.map((row) => {
     const r = row as { id: string };
@@ -78,10 +82,10 @@ const setupTableData = (vacLookup: Record<string, Record<string, unknown>>): unk
   return tableData;
 };
 
-export const drawTable = (): void => {
-  const tableData = setupTableData(
+export const drawTable = async (): Promise<void> => {
+  const tableData = (await setupTableData(
     STATE.vacLookup as Record<string, Record<string, unknown>>,
-  ) as unknown[];
+  )) as unknown[];
 
   tableData.sort((a: unknown, b: unknown) => {
     const ax = a as Record<string, unknown>;

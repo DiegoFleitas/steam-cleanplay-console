@@ -96,7 +96,7 @@ const processInput = async (input: string): Promise<void> => {
     }
 
     await fetchData(ids);
-    drawTable();
+    await drawTable();
   } catch (error) {
     console.error(error);
   } finally {
@@ -111,7 +111,7 @@ const fetchData = async (ids: string[]): Promise<void> => {
     if (bansResponse) onBansData(bansResponse);
 
     const summariesResponse = await playerSummariesRequest(ids);
-    if (summariesResponse) onSummaryData(summariesResponse);
+    if (summariesResponse) await onSummaryData(summariesResponse);
 
     const players = summariesResponse as { steamid: string; profileurl?: string }[];
     await runWithConcurrency(players, fetchPlayerData, 5);
