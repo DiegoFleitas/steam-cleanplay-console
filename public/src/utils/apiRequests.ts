@@ -4,7 +4,7 @@ const PROXY = '';
 
 const sendGet = async (url: string): Promise<unknown> => {
   try {
-    const response = await fetch(`/api/proxy/${url}`);
+    const response = await fetch(`/api/proxy/${encodeURIComponent(url)}`);
     const data = await response.json();
     return data;
   } catch (err) {
@@ -169,6 +169,5 @@ export const playerLogsRequest = async (id: string): Promise<unknown> => {
 
 export const playerSourcebansRequest = async (id: string): Promise<unknown> => {
   const url = `https://www.google.com/search?q="${id}"+"sourceban"`;
-  const encoded = encodeURIComponent(url);
-  return sendGet(`${PROXY}${encoded}`);
+  return sendGet(`${PROXY}${url}`);
 };
