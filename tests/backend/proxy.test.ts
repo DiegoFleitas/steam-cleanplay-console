@@ -21,11 +21,13 @@ vi.mock('../../helpers/redis.ts', async () => {
 });
 
 describe('proxy endpoint', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     if (!process.env.STEAM_API_KEY) {
       process.env.STEAM_API_KEY = 'test-steam-api-key';
     }
+    const { __resetCache } = await import('../../controllers/proxy.ts');
+    __resetCache();
   });
 
   it('returns 404 when url is missing', async () => {

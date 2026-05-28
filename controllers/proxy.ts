@@ -1,12 +1,43 @@
 import type { Request, Response } from 'express';
 import axiosHelper from '../helpers/axios.js';
 import { getSteamApiKey } from '../helpers/config.js';
-import { getCacheValue } from '../helpers/redis.js';
+import { getCacheValue, setCacheValue } from '../helpers/redis.js';
 
 const axios = axiosHelper();
 type ProxyResult = { status: number; data: unknown };
 
 const ALLOWED_DOMAINS = new Set(['api.steampowered.com', 'steamcommunity.com', 'logs.tf']);
+
+interface MemoryCacheEntry {
+  data: unknown;
+  status: number;
+  expiresAt: number;
+}
+
+const memoryCache = new Map<string, MemoryCacheEntry>();
+const MEMORY_CACHE_TTL_MS = 5 * 60 * 1000;
+
+function getMemoryCache(key: string): MemoryCacheEntry | undefined {
+  const entry = memoryCache.get(key);
+  if (!entry) return undefined;
+  if (Date.now() > entry.expiresAt) {
+    memoryCache.delete(key);
+    return undefined;
+  }
+  return entry;
+}
+
+function setMemoryCache(key: string, data: unknown, status: number): void {
+  memoryCache.set(key, { data, status, expiresAt: Date.now() + MEMORY_CACHE_TTL_MS });
+  if (memoryCache.size > 2000) {
+    const oldestKey = memoryCache.keys().next().value;
+    if (oldestKey) memoryCache.delete(oldestKey);
+  }
+}
+
+function getStaleMemoryCache(key: string): MemoryCacheEntry | undefined {
+  return memoryCache.get(key);
+}
 
 // Coalesce identical in-flight requests for the same URL+method+body.
 // This prevents stampedes when the cache is cold and the user clicks rapidly.
@@ -36,6 +67,10 @@ function addApiKeyToUrl(url: string): string {
   return result;
 }
 
+export function __resetCache(): void {
+  memoryCache.clear();
+}
+
 export const proxy = async (req: Request, res: Response): Promise<Response | void> => {
   const url = req.originalUrl.replace('/api/proxy/', '');
   const { method } = req;
@@ -46,10 +81,14 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     }
     let response: { status: number; data?: unknown };
 
-    // Keep cache/in-flight keys stable for GET requests (front-end only uses GET here).
-    // For GET, any req.body variations would otherwise prevent coalescing.
     const bodyKey = method === 'GET' ? '' : JSON.stringify(req.body ?? {});
     const cacheKey = `proxy:${method}:${url}:${bodyKey}`;
+
+    const memoryEntry = getMemoryCache(cacheKey);
+    if (memoryEntry) {
+      console.log('[CACHE] Memory hit');
+      return res.status(memoryEntry.status).json(memoryEntry.data);
+    }
 
     const existingInFlight = inFlight.get(cacheKey);
     if (existingInFlight) {
@@ -60,7 +99,8 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     const responsePromise: Promise<ProxyResult> = (async () => {
       const cachedResponse = await getCacheValue(cacheKey);
       if (cachedResponse) {
-        console.log('Response found (cached)');
+        console.log('[CACHE] Redis hit');
+        setMemoryCache(cacheKey, cachedResponse, 200);
         return { status: 200, data: cachedResponse };
       }
 
@@ -75,6 +115,8 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
           return { status: 405, data: { error: 'Method Not Allowed' } };
       }
 
+      setMemoryCache(cacheKey, response.data, response.status);
+      setCacheValue(cacheKey, response.data, 300);
       return { status: response.status, data: response.data };
     })().finally(() => {
       inFlight.delete(cacheKey);
@@ -93,6 +135,14 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     const message = err?.message ?? err?.response?.statusText ?? 'Internal Server Error';
     console.log(`[proxy] ${status} ${message}`);
     if (status === 401 || status === 429) {
+      const bodyKey = method === 'GET' ? '' : JSON.stringify(req.body ?? {});
+      const cacheKey = `proxy:${method}:${url}:${bodyKey}`;
+      const stale = getStaleMemoryCache(cacheKey);
+      if (stale) {
+        console.log('[CACHE] Serving stale on rate limit');
+        res.set('X-Cache', 'STALE');
+        return res.status(stale.status).json(stale.data);
+      }
       const data = err?.response?.data ?? {};
       return res.status(status).json(data);
     }
