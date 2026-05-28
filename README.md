@@ -12,15 +12,13 @@ This repo uses [Bun](https://bun.sh) as the runtime and package manager (`packag
 bun install
 ```
 
-Optional Git hooks are documented under **Coding standards** below.
-
 Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration.
 
 - Rename `.env.example` to `.env` and update the values (at minimum `STEAM_API_KEY`)
 - Run `bun run dev`
 - **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
 
-Production and `bun run start` require a built frontend. Run `bun run build` before `bun run start`. If you open http://localhost:3000 when no build exists, the server returns **503 Service Unavailable** with the message "Frontend not built. Run \`bun run build\` and try again."
+Production and `bun run start` require a built frontend. Run `bun run build` before `bun run start`. If you open http://localhost:3000 when no build exists, the server returns **503 Service Unavailable** with the message "Frontend not built. Run `bun run build` and try again."
 
 ## Tests
 
@@ -49,14 +47,14 @@ The app is written in TypeScript. Backend entry is `server.ts` (run with Bun). N
 - **Formatting**: Prettier (with import sorting).
   - Format code: `bun run format`
   - Check formatting (CI-safe): `bun run format:check`
-- **Type checking**: strict TypeScript options enabled for app code.
+- **Type checking**: `strict: false` in tsconfig, with selected strict flags enabled (`strictNullChecks`, `noUnusedLocals`, `noUnusedParameters`).
   - Run typecheck: `bun run typecheck`
 - **CI**:
   - GitHub Actions run `bun run lint`, `bun run typecheck`, `bun run test:ci`, and `bun run build` on pushes/PRs.
 - **Dependencies & security**:
   - Dependabot is configured to open weekly dependency update PRs.
   - Basic dependency audit: `bun audit`
-- **Git hooks** (optional): after `bun install`, run `bun run setup:hooks` once (needs **Node 18+** on your `PATH`). That registers Husky; pre-commit runs **lint-staged** from `node_modules/.bin` so it works from terminals and the VS Code Git UI (Git’s `PATH` usually does not include `bunx`). CI runs the same lint/format checks without hooks.
+- **Git hooks**: Husky is registered automatically via the `prepare` lifecycle script on `bun install`. The pre-commit hook runs **lint-staged** (`eslint --fix` + `prettier --write`) on staged `.ts,.tsx,.js,.jsx` files. CI runs the same lint/format checks without hooks.
 
 ## Deployment (Vercel)
 
