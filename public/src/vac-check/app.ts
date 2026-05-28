@@ -10,6 +10,7 @@ import {
   playerSummariesRequest,
   playerXMLRequest,
 } from '../utils/apiRequests.js';
+import { runWithConcurrency } from '../utils/concurrency.js';
 import {
   onBansData,
   onLogsData,
@@ -136,7 +137,7 @@ const fetchData = async (ids: string[]): Promise<void> => {
     if (summariesResponse) onSummaryData(summariesResponse);
 
     const players = summariesResponse as { steamid: string; profileurl?: string }[];
-    await Promise.all(players.map(fetchPlayerData));
+    await runWithConcurrency(players, fetchPlayerData, 5);
 
     onSteamLevelData(await playerSteamlevelRequest(ids));
 
