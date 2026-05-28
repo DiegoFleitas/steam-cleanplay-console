@@ -165,7 +165,12 @@ export const getUserStatsForGameRequest = (ids: string[]): Promise<unknown[]> =>
 
 export const playerXMLRequest = async (url: string): Promise<unknown> => {
   if (!url) return;
-  return sendGet(`${PROXY}${url}`);
+  const cacheLabel = 'STEAMCOMMUNITY/PROFILEXML';
+  const cached = await getCache(url, cacheLabel);
+  if (cached) return cached;
+  const result = await sendGet(`${PROXY}${url}`);
+  if (result) await setCache(url, result, cacheLabel);
+  return result;
 };
 
 export const playerLogsRequest = async (id: string): Promise<unknown> => {
