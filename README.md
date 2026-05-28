@@ -6,9 +6,17 @@ A web-based tool to check if players in a Team Fortress 2 or Counter-Strike: Glo
 
 ## Development
 
+This repo uses [Bun](https://bun.sh) as the runtime and package manager (`packageManager` is pinned in `package.json`). Install dependencies first:
+
+```sh
+bun install
+```
+
+Optional Git hooks are documented under **Coding standards** below.
+
 Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration.
 
-- Rename `.env.example` to `.env` & update the values (at minimum `STEAM_API_KEY`)
+- Rename `.env.example` to `.env` and update the values (at minimum `STEAM_API_KEY`)
 - Run `bun run dev`
 - **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
 
@@ -48,8 +56,7 @@ The app is written in TypeScript. Backend entry is `server.ts` (run with Bun). N
 - **Dependencies & security**:
   - Dependabot is configured to open weekly dependency update PRs.
   - Basic dependency audit: `bun audit`
-- **Pre-commit hooks**:
-  - Husky + lint-staged run ESLint and Prettier on staged files before each commit.
+- **Git hooks** (optional): after `bun install`, run `bun run setup:hooks` once (needs **Node 18+** on your `PATH`). That registers Husky; pre-commit runs **lint-staged** from `node_modules/.bin` so it works from terminals and the VS Code Git UI (Git’s `PATH` usually does not include `bunx`). CI runs the same lint/format checks without hooks.
 
 ## Deployment (Vercel)
 
