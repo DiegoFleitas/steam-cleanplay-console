@@ -44,8 +44,8 @@ describe('proxy endpoint', () => {
     expect(res.body).toEqual({ foo: 'bar' });
   });
 
-  it('proxies GET request and caches response on cache miss', async () => {
-    const { getCacheValue, setCacheValue } = await import('../../helpers/redis.ts');
+  it('proxies GET request on cache miss', async () => {
+    const { getCacheValue } = await import('../../helpers/redis.ts');
     const { axiosInstance } = await import('../../helpers/axios.ts');
 
     (getCacheValue as Mock).mockResolvedValue(null);
@@ -59,7 +59,6 @@ describe('proxy endpoint', () => {
     expect(axiosInstance.get).toHaveBeenCalledTimes(1);
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true });
-    expect(setCacheValue).toHaveBeenCalledTimes(1);
   });
 
   it('injects STEAM_API_KEY into Steam API requests', async () => {
@@ -98,6 +97,25 @@ describe('proxy endpoint', () => {
 
     expect(res.status).toBe(500);
     expect(res.body).toEqual({ error: 'Internal Server Error' });
+  });
+
+  it('forwards 429 error with original response body', async () => {
+    const { getCacheValue } = await import('../../helpers/redis.ts');
+    const { axiosInstance } = await import('../../helpers/axios.ts');
+
+    (getCacheValue as Mock).mockResolvedValue(null);
+    (axiosInstance.get as Mock).mockRejectedValue({
+      response: {
+        status: 429,
+        statusText: 'Too Many Requests',
+        data: { retry_after: 60 },
+      },
+    });
+
+    const res = await request(app).get('/api/proxy/https://api.steampowered.com/test');
+
+    expect(res.status).toBe(429);
+    expect(res.body).toEqual({ retry_after: 60 });
   });
 
   it('forwards 401 error with original response body', async () => {

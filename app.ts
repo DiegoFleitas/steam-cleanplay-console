@@ -6,7 +6,6 @@ import { logging } from 'diegos-fly-logger/index.mjs';
 import { config as dotenvConfig } from 'dotenv';
 import express from 'express';
 import { proxy } from './controllers/index.js';
-import { isHealthy } from './helpers/redis.js';
 import { session } from './middleware/index.js';
 
 dotenvConfig();
@@ -43,14 +42,6 @@ app.use(bodyParser.json());
 
 app.get('/healthcheck', (_req, res) => {
   res.status(200).send('OK');
-});
-
-app.get('/redis-healthcheck', async (_req, res) => {
-  if (await isHealthy()) {
-    res.status(200).send('OK');
-  } else {
-    res.status(500).send('Redis is not healthy');
-  }
 });
 
 app.all('/api/proxy/:url(*)', async (req, res) => {
