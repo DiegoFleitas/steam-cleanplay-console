@@ -43,21 +43,6 @@ bun run test      # vite build && vitest
 - **No real API key needed:** `proxy.test.ts` sets `STEAM_API_KEY` in `beforeEach`.
 - Blacklist tests use fixtures from `tests/fixtures/` (tiny schema-correct samples, not full payloads).
 
-## Git conventions
-
-- **Commit messages:** Use [Conventional Commits](https://www.conventionalcommits.org/):
-  - `feat:` — new feature
-  - `fix:` — bug fix
-  - `docs:` — documentation only
-  - `chore:` — maintenance, deps, tooling
-  - `refactor:` — code change with no fix/feature
-  - `style:` — formatting, missing semicolons, etc.
-  - `perf:` — performance improvement
-  - `test:` — adding or fixing tests
-  - Scope optional, e.g. `feat(proxy):`, `fix(graph):`
-  - Keep subject line under 72 chars, lowercase after colon, no trailing period
-  - Body paragraphs wrapped at 72 chars, blank line between subject and body
-
 ## Conventions & quirks
 
 - `tsconfig.json`: `strict: false` but `strictNullChecks`, `noUnusedLocals`, `noUnusedParameters` are on.
