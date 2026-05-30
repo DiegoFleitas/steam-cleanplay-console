@@ -2,102 +2,66 @@
 
 # Steam Cleanplay Console
 
-A web-based tool to check if players in a Team Fortress 2 or Counter-Strike: Global Offensive matches have any Steam bans. It also features a social graph to visualize the relationships between players based on their Steam friendships / relevant groups.
+Web tool to check if TF2/CS:GO players have Steam bans, with a social graph visualizing friendships and group relationships between players.
 
 ## Development
 
-This repo uses [Bun](https://bun.sh) as the runtime and package manager (`packageManager` is pinned in `package.json`). Install dependencies first:
+Requires [Bun](https://bun.sh) (pinned in `package.json`).
 
-```sh
+```bash
 bun install
+cp .env.example .env   # set STEAM_API_KEY at minimum
+bun run dev
 ```
 
-Vite is used for development and building the front-end application. It provides fast development with features like hot module replacement (HMR) and efficient production builds. Vite is configured using `vite.config.js` in the project root. All requests with the `/api` prefix are forwarded to the back-end Express server during development, using the vite server-proxy configuration.
-
-- Rename `.env.example` to `.env` and update the values (at minimum `STEAM_API_KEY`)
-- Run `bun run dev`
-- **Open the app at http://localhost:5173** (Vite). Do not use http://localhost:3000 during development—the backend runs on 3000 and serves raw files; the frontend must be loaded from Vite so TypeScript is compiled and scripts run correctly.
-
-Production and `bun run start` require a built frontend. Run `bun run build` before `bun run start`. If you open http://localhost:3000 when no build exists, the server returns **503 Service Unavailable** with the message "Frontend not built. Run `bun run build` and try again."
+Open `http://localhost:5173` (Vite). Don't use `:3000` during development — the backend serves raw files without TypeScript compilation.
 
 ## Tests
 
-Vitest is used for both backend and frontend tests.
+```bash
+bun run test        # all tests
+bun run test:ci     # single run (CI)
+bun run typecheck
+```
 
-- **Run all tests**: `bun run test`
-- **Run tests once (CI)**: `bun run test:ci`
-- **Watch mode**: `bun run test:watch`
-- **Test UI**: `bun run test:ui`
-- **TypeScript check**: `bun run typecheck`
-
-Test files live under the `tests` folder:
-
-- Backend tests in `tests/backend` (Node environment)
-- Frontend and UI tests in `tests/frontend` (jsdom / DOM-focused)
-
-## TypeScript
-
-The app is written in TypeScript. Backend entry is `server.ts` (run with Bun). New modules should be added in `.ts`; prefer type inference and avoid `any` where practical. Data-only blacklist files under `public/src/utils/blacklists` remain JavaScript.
+Backend tests in `tests/backend`, frontend tests in `tests/frontend`.
 
 ## Coding standards
 
-- **Linting**: ESLint with TypeScript support.
-  - Run lint: `bun run lint`
-  - Auto-fix lint issues: `bun run lint:fix`
-- **Formatting**: Prettier (with import sorting).
-  - Format code: `bun run format`
-  - Check formatting (CI-safe): `bun run format:check`
-- **Type checking**: `strict: false` in tsconfig, with selected strict flags enabled (`strictNullChecks`, `noUnusedLocals`, `noUnusedParameters`).
-  - Run typecheck: `bun run typecheck`
-- **CI**:
-  - GitHub Actions run `bun run lint`, `bun run typecheck`, `bun run test:ci`, and `bun run build` on pushes/PRs.
-- **Dependencies & security**:
-  - Dependabot is configured to open weekly dependency update PRs.
-  - Basic dependency audit: `bun audit`
-- **Git hooks**: Husky is registered automatically via the `prepare` lifecycle script on `bun install`. The pre-commit hook runs **lint-staged** (`eslint --fix` + `prettier --write`) on staged `.ts,.tsx,.js,.jsx` files. CI runs the same lint/format checks without hooks.
-
-## Deployment (Vercel)
-
-The app is deployed on Vercel (Hobby/free tier). The frontend is built as a static site and served by Vercel's CDN. The Express backend runs as a serverless function handling `/api/proxy/*` requests.
-
-### Automatic deploys
-
-Pushes to the `main` branch are automatically deployed via the Vercel GitHub integration.
-
-### Required environment variables
-
-Set these in your Vercel project dashboard (Settings → Environment Variables):
-
-| Variable        | Description                                        |
-| --------------- | -------------------------------------------------- |
-| `STEAM_API_KEY` | Steam Web API key (required for the proxy to work) |
-
-### Manual deploy
-
 ```bash
-vercel --prod
+bun run lint        # ESLint
+bun run lint:fix
+bun run format      # Prettier
+bun run format:check
 ```
 
-### Local preview of production build
+CI runs lint, typecheck, tests, and build on every push/PR. Husky runs lint-staged on commit.
 
-```bash
-bun run build
-bun run start
+## Deploy (Vercel)
+
+Pushes to `main` deploy automatically via the Vercel GitHub integration. Set `STEAM_API_KEY` in Vercel Settings → Environment Variables. Manual deploy: `vercel --prod`.
+
+Production requires a built frontend — run `bun run build` before `bun run start`.
+
+## Environment variables
+
+| Variable        | Description                                                                 |
+| --------------- | --------------------------------------------------------------------------- |
+| `STEAM_API_KEY` | Steam Web API key (required)                                                |
+| `REDIS_URL`     | Redis connection string (optional, local caching only — disabled on Vercel) |
+
+## Project structure
+
 ```
-
-## Environment Variables
-
-See `.env.example` for all expected variables.
-
-| Variable        | Description                                           |
-| --------------- | ----------------------------------------------------- |
-| `STEAM_API_KEY` | Steam Web API key (required in production)            |
-| `REDIS_URL`     | Redis connection string (optional, for local caching) |
-
-## Redis (local development only)
-
-The proxy can optionally cache responses in Redis. Redis is **disabled on Vercel** (serverless functions don't support persistent TCP connections). For local dev, set `REDIS_URL` in `.env` and run Redis locally:
-
-```bash
-redis-server
+steam-cleanplay-console/
+├── app.ts               # Express entry point
+├── server.ts            # backend server
+├── api/                 # Vercel serverless function handler
+├── controllers/         # route handlers
+├── helpers/             # axios, redis, config, throttle
+├── middleware/
+├── public/src/          # frontend (Vite)
+└── tests/
+    ├── backend/
+    └── frontend/
 ```
