@@ -1,5 +1,5 @@
 version: 2
 github:
-  - repository: DiegoFleitas/cleanplay-console
+  - repository: DiegoFleitas/steam-cleanplay-console
     opts:
       branch: main
