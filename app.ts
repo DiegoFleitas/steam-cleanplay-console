@@ -19,7 +19,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", 'https://unpkg.com', 'https://cdn.datatables.net', "'unsafe-inline'"],
+        scriptSrc: ["'self'", 'https://unpkg.com', 'https://cdn.datatables.net'],
         styleSrc: [
           "'self'",
           'https://cdnjs.cloudflare.com',
@@ -73,8 +73,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.all(['/api/proxy', '/api/proxy/{*url}'], async (req, res) => {
-  res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
-  res.setHeader('Vercel-CDN-Cache-Control', 'max-age=3600');
+  // Cache headers are set per-response by the proxy: only 2xx responses are cacheable.
   return proxy(req, res);
 });
 

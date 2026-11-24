@@ -68,18 +68,51 @@ function addApiKeyToUrl(url: string): string {
   return result;
 }
 
+// Success responses may be cached by the CDN; error responses must never be,
+// otherwise a transient upstream failure is served as a real answer for an hour.
+const SUCCESS_CACHE_HEADERS = {
+  'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+  'Vercel-CDN-Cache-Control': 'max-age=3600',
+};
+
+function sendSuccess(res: Response, status: number, data: unknown): Response {
+  res.set(SUCCESS_CACHE_HEADERS);
+  return res.status(status).json(data);
+}
+
+function sendError(
+  res: Response,
+  status: number,
+  body: unknown,
+  retryAfterSeconds?: unknown,
+): Response {
+  res.set('Cache-Control', 'no-store');
+  res.set('Vercel-CDN-Cache-Control', 'no-store');
+  if (retryAfterSeconds !== undefined && retryAfterSeconds !== null) {
+    res.set('Retry-After', String(retryAfterSeconds));
+  }
+  return res.status(status).json(body);
+}
+
 export function __resetCache(): void {
   memoryCache.clear();
 }
 
 export const proxy = async (req: Request, res: Response): Promise<Response | void> => {
-  const url =
-    (req.query.url as string) ?? decodeURIComponent(req.originalUrl.replace('/api/proxy/', ''));
   const { method } = req;
+  let url = '';
   try {
+    // decodeURIComponent throws URIError on malformed % sequences; keep it inside
+    // the try so it cannot escape to Express's default handler.
+    try {
+      url =
+        (req.query.url as string) ?? decodeURIComponent(req.originalUrl.replace('/api/proxy/', ''));
+    } catch {
+      return sendError(res, 400, { error: 'Malformed URL' });
+    }
     if (!url) {
       console.log('No url');
-      return res.status(404).json({ message: 'Url not found' });
+      return sendError(res, 404, { message: 'Url not found' });
     }
     let response: { status: number; data?: unknown };
 
@@ -89,13 +122,13 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
     const memoryEntry = getMemoryCache(cacheKey);
     if (memoryEntry) {
       console.log('[CACHE] Memory hit');
-      return res.status(memoryEntry.status).json(memoryEntry.data);
+      return sendSuccess(res, memoryEntry.status, memoryEntry.data);
     }
 
     const existingInFlight = inFlight.get(cacheKey);
     if (existingInFlight) {
       const result = await existingInFlight;
-      return res.status(result.status).json(result.data);
+      return sendSuccess(res, result.status, result.data);
     }
 
     const responsePromise: Promise<ProxyResult> = (async () => {
@@ -131,12 +164,17 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
 
     inFlight.set(cacheKey, responsePromise);
     const result = await responsePromise;
-    return res.status(result.status).json(result.data);
+    return sendSuccess(res, result.status, result.data);
   } catch (error: unknown) {
     const err = error as {
       status?: number;
       message?: string;
-      response?: { status?: number; statusText?: string; data?: unknown };
+      response?: {
+        status?: number;
+        statusText?: string;
+        data?: unknown;
+        headers?: { 'retry-after'?: string };
+      };
     };
     const status = err?.status ?? err?.response?.status ?? 500;
     const message = err?.message ?? err?.response?.statusText ?? 'Internal Server Error';
@@ -148,18 +186,18 @@ export const proxy = async (req: Request, res: Response): Promise<Response | voi
       if (stale) {
         console.log('[CACHE] Serving stale on rate limit');
         res.set('X-Cache', 'STALE');
-        return res.status(stale.status).json(stale.data);
+        return sendSuccess(res, stale.status, stale.data);
       }
       if (status === 429) {
-        console.log('[CACHE] Rate limited, no stale cache - returning empty');
-        return res.status(200).json({});
+        console.log('[CACHE] Rate limited, no stale cache - returning 429');
+        return sendError(res, 429, {}, err?.response?.headers?.['retry-after'] ?? 60);
       }
       const data = err?.response?.data ?? {};
-      return res.status(status).json(data);
+      return sendError(res, status, data);
     }
     if (status === 400 || status === 403) {
-      return res.status(status).json({ error: message });
+      return sendError(res, status, { error: message });
     }
-    return res.status(status).json({ error: 'Internal Server Error' });
+    return sendError(res, status, { error: 'Internal Server Error' });
   }
 };

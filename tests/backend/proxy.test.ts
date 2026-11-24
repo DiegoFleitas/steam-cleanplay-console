@@ -63,6 +63,7 @@ describe('proxy endpoint', () => {
     expect(axiosInstance.get).toHaveBeenCalledTimes(1);
     expect(res.status).toBe(200);
     expect(res.body).toEqual({ ok: true });
+    expect(res.headers['cache-control']).toContain('public');
   });
 
   it('injects STEAM_API_KEY into Steam API requests', async () => {
@@ -103,7 +104,7 @@ describe('proxy endpoint', () => {
     expect(res.body).toEqual({ error: 'Internal Server Error' });
   });
 
-  it('handles 429 gracefully with empty response body', async () => {
+  it('returns 429 with no-store when upstream is rate limited and no stale cache exists', async () => {
     const { getCacheValue } = await import('../../helpers/redis.ts');
     const { axiosInstance } = await import('../../helpers/axios.ts');
 
@@ -118,8 +119,10 @@ describe('proxy endpoint', () => {
 
     const res = await request(app).get('/api/proxy/https://api.steampowered.com/test');
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(429);
     expect(res.body).toEqual({});
+    expect(res.headers['cache-control']).toBe('no-store');
+    expect(res.headers['retry-after']).toBe('60');
   });
 
   it('accepts target URL as query parameter', async () => {

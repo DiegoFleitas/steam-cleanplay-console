@@ -10,6 +10,14 @@
 # editor and IDE files
 .vscode/
 
+# agent tooling (local only; never commit)
+.opencode/
+.claude/
+.agents/
+.playwright/
+opencode.jsonc
+STEP_ZERO.md
+
 # misc
 *.log
 

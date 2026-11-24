@@ -22,6 +22,7 @@ jobs:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Approve PR
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' }}
         run: |
           gh pr review --approve "$PR_URL"
         env:
@@ -29,6 +30,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge (squash)
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' }}
         run: |
           gh pr merge --auto --squash "$PR_URL"
         env:

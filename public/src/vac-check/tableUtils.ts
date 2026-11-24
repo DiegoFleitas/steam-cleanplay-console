@@ -10,6 +10,19 @@ declare const Popper: {
 
 let table: { clear: () => unknown; draw: () => void } | null = null;
 
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+// DataTables inserts string cell values as HTML. Escape untrusted text (Steam
+// profile summary, location, etc.) so player-controlled data can never become markup.
+export const escapeCellText = (value: unknown): string =>
+  String(value ?? '').replace(/[&<>"']/g, (char) => HTML_ESCAPE_MAP[char]);
+
 export const clearTable = (): void => {
   if (table) {
     (table.clear() as { draw: () => void }).draw();
@@ -163,12 +176,42 @@ export const drawTable = async (): Promise<void> => {
         render: (data: HTMLElement) => data?.outerHTML,
         defaultContent: '',
       },
-      { title: 'OS', data: 'os', defaultContent: '' },
-      { title: 'Created', data: 'timecreated', defaultContent: '' },
-      { title: 'Profile', data: 'profile', defaultContent: '' },
-      { title: 'Level', data: 'level', defaultContent: '' },
-      { title: 'Playtime (hrs)', data: 'playtime', defaultContent: '' },
-      { title: 'Location', data: 'location', defaultContent: '' },
+      {
+        title: 'OS',
+        data: 'os',
+        render: (data: unknown) => escapeCellText(data),
+        defaultContent: '',
+      },
+      {
+        title: 'Created',
+        data: 'timecreated',
+        render: (data: unknown) => escapeCellText(data),
+        defaultContent: '',
+      },
+      {
+        title: 'Profile',
+        data: 'profile',
+        render: (data: unknown) => escapeCellText(data),
+        defaultContent: '',
+      },
+      {
+        title: 'Level',
+        data: 'level',
+        render: (data: unknown) => escapeCellText(data),
+        defaultContent: '',
+      },
+      {
+        title: 'Playtime (hrs)',
+        data: 'playtime',
+        render: (data: unknown) => escapeCellText(data),
+        defaultContent: '',
+      },
+      {
+        title: 'Location',
+        data: 'location',
+        render: (data: unknown) => escapeCellText(data),
+        defaultContent: '',
+      },
       {
         title: 'Steam nick',
         visible: false,
@@ -187,7 +230,7 @@ export const drawTable = async (): Promise<void> => {
         title: 'Related',
         visible: false,
         data: 'relatedPersonas',
-        render: (data: unknown) => (data as string) ?? '',
+        render: (data: unknown) => escapeCellText(data),
         defaultContent: '',
       },
       {
@@ -195,7 +238,7 @@ export const drawTable = async (): Promise<void> => {
         visible: true,
         data: 'summary',
         render: (data: unknown) =>
-          ((data as string) === 'No information given.' ? '' : data) as string,
+          (data as string) === 'No information given.' ? '' : escapeCellText(data),
         defaultContent: '',
       },
     ],

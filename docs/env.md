@@ -14,6 +14,12 @@ Environment variables are loaded via `dotenv` (see `app.ts`) and read at runtime
 - **`REDIS_URL`**
   - Connection string for a local Redis instance. Only used in local development; Redis is disabled on Vercel.
 
+- **`APP_SECRET_KEY`** (required in production/staging)
+  - Signing key for `cookie-session` (`middleware/session.ts`).
+  - In `NODE_ENV=production` or `NODE_ENV=staging`, a missing value aborts startup.
+  - In development/test, an ephemeral random key is generated per process (logged as a warning), so cookies do not survive a restart — by design, since there is no public fallback key.
+  - Generate with e.g. `openssl rand -hex 32` and set it per environment in the Vercel project dashboard.
+
 See `.env.example` for all currently expected variables and sample values.
 
 ### Tests vs. production

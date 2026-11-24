@@ -2,6 +2,8 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const isProdLike = ['production', 'staging'].includes(NODE_ENV);
 
+export const isProductionLike = (): boolean => isProdLike;
+
 export const getEnv = (name: string, defaultValue = ''): string => {
   const value = process.env[name];
   if (value !== undefined && value !== null && String(value).length > 0) {

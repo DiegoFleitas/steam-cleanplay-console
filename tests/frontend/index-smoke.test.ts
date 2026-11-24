@@ -15,4 +15,17 @@ describe('index.html UI smoke test', () => {
     expect(button).not.toBeNull();
     expect(button?.textContent).toMatch(/Wash away the cheats/i);
   });
+
+  it('has no inline scripts or inline event handlers (CSP without unsafe-inline)', async () => {
+    const dom = await JSDOM.fromFile('public/index.html');
+    const document = dom.window.document;
+
+    const inlineScripts = Array.from(document.querySelectorAll('script')).filter(
+      (script) => !script.getAttribute('src'),
+    );
+    expect(inlineScripts).toHaveLength(0);
+
+    const textarea = document.querySelector('#input-players');
+    expect(textarea?.getAttribute('onpaste')).toBeNull();
+  });
 });

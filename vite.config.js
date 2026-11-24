@@ -5,6 +5,9 @@ export default defineConfig({
   publicDir: '.',
   build: {
     outDir: 'dist',
+    // Vite's modulepreload polyfill is an inline <script>; the CSP has no
+    // 'unsafe-inline' for scripts, and every supported browser has modulepreload.
+    modulePreload: { polyfill: false },
   },
   server: {
     proxy: {
