@@ -14,7 +14,6 @@
     <script src="https://unpkg.com/cytoscape-cola@2.5.1/cytoscape-cola.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/cytoscape-popper@2.0.0/cytoscape-popper.js"></script>
-    <script src="https://unpkg.com/axios@1.3.4/dist/axios.min.js"></script>
     <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.js"></script>
     <script src="https://unpkg.com/localforage@1.10.0/dist/localforage.js"></script>
     <script src="https://unpkg.com/moment@2.29.4/moment.js"></script>
@@ -52,7 +51,7 @@
           <p>A quick way to inspect players in a TF2 (or CS:GO) match.</p>
         </div>
         <div class="textarea-container">
-          <textarea id="input-players" onpaste=""></textarea>
+          <textarea id="input-players"></textarea>
         </div>
         <div class="button-container">
           <button id="button" class="btn btn-bubble">Wash away the cheats™</button>
@@ -120,36 +119,6 @@
     </div>
     <script src="./src/utils/floatyButton.ts" type="module"></script>
     <script src="./src/utils/bubblyCursor.ts" type="module"></script>
+    <script src="./src/utils/uiBehaviors.ts" type="module"></script>
   </body>
-  <script>
-    function formatText(text) {
-      return text.replace(/(?<!\n)#\s+/g, '\n# ').trim();
-    }
-
-    document.getElementById('input-players').addEventListener('paste', (e) => {
-      // cancel paste
-      e.preventDefault();
-
-      const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-      e.target.value = formatText(text);
-    });
-
-    window.addEventListener('load', function () {
-      const textarea = document.getElementById('input-players');
-      textarea.value = formatText(textarea.value);
-    });
-  </script>
-  <script>
-    // Add blinking-cursor class to DataTables search input after DOM is ready
-    document.addEventListener('DOMContentLoaded', function () {
-      const interval = setInterval(() => {
-        const searchInput = document.querySelector('input[type="search"]');
-        if (searchInput) {
-          searchInput.classList.add('blinking-cursor');
-          setTimeout(() => searchInput.focus(), 0);
-          clearInterval(interval);
-        }
-      }, 100);
-    });
-  </script>
 </html>

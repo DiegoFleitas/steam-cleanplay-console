@@ -9,9 +9,8 @@ export const setCache = async (key: string, value: unknown, label = ''): Promise
   try {
     if (!value) return;
     const timestamp = Date.now();
-    console.log(
-      `[LOCALFORAGE_SET] ${fullKey} (${JSON.stringify(value, null, 2)}) TTL: ${timestamp}`,
-    );
+    // Log key labels/TTLs only: cached values contain full Steam profiles and ban records.
+    console.log(`[LOCALFORAGE_SET] ${fullKey} TTL: ${timestamp}`);
     await localforage.setItem(fullKey, { value, timestamp });
   } catch (error) {
     console.log(`[LOCALFORAGE_SET_ERROR] (${fullKey})`);
@@ -30,7 +29,7 @@ export const getCache = async (key: string, label: string): Promise<unknown> => 
       'timestamp' in cacheRecord &&
       Date.now() - (cacheRecord.timestamp as number) <= HOUR_IN_MS
     ) {
-      console.log(`[LOCALFORAGE_HIT] ${fullKey}`, (cacheRecord as { value: unknown }).value);
+      console.log(`[LOCALFORAGE_HIT] ${fullKey}`);
       return (cacheRecord as { value: unknown }).value;
     }
     console.log(`[LOCALFORAGE_MISS] ${fullKey}`);

@@ -42,7 +42,7 @@ const getRedisClient = async (): Promise<RedisClientType | null> => {
           reconnectStrategy: false as const,
         },
       };
-      console.log('[REDIS_OPTIONS]', options);
+      // Never log options: they contain REDIS_URL, which may carry credentials.
       redisClient = redis.createClient(options) as RedisClientType;
       redisClient
         .on('error', (error: Error) => {
@@ -71,17 +71,17 @@ export const getCacheValue = async (key: string): Promise<unknown> => {
     const hashedKey = getCacheKey(key);
     const value = await client.get(hashedKey);
     if (!value) {
-      console.log(`[REDIS_MISS] ${hashedKey} (${key})`);
+      console.log(`[REDIS_MISS] ${hashedKey}`);
       return null;
     }
-    console.log(`[REDIS_HIT] ${hashedKey} (${key})`);
+    console.log(`[REDIS_HIT] ${hashedKey}`);
     try {
       return JSON.parse(value) as unknown;
     } catch {
       return value;
     }
   } catch (error) {
-    console.log(`[REDIS_GET_ERROR] (${key}) ${error}`);
+    console.log(`[REDIS_GET_ERROR] ${getCacheKey(key)} ${error}`);
     return null;
   }
 };
@@ -99,10 +99,10 @@ export const setCacheValue = async (
     const serializedValue = JSON.stringify(value);
     const hashedKey = getCacheKey(key);
     const result = await client.set(hashedKey, serializedValue, { EX: ttl });
-    console.log(`[REDIS_SET] ${hashedKey} (${key}) TTL: ${ttl}`);
+    console.log(`[REDIS_SET] ${hashedKey} TTL: ${ttl}`);
     return result === 'OK';
   } catch (error) {
-    console.log(`[REDIS_SET_ERROR] (${key}) ${error}`);
+    console.log(`[REDIS_SET_ERROR] ${getCacheKey(key)} ${error}`);
     return null;
   }
 };
